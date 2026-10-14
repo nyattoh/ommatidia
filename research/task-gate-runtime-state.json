@@ -1,0 +1,45 @@
+{
+  "tasks": [
+    {
+      "id": "task-runtime-implement",
+      "kind": "implement",
+      "model": "gemini-3.8-flash-high",
+      "vendor": "google",
+      "status": "done",
+      "artifact": "research/hand_over_runtime.md",
+      "domain": "coding-implement",
+      "cost_usd": null
+    },
+    {
+      "id": "task-runtime-verify",
+      "kind": "verify",
+      "model": "gemini-3.8-flash-high",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "fail",
+      "verifies": "task-runtime-implement",
+      "no_cross_vendor_candidate": false,
+      "cost_usd": null,
+      "evidence": {
+        "cross_vendor_status": {
+          "openai": "failed helper_unknown_error setup refresh",
+          "anthropic_claude": "rate limit",
+          "cursor": "unavailable",
+          "xai_grok": "auto-review rejected"
+        },
+        "same_vendor_reviewer": "agy gemini-3.8-flash-high (separate context, rank 13, score 100.0, cost null, effort model-encoded)",
+        "remaining_requirements": [
+          "Fix usage accumulation in _accumulate_step_usage to not coerce null cost/tokens to 0.0 or bypass unknown tracking",
+          "Implement budget check in Condition A and Condition B runners",
+          "Revoke READY_FOR_REQUESTED_STEP decision on evidence withdrawal when required gaps reopen",
+          "Implement stale lock / PID check in RunLedger.acquire_lock to prevent crash deadlocks",
+          "Call verify_environment in ResearchHarness execution paths and seal datasets/prompts/code",
+          "Align Evaluator and Types with research/EVALUATION_SPEC.md (FinalJudgement schema, FDA, Recall_crit, FAR, DSC, etc.)",
+          "Fix paired comparison CI to handle zero sample variance and small samples without misleading [0.0, 0.0]",
+          "Wire real child delegation executor_func to T3 Code instead of synthetic dummy"
+        ]
+      }
+    }
+  ],
+  "budget_usd": null
+}
