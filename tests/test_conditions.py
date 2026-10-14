@@ -31,6 +31,7 @@ class TestConditionRunners(unittest.TestCase):
 
         def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
             self.assertEqual(step_name, "single_pass_investigation")
+            self.assertIn("systemPrompt", payload)
             return {
                 "answer": "Evaluated single-pass conclusion",
                 "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "elapsedMs": 200.0},
@@ -41,11 +42,29 @@ class TestConditionRunners(unittest.TestCase):
         self.assertEqual(len(state.claims), 1)
         self.assertEqual(state.claims[0].text, "Evaluated single-pass conclusion")
         self.assertEqual(state.usage.model_calls, 1)
+        self.assertIsNotNone(state.final_judgement)
+        self.assertEqual(state.final_judgement.verdict, "supported")
+
+    def test_condition_a_budget_exhaustion(self) -> None:
+        runner = ConditionARunner()
+
+        def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+            return {
+                "answer": "Over-budget answer",
+                "usage": {"rounds": 1, "modelCalls": 100, "toolCalls": 500, "elapsedMs": 999999.0},
+            }
+
+        state = runner.run(self.task, mock_executor)
+        self.assertEqual(state.decision, Decision.BLOCKED)
+        self.assertEqual(state.stop_reason, "budget_exhausted")
+        self.assertIsNotNone(state.final_judgement)
+        self.assertEqual(state.final_judgement.verdict, "inconclusive")
 
     def test_condition_b_runner(self) -> None:
         runner = ConditionBRunner()
 
         def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+            self.assertIn("systemPrompt", payload)
             if step_name == "pass1_investigation":
                 return {"answer": "Pass 1 answer", "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "elapsedMs": 100.0}}
             elif step_name == "generic_recheck":
@@ -57,18 +76,35 @@ class TestConditionRunners(unittest.TestCase):
         self.assertEqual(state.claims[0].text, "Pass 2 re-evaluated")
         self.assertEqual(state.usage.rounds, 2)
         self.assertEqual(state.usage.tool_calls, 1)
+        self.assertIsNotNone(state.final_judgement)
+
+    def test_condition_b_budget_exhaustion(self) -> None:
+        runner = ConditionBRunner()
+
+        def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+            if step_name == "pass1_investigation":
+                # Exceeds max tool calls in pass 1
+                return {"answer": "Pass 1", "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 50, "elapsedMs": 100.0}}
+            return {}
+
+        state = runner.run(self.task, mock_executor)
+        self.assertEqual(state.decision, Decision.BLOCKED)
+        self.assertEqual(state.stop_reason, "budget_exhausted")
+        self.assertIsNotNone(state.final_judgement)
 
     def test_condition_c_runner(self) -> None:
         runner = ConditionCRunner()
 
         def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
             self.assertEqual(step_name, "fixed_lens_query")
+            self.assertIn("systemPrompt", payload)
             return {"observations": [], "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "elapsedMs": 50.0}}
 
         state = runner.run(self.task, mock_executor)
-        self.assertEqual(len(state.lenses), 3)
+        self.assertEqual(len(state.lenses), 5)
         self.assertEqual(state.decision, Decision.READY_FOR_REQUESTED_STEP)
-        self.assertEqual(state.usage.model_calls, 3)
+        self.assertEqual(state.usage.model_calls, 5)
+        self.assertIsNotNone(state.final_judgement)
 
     def test_condition_d_runner(self) -> None:
         runner = ConditionDRunner()
@@ -78,6 +114,7 @@ class TestConditionRunners(unittest.TestCase):
         def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
             nonlocal step_counter
             step_counter += 1
+            self.assertIn("systemPrompt", payload)
             if step_name == "adaptive_plan_step":
                 return {
                     "proposal": {
@@ -113,11 +150,13 @@ class TestConditionRunners(unittest.TestCase):
         self.assertIn(state.stop_reason, ("probes_exhausted", "no_pending_probes"))
         self.assertEqual(len(state.probes), 1)
         self.assertEqual(state.probes[0].status, ProbeStatus.COMPLETE)
+        self.assertIsNotNone(state.final_judgement)
 
     def test_condition_e_runner(self) -> None:
         runner = ConditionERunner(max_concurrent_roles=2)
 
         def mock_executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+            self.assertIn("systemPrompt", payload)
             if step_name == "ommatidia_inspect":
                 return {
                     "proposal": {
@@ -160,6 +199,7 @@ class TestConditionRunners(unittest.TestCase):
         self.assertEqual(len(state.lenses), 1)
         self.assertEqual(len(state.probes), 1)
         self.assertEqual(state.probes[0].status, ProbeStatus.COMPLETE)
+        self.assertIsNotNone(state.final_judgement)
 
 
 if __name__ == "__main__":

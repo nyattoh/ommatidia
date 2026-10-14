@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import re
 from typing import Any, Dict, List, Optional, Set
 
 from ommatidia.types import validate_sha256
@@ -128,8 +129,21 @@ def check_heldout_leakage(
         violations.append(f"Task ID overlap between dev and heldout sets: {sorted(list(intersection))}")
 
     # Check if any heldout answers appear in the visible text
+    vis_lower = agent_visible_text.lower()
     for tid, answer in heldout_answers.items():
-        if len(answer) >= 6 and answer.lower() in agent_visible_text.lower():
+        ans_clean = answer.strip().lower()
+        if not ans_clean:
+            continue
+        if ans_clean in vis_lower:
             violations.append(f"Ground-truth answer for heldout task '{tid}' detected in visible text")
+        else:
+            # Check token n-grams for multi-word answers
+            tokens = [t for t in re.split(r"\W+", ans_clean) if t]
+            if len(tokens) >= 3:
+                for k in range(len(tokens) - 2):
+                    ngram = " ".join(tokens[k : k + 3])
+                    if ngram in vis_lower:
+                        violations.append(f"Ground-truth n-gram fragment '{ngram}' for heldout task '{tid}' detected in visible text")
+                        break
 
     return violations

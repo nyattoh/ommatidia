@@ -10,6 +10,7 @@ from ommatidia.types import (
     Claim,
     ClaimRole,
     ClaimStatus,
+    Decision,
     Evidence,
     EvidenceKind,
     EvidenceValidity,
@@ -101,7 +102,7 @@ class TestInvalidationAndDeduplication(unittest.TestCase):
             id="gap_01",
             kind=GapKind.MISSING_FACT,
             lens_id="lens_test",
-            question="Is eviction async?",
+            question="Is eviction async? ",
             trigger_refs=["code"],
             why_it_matters="Concurrency",
             importance=GapImportance.REQUIRED,
@@ -135,6 +136,52 @@ class TestInvalidationAndDeduplication(unittest.TestCase):
         # Target evidence validity must be WITHDRAWN
         ev_in_state = next(e for e in self.state.evidence if e.id == ev.id)
         self.assertEqual(ev_in_state.validity, EvidenceValidity.WITHDRAWN)
+
+    def test_evidence_withdrawal_revokes_ready_decision(self) -> None:
+        ev = Evidence(
+            id="ev_for_decision",
+            kind=EvidenceKind.DOCUMENT,
+            locator="spec.md",
+            source_group="docs",
+            retrieved_at="2026-10-14T01:00:00Z",
+            version="1.0",
+            scope="spec",
+            passage="Mandatory spec clause",
+            content_hash="3333333333333333333333333333333333333333333333333333333333333333",
+        )
+        self.state.evidence.append(ev)
+
+        res = Resolution(
+            reason=ResolutionReason.SUPPORTED,
+            evidence_ids=[ev.id],
+            explanation="Clause verified",
+        )
+        gap = Gap(
+            id="gap_req",
+            kind=GapKind.MISSING_FACT,
+            lens_id="lens_spec",
+            question="Is clause verified?",
+            trigger_refs=["spec"],
+            why_it_matters="Requirement",
+            importance=GapImportance.REQUIRED,
+            claim_ids=["claim_req"],
+            status=GapStatus.RESOLVED,
+            resolution=res,
+        )
+        self.state.gaps.append(gap)
+        self.state.decision = Decision.READY_FOR_REQUESTED_STEP
+        self.state.stop_reason = "required_gaps_resolved"
+
+        report = invalidate_evidence(
+            self.state,
+            target_evidence_ids=[ev.id],
+            reason="Retracted clause",
+            action=EvidenceValidity.WITHDRAWN,
+        )
+
+        self.assertTrue(report["decisionRevoked"])
+        self.assertEqual(self.state.decision, Decision.NEEDS_CHECK)
+        self.assertIsNone(self.state.stop_reason)
 
 
 if __name__ == "__main__":

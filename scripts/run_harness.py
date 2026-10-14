@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from ommatidia.harness import ResearchHarness
+from ommatidia.t3_adapter import create_t3_executor
 from ommatidia.types import ConditionType
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
 
@@ -97,30 +98,41 @@ def main() -> int:
                         help="Output directory for ledgers and reports")
     parser.add_argument("--run-id", type=str, default="run_mech_001",
                         help="Unique run identifier")
+    parser.add_argument("--manifest", type=Path, default=Path("research/seal_manifest.json"),
+                        help="Path to seal manifest")
+    parser.add_argument("--executor", choices=["synthetic", "t3"], default="synthetic",
+                        help="Execution driver: synthetic dummy or live T3 child delegation")
 
     args = parser.parse_args()
 
     fixtures = get_mechanism_check_fixtures()
-    harness = ResearchHarness(output_dir=args.output_dir)
+    harness = ResearchHarness(output_dir=args.output_dir, seal_manifest_path=args.manifest)
+
+    if args.executor == "t3":
+        active_executor = create_t3_executor(fallback_executor=dummy_synthetic_executor)
+    else:
+        active_executor = dummy_synthetic_executor
 
     print(f"=== Running Ommatidia Research Harness [{args.mode}] ===")
     print(f"Output directory: {args.output_dir}")
     print(f"Run ID: {args.run_id}")
+    print(f"Executor: {args.executor}")
+    print(f"Manifest: {args.manifest}")
 
     if args.mode == "mechanism_check":
         cond = ConditionType(args.condition_primary)
         print(f"Evaluating {len(fixtures)} dev mechanism fixture(s) under Condition {cond.value}...")
         for task, gold in fixtures:
-            rec = harness.evaluate_task(task, gold, cond, args.run_id, dummy_synthetic_executor)
-            print(f"  Task {rec.task_id}: success={rec.final_decision_success}, "
-                  f"gap_recall={rec.required_gap_recall:.2f}, tool_calls={rec.usage.tool_calls}")
+            rec = harness.evaluate_task(task, gold, cond, args.run_id, active_executor)
+            print(f"  Task {rec.task_id}: FDA={rec.fda}, "
+                  f"Recall_crit={rec.recall_crit:.2f}, FAR={rec.far:.2f}, tool_calls={rec.usage.tool_calls}")
 
     elif args.mode == "paired_compare":
         cond_p = ConditionType(args.condition_primary)
         cond_b = ConditionType(args.condition_baseline)
         print(f"Running paired comparison: Condition {cond_p.value} vs Condition {cond_b.value}...")
         result = harness.run_paired_comparison(
-            fixtures, cond_p, cond_b, args.run_id, dummy_synthetic_executor
+            fixtures, cond_p, cond_b, args.run_id, active_executor
         )
         print("Paired statistics:")
         print(json.dumps(result["pairedStats"], indent=2))

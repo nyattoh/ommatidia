@@ -1,7 +1,16 @@
 {
-  "datasets": {},
+  "datasets": {
+    "research/EVALUATION_SPEC.md": {
+      "hash": "61734daec67d4b3a66f40ddf490bdc338498f6c37de99732a26fb9394e314865",
+      "sizeBytes": 17754
+    },
+    "research/datasets/dev/manifest.json": {
+      "hash": "314901abb2faa9098a404ed92ededb4866f7e1ad9648cdf2ba17b33d4a8816c2",
+      "sizeBytes": 16227
+    }
+  },
   "protocol": {
-    "hash": "aad558bc40e2ec93ddb56d918641b8bdff25d8af5cac347e3a3d9f0221fc5523",
+    "hash": "a8e928a19d2a390ef017da638bad87682c8e81f01f0081ec3f1c488915d7fefe",
     "path": "research/PROTOCOL.md"
   },
   "schemaVersion": "0.1"

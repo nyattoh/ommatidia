@@ -7,12 +7,14 @@ without spawning unauthorized provider CLIs.
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ommatidia.types import (
     Assessment,
     Claim,
     Evidence,
+    FinalJudgement,
     Gap,
     Lens,
     Observation,
@@ -54,23 +56,53 @@ def prepare_child_task_payload(
 
 
 def ingest_json_response(raw_text: str) -> Dict[str, Any]:
-    """Parse JSON strictly from raw response text, handling markdown fences if present."""
+    """Parse JSON strictly from raw response text, extracting markdown code blocks if present."""
     clean_text = raw_text.strip()
-    lines = clean_text.splitlines()
-    if lines and lines[0].strip().startswith("```"):
-        lines = lines[1:]
-    if lines and lines[-1].strip().startswith("```"):
-        lines = lines[:-1]
-    clean_text = "\n".join(lines).strip()
 
+    # 1. Try markdown code block extraction
+    code_block_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", clean_text)
+    if code_block_match:
+        candidate = code_block_match.group(1).strip()
+        try:
+            data = json.loads(candidate)
+            if isinstance(data, dict):
+                return data
+        except json.JSONDecodeError:
+            pass
+
+    # 2. Try direct parse
     try:
         data = json.loads(clean_text)
-    except json.JSONDecodeError as exc:
-        raise IngestionValidationError(f"Response is not valid JSON: {exc}") from exc
+        if isinstance(data, dict):
+            return data
+    except json.JSONDecodeError:
+        pass
 
-    if not isinstance(data, dict):
-        raise IngestionValidationError(f"Expected top-level JSON object, got {type(data).__name__}")
-    return data
+    # 3. Try finding first '{' and last '}'
+    first_brace = clean_text.find("{")
+    last_brace = clean_text.rfind("}")
+    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+        candidate = clean_text[first_brace : last_brace + 1]
+        try:
+            data = json.loads(candidate)
+            if isinstance(data, dict):
+                return data
+        except json.JSONDecodeError as exc:
+            raise IngestionValidationError(f"Response contains malformed JSON block: {exc}") from exc
+
+    raise IngestionValidationError("Response does not contain a valid top-level JSON object")
+
+
+def ingest_final_judgement(raw_input: Union[str, Dict[str, Any]]) -> FinalJudgement:
+    """Strictly validate and ingest a FinalJudgement payload from an agent response."""
+    data = ingest_json_response(raw_input) if isinstance(raw_input, str) else raw_input
+    fj_data = data.get("finalJudgement", data)
+    if not isinstance(fj_data, dict):
+        raise IngestionValidationError("Missing 'finalJudgement' dictionary in output")
+    try:
+        return FinalJudgement.from_dict(fj_data)
+    except Exception as exc:
+        raise IngestionValidationError(f"Invalid FinalJudgement schema: {exc}") from exc
 
 
 def ingest_proposal(raw_input: Union[str, Dict[str, Any]]) -> Tuple[Proposal, Usage]:

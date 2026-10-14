@@ -8,10 +8,13 @@ from ommatidia.types import (
     Assessment,
     AssessmentVerdict,
     Claim,
+    ClaimRole,
     ClaimStatus,
+    Decision,
     Evidence,
     EvidenceValidity,
     Gap,
+    GapImportance,
     GapStatus,
     UnderstandingState,
 )
@@ -79,7 +82,9 @@ def invalidate_evidence(
        - Re-evaluate claim statuses (supported/contradicted -> unverified or disputed).
     3. Reopen any gaps whose resolution relied on the invalidated evidence:
        - Set gap.status = OPEN, gap.resolution = None.
-    4. Historical applied executions and usage are preserved intact.
+    4. Revoke READY_FOR_REQUESTED_STEP decision if required gaps reopened or are unresolved,
+       or if primary answer claims were invalidated.
+    5. Historical applied executions and usage are preserved intact.
 
     Returns a report detailing what was changed.
     """
@@ -162,6 +167,30 @@ def invalidate_evidence(
                 gap.resolution = None
                 gaps_reopened.append(gap.id)
 
+    # 4. Revoke READY_FOR_REQUESTED_STEP decision if required gaps reopened or are unresolved
+    reopened_required = any(
+        gap.importance == GapImportance.REQUIRED
+        for gap in state.gaps
+        if gap.id in gaps_reopened
+    )
+    unresolved_required = any(
+        gap.importance == GapImportance.REQUIRED and gap.status != GapStatus.RESOLVED
+        for gap in state.gaps
+    )
+    answer_claims_invalidated = any(
+        claim.role == ClaimRole.ANSWER_CLAIM and claim.status != ClaimStatus.SUPPORTED
+        for claim in state.claims
+        if claim.id in claims_modified
+    )
+
+    decision_revoked = False
+    if reopened_required or unresolved_required or answer_claims_invalidated:
+        if state.decision == Decision.READY_FOR_REQUESTED_STEP:
+            state.decision = Decision.NEEDS_CHECK
+            state.stop_reason = None
+            state.final_judgement = None
+            decision_revoked = True
+
     state.revision += 1
 
     return {
@@ -170,5 +199,6 @@ def invalidate_evidence(
         "invalidatedEvidenceIds": invalidated_evidence_ids,
         "claimsModified": claims_modified,
         "gapsReopened": gaps_reopened,
+        "decisionRevoked": decision_revoked,
         "newRevision": state.revision,
     }

@@ -45,7 +45,11 @@ class ResearchHarness:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.ledger = RunLedger(ledger_path or (self.output_dir / "ledger.jsonl"))
-        self.seal_manifest_path = seal_manifest_path
+        self.seal_manifest_path = seal_manifest_path or (
+            Path("research/seal_manifest.json")
+            if Path("research/seal_manifest.json").exists()
+            else None
+        )
 
         self.runners = {
             ConditionType.A: ConditionARunner(),
@@ -70,6 +74,9 @@ class ResearchHarness:
         executor_func: Callable[[str, Dict[str, Any]], Dict[str, Any]],
     ) -> EvaluationMetricRecord:
         """Run a single task under a specified condition and compute objective metrics."""
+        # Enforce cryptographic seal verification before execution
+        self.verify_environment()
+
         runner = self.runners[condition]
         task_hash = compute_payload_hash(task.to_dict())
 
@@ -110,6 +117,7 @@ class ResearchHarness:
             run_id=run_id,
             condition=condition,
             stage_breakdown=stage_breakdown,
+            final_judgement=final_state.final_judgement,
         )
 
         return metric_record
@@ -123,6 +131,9 @@ class ResearchHarness:
         executor_func: Callable[[str, Dict[str, Any]], Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Execute paired runs on a task cohort and compute comparative differences."""
+        # Enforce cryptographic seal verification before execution
+        self.verify_environment()
+
         self.ledger.acquire_lock(run_id)
         try:
             primary_records: List[EvaluationMetricRecord] = []

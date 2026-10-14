@@ -4,6 +4,8 @@ import unittest
 
 from ommatidia.ingestion import (
     IngestionValidationError,
+    ingest_final_judgement,
+    ingest_json_response,
     ingest_observations,
     ingest_proposal,
     prepare_child_task_payload,
@@ -50,6 +52,57 @@ class TestIngestion(unittest.TestCase):
         self.assertEqual(prop.lenses[0].id, "lens_01")
         self.assertIsNone(usage.total_tokens)
         self.assertIsNone(usage.cost_yen)
+
+    def test_json_parsing_with_preamble_and_fences(self) -> None:
+        raw_with_preamble = """Here is the structured proposal you requested:
+        ```json
+        {
+            "proposal": {
+                "claims": [{
+                    "id": "claim_p1",
+                    "role": "hypothesis",
+                    "text": "Hypothesis statement",
+                    "scope": "domain"
+                }]
+            }
+        }
+        ```
+        Hope this helps!"""
+
+        prop, _ = ingest_proposal(raw_with_preamble)
+        self.assertIsNotNone(prop.claims)
+        self.assertEqual(len(prop.claims), 1)
+        self.assertEqual(prop.claims[0].id, "claim_p1")
+
+    def test_ingest_final_judgement(self) -> None:
+        raw_fj = """{
+            "finalJudgement": {
+                "taskId": "task_01",
+                "verdict": "supported",
+                "confidenceScore": 0.95,
+                "justification": "Verified against specs",
+                "citedEvidence": [{
+                    "id": "ev_01",
+                    "sourceGroup": "docs",
+                    "locator": "spec.md",
+                    "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "passage": "Clause 1",
+                    "verdictRelation": "supports"
+                }],
+                "unresolvedGaps": [],
+                "resourceUsage": {
+                    "modelCalls": 2,
+                    "toolCalls": 3,
+                    "elapsedMs": 1500.0,
+                    "inputCharsEstimated": 400
+                }
+            }
+        }"""
+        fj = ingest_final_judgement(raw_fj)
+        self.assertEqual(fj.task_id, "task_01")
+        self.assertEqual(fj.verdict, "supported")
+        self.assertEqual(len(fj.cited_evidence), 1)
+        self.assertEqual(fj.resource_usage.tool_calls, 3)
 
     def test_malformed_proposal_rejection(self) -> None:
         # Invalid JSON
