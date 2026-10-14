@@ -1,0 +1,385 @@
+{
+  "ledger_version": "2.0.0",
+  "updated_at": "2026-10-14T11:15:45Z",
+  "verification_run": {
+    "role": "Manuscript recovery sub-agent (claudeAgent / claude-opus-5-5)",
+    "method": "Official venue PDFs and BibTeX records were downloaded with curl into a local directory outside the repository. Text was extracted with pdftotext and passages were located with grep. No summarising model or web-fetch summariser was used.",
+    "local_copies": "D:/inbox/ommatidia-recovery-20261014/sources (not part of the repository)",
+    "fetch_window_utc": [
+      "2026-10-14T11:01:56Z",
+      "2026-10-14T11:03:04Z"
+    ],
+    "claim_types": {
+      "supported": "The statement restates a passage at the given location. The excerpt is quoted from the official PDF.",
+      "inference": "The statement is our reading of the paper, usually that a mechanism is not described in the sections we read. It is not a quotation and not an exhaustive literature claim."
+    },
+    "scope_limit": "Only the four papers below were checked. No claim is made that the combination of mechanisms in Ommatidia is absent from the wider literature."
+  },
+  "sources": [
+    {
+      "key": "self_rag",
+      "title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+      "authors": [
+        "Akari Asai",
+        "Zeqiu Wu",
+        "Yizhong Wang",
+        "Avirup Sil",
+        "Hannaneh Hajishirzi"
+      ],
+      "venue": "International Conference on Learning Representations (ICLR 2024)",
+      "pages": "9112-9141",
+      "arxiv": "2310.11511",
+      "official_url": "https://proceedings.iclr.cc/paper_files/paper/2024/hash/25f7be9694d7b32d5cc670927b8091e1-Abstract-Conference.html",
+      "pdf_url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/25f7be9694d7b32d5cc670927b8091e1-Paper-Conference.pdf",
+      "bib_url": "https://proceedings.iclr.cc/paper_files/paper/4936-/bibtex",
+      "pdf_sha256": "b1b57b5d9c1e71ebbebc2a18b625889c467e3f6bced88d049b6ee29067666e7e",
+      "accessed_at_utc": "2026-10-14T11:03:04Z",
+      "access_note": "openreview.net returned HTTP 403. The ICLR proceedings copy was used instead.",
+      "claims": [
+        {
+          "id": "selfrag-1",
+          "type": "supported",
+          "statement": "Self-RAG adds four types of reflection tokens: Retrieve, IsRel, IsSup and IsUse.",
+          "location": "Section 3.1, Table 1",
+          "excerpt": "Table 1: Four types of reflection tokens used in SELF-RAG."
+        },
+        {
+          "id": "selfrag-2",
+          "type": "supported",
+          "statement": "A critic model inserts reflection tokens into the training corpus offline, and the generator is trained with a standard language-model objective.",
+          "location": "Section 3.2",
+          "excerpt": "we compute critique offline and directly insert them into the training corpus, where the generator LM is trained with a standard LM objective"
+        },
+        {
+          "id": "selfrag-3",
+          "type": "supported",
+          "statement": "The generators are Llama2 7B and 13B. The experiments treat one sentence as a segment.",
+          "location": "Section 3.1, Section 4.3",
+          "excerpt": "We use Llama2 7B and 13B (Touvron et al., 2023) as our generator base LM"
+        },
+        {
+          "id": "selfrag-4",
+          "type": "supported",
+          "statement": "Inference uses a segment-level beam search scored by a weighted linear sum of reflection-token probabilities, with soft or hard constraints.",
+          "location": "Section 1, Section 3.3",
+          "excerpt": "segment-level beam search using the weighted linear sum of the reflection token probabilities as segment score"
+        },
+        {
+          "id": "selfrag-5",
+          "type": "supported",
+          "statement": "The authors state that the method can still generate outputs that the citations do not fully support.",
+          "location": "Ethical Concerns",
+          "excerpt": "it can still generate outputs that are not fully supported by the citations"
+        },
+        {
+          "id": "selfrag-6",
+          "type": "inference",
+          "statement": "Because the generator is trained to emit reflection tokens, the published method does not apply unchanged to a hosted model whose weights cannot be trained.",
+          "location": "Derived from Section 3.2",
+          "excerpt": null
+        },
+        {
+          "id": "selfrag-7",
+          "type": "inference",
+          "statement": "Sections 3.1 to 3.3 do not describe a task-level external record of claims, hypotheses and unverified items.",
+          "location": "Sections 3.1-3.3 as read",
+          "excerpt": null
+        }
+      ]
+    },
+    {
+      "key": "adaptive_rag",
+      "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+      "authors": [
+        "Soyeong Jeong",
+        "Jinheon Baek",
+        "Sukmin Cho",
+        "Sung Ju Hwang",
+        "Jong C. Park"
+      ],
+      "venue": "Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)",
+      "pages": "7036-7050",
+      "arxiv": "2403.14403",
+      "official_url": "https://aclanthology.org/2024.naacl-long.389/",
+      "pdf_url": "https://aclanthology.org/2024.naacl-long.389.pdf",
+      "bib_url": "https://aclanthology.org/2024.naacl-long.389.bib",
+      "doi": "10.18653/v1/2024.naacl-long.389",
+      "pdf_sha256": "1e5abee712c5d8552416b2fd456bcf2c37a0ba518372e64302db2b7b7bdf643f",
+      "accessed_at_utc": "2026-10-14T11:01:56Z",
+      "claims": [
+        {
+          "id": "adaptiverag-1",
+          "type": "supported",
+          "statement": "The strategy (no retrieval, single-step or multi-step) is selected by classifying the query's complexity before the system attempts a solution.",
+          "location": "Section 3.2, p. 7040",
+          "excerpt": "determining the complexity of each query before attempting a solution"
+        },
+        {
+          "id": "adaptiverag-2",
+          "type": "supported",
+          "statement": "In the multi-step strategy, retrieval at each step takes a context of earlier documents and intermediate answers as input, so later retrieval depends on what earlier steps found.",
+          "location": "Section 3.1 (Multi-step Approach for QA) and footnote 1, p. 7039",
+          "excerpt": "the additional context ci can be composed of previous documents and outcomes"
+        },
+        {
+          "id": "adaptiverag-3",
+          "type": "supported",
+          "statement": "The query-complexity classifier is a trained T5-Large model.",
+          "location": "Section 4.4, p. 7041",
+          "excerpt": "for the query-complexity classifier, we use and train the T5-Large model"
+        },
+        {
+          "id": "adaptiverag-4",
+          "type": "supported",
+          "statement": "Classifier training labels are constructed automatically from the outcomes of the three strategies and from inductive biases of the datasets. The authors note that labels may be wrong and that a gap remains to the ideal (oracle) classifier.",
+          "location": "Section 3.2, p. 7040; Limitations, p. 7044",
+          "excerpt": "it may have the potential to label queries incorrectly despite its effectiveness"
+        },
+        {
+          "id": "adaptiverag-5",
+          "type": "inference",
+          "statement": "The paper does not describe changing the selected strategy part-way through a query when retrieved evidence conflicts.",
+          "location": "Sections 3.1-3.2 as read",
+          "excerpt": null
+        },
+        {
+          "id": "adaptiverag-6",
+          "type": "inference",
+          "statement": "The paper does not describe grouping retrieved documents by shared original source.",
+          "location": "Sections 3-4 as read",
+          "excerpt": null
+        }
+      ]
+    },
+    {
+      "key": "storm",
+      "title": "Assisting in Writing Wikipedia-like Articles From Scratch with Large Language Models",
+      "authors": [
+        "Yijia Shao",
+        "Yucheng Jiang",
+        "Theodore A. Kanell",
+        "Peter Xu",
+        "Omar Khattab",
+        "Monica S. Lam"
+      ],
+      "venue": "Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)",
+      "pages": "6252-6278",
+      "arxiv": "2402.14207",
+      "official_url": "https://aclanthology.org/2024.naacl-long.347/",
+      "pdf_url": "https://aclanthology.org/2024.naacl-long.347.pdf",
+      "bib_url": "https://aclanthology.org/2024.naacl-long.347.bib",
+      "doi": "10.18653/v1/2024.naacl-long.347",
+      "pdf_sha256": "5815b45d03d79f47844aeb90fe5bdbbf5e8d574bf6f457eb84aab23a5c335262",
+      "accessed_at_utc": "2026-10-14T11:01:56Z",
+      "claims": [
+        {
+          "id": "storm-1",
+          "type": "supported",
+          "statement": "STORM generates N perspectives from the tables of contents of Wikipedia articles on related topics and adds a fixed basic-fact-writer perspective.",
+          "location": "Section 3.1, p. 6255; Algorithm 1 (appendix)",
+          "excerpt": "extracts the tables of contents from their corresponding Wikipedia articles"
+        },
+        {
+          "id": "storm-2",
+          "type": "supported",
+          "statement": "The perspective set is generated before the conversations start. Each perspective then guides question asking in parallel.",
+          "location": "Section 3.1; Algorithm 1 lines 11-17",
+          "excerpt": "Each perspective p ∈ P will be utilized to guide the LLM in the process of question asking in parallel."
+        },
+        {
+          "id": "storm-3",
+          "type": "supported",
+          "statement": "Each perspective runs a multi-turn conversation of at most M rounds between a simulated writer and a search-grounded expert. The writer's next question depends on the conversation history, so follow-up questions adapt to earlier answers.",
+          "location": "Section 3.2, p. 6255",
+          "excerpt": "The conversation history enables the LLM to update its understanding of the topic and ask follow-up questions."
+        },
+        {
+          "id": "storm-4",
+          "type": "supported",
+          "statement": "The expert splits each question into search queries and applies a rule-based filter, following the Wikipedia guideline, to exclude untrustworthy sources.",
+          "location": "Section 3.2, pp. 6255-6256",
+          "excerpt": "the searched results will be evaluated using a rule-based filter according to"
+        },
+        {
+          "id": "storm-5",
+          "type": "supported",
+          "statement": "The authors report that collected information may be biased towards dominant Internet sources and contain promotional content, and that generated articles can link unrelated facts.",
+          "location": "Section 6; Limitations, p. 6260",
+          "excerpt": "the collected information may still be biased towards dominant sources on the Internet and may contain promotional content"
+        },
+        {
+          "id": "storm-7",
+          "type": "supported",
+          "statement": "STORM is built with zero-shot prompting in the DSPy framework, without model training.",
+          "location": "Section 4.4; Appendix B",
+          "excerpt": "We build STORM with zero-shot prompting using the DSPy framework"
+        },
+        {
+          "id": "storm-6",
+          "type": "inference",
+          "statement": "The method description does not include a step that groups syndicated copies of one original source. The rule-based filter targets trustworthiness, not shared provenance.",
+          "location": "Section 3 as read",
+          "excerpt": null
+        }
+      ]
+    },
+    {
+      "key": "reflexion",
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "authors": [
+        "Noah Shinn",
+        "Federico Cassano",
+        "Ashwin Gopinath",
+        "Karthik Narasimhan",
+        "Shunyu Yao"
+      ],
+      "author_note": "The NeurIPS proceedings PDF and BibTeX list five authors. The current arXiv abstract page also lists Edward Berman.",
+      "venue": "Advances in Neural Information Processing Systems 36 (NeurIPS 2023)",
+      "pages": "8634-8652",
+      "arxiv": "2303.11366",
+      "official_url": "https://proceedings.neurips.cc/paper_files/paper/2023/hash/1b44b878bb782e6954cd888628510e90-Abstract-Conference.html",
+      "pdf_url": "https://proceedings.neurips.cc/paper_files/paper/2023/file/1b44b878bb782e6954cd888628510e90-Paper-Conference.pdf",
+      "bib_url": "https://proceedings.neurips.cc/paper_files/paper/20995-/bibtex",
+      "doi": "10.52202/075280-0377",
+      "pdf_sha256": "efba04cd48b779131fc4c3c58ae49e8523ded534f9225a7c57c7bdad0823803d",
+      "accessed_at_utc": "2026-10-14T11:02:20Z",
+      "claims": [
+        {
+          "id": "reflexion-1",
+          "type": "supported",
+          "statement": "Reflexion has three models (Actor, Evaluator, Self-Reflection) and a memory of reflections bounded to a small number of entries, usually 1 to 3.",
+          "location": "Section 3",
+          "excerpt": "we bound mem by a maximum number of stored experiences, Ω (usually set to 1-3)"
+        },
+        {
+          "id": "reflexion-2",
+          "type": "supported",
+          "statement": "The Self-Reflection model turns a binary or scalar evaluation signal and the trajectory into natural-language feedback that is added to the next trial's context.",
+          "location": "Section 1; Section 3 (Self-reflection)",
+          "excerpt": "Reflexion converts binary or scalar feedback from the environment into verbal feedback in the form of a textual summary"
+        },
+        {
+          "id": "reflexion-3",
+          "type": "supported",
+          "statement": "The framework accepts scalar or free-form language feedback, from external or internally simulated sources.",
+          "location": "Abstract",
+          "excerpt": "various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals"
+        },
+        {
+          "id": "reflexion-4",
+          "type": "supported",
+          "statement": "The evaluation signal in the experiments comes from exact-match grading (reasoning), pre-defined heuristics or LLM classification (decision making) and self-written unit tests (programming).",
+          "location": "Section 1; Section 3 (Evaluator); Sections 4.1-4.3",
+          "excerpt": "simple binary environment feedback, pre-defined heuristics for common failure cases, and self-evaluation such as binary classification using LLMs (decision-making) or self-written unit tests (programming)"
+        },
+        {
+          "id": "reflexion-5",
+          "type": "supported",
+          "statement": "Reflections are produced between trials and stored for the next trial. Trials repeat until the Evaluator judges the output correct, bounded by a maximum number of trials.",
+          "location": "Section 3; Algorithm 1; Section 4.2",
+          "excerpt": "After each trial t, srt, is appended mem."
+        },
+        {
+          "id": "reflexion-6",
+          "type": "supported",
+          "statement": "The authors list reliance on the LLM's self-evaluation (or heuristics), no formal guarantee of success and a risk of non-optimal local minima.",
+          "location": "Section 1; Section 5 (Limitations)",
+          "excerpt": "it may still succumb to non-optimal local minima solutions"
+        },
+        {
+          "id": "reflexion-8",
+          "type": "supported",
+          "statement": "Reflexion reinforces agents through linguistic feedback rather than by updating model weights.",
+          "location": "Abstract",
+          "excerpt": "reinforce language agents not by updating weights"
+        },
+        {
+          "id": "reflexion-7",
+          "type": "inference",
+          "statement": "The paper does not describe a structured record that links claims to evidence and sources, or a step that removes duplicate sources.",
+          "location": "Sections 3-4 as read",
+          "excerpt": null
+        }
+      ]
+    }
+  ],
+  "manuscript_corrections": [
+    {
+      "target": "paper/manuscript-ja.md references",
+      "before": "Adaptive-RAG pages 7029-7043",
+      "after": "pages 7036-7050",
+      "basis": "ACL Anthology BibTeX"
+    },
+    {
+      "target": "paper/manuscript-ja.md references",
+      "before": "STORM pages 6064-6082",
+      "after": "pages 6252-6278",
+      "basis": "ACL Anthology BibTeX"
+    },
+    {
+      "target": "paper/manuscript-ja.md references",
+      "before": "Reflexion with six authors including Edward Berman, cited as NeurIPS 2023",
+      "after": "five authors as in the NeurIPS proceedings, with a note on the arXiv author list",
+      "basis": "NeurIPS proceedings BibTeX and PDF"
+    },
+    {
+      "target": "paper/manuscript-ja.md references",
+      "before": "Self-RAG without page range",
+      "after": "ICLR 2024 pages 9112-9141",
+      "basis": "ICLR proceedings BibTeX"
+    },
+    {
+      "target": "paper/manuscript-ja.md references",
+      "before": "Okapi at TREC-3 and DPR listed",
+      "after": "removed",
+      "basis": "Neither work is cited in the body text."
+    },
+    {
+      "target": "paper/manuscript-ja.md section 2.2",
+      "before": "Adaptive-RAG has no dynamic adaptation during an investigation",
+      "after": "Upfront routing, plus multi-step retrieval conditioned on earlier documents and answers",
+      "basis": "adaptiverag-1, adaptiverag-2"
+    },
+    {
+      "target": "paper/manuscript-ja.md section 2.3",
+      "before": "STORM perspectives are not adaptive; duplicate syndication risk not excluded",
+      "after": "Perspective set fixed before conversations, multi-turn follow-up questions within each conversation, rule-based trust filter, no described provenance grouping (inference)",
+      "basis": "storm-2, storm-3, storm-4, storm-6"
+    },
+    {
+      "target": "paper/manuscript-ja.md section 2.4",
+      "before": "Reflexion presupposes an external environment that gives a clear scalar reward",
+      "after": "Linguistic feedback generated from evaluator signals that include exact match, heuristics, LLM classification and self-written unit tests",
+      "basis": "reflexion-2, reflexion-3, reflexion-4"
+    }
+  ],
+  "history": {
+    "note": "The block below is the ledger 1.0.0 router record written by the previous research sub-agent at 2026-10-14T02:29:00+09:00. It is kept unchanged. Its access timestamps and section lists were not re-verified by this run. This run replaced its per-paper entries with the claims above.",
+    "ledger_1_0_0_router_execution_record": {
+      "skill_path": "<HOME>/.agents/skills/bench-ledger-router/SKILL.md",
+      "task_classification": {
+        "kind": "research",
+        "domain": "coding-implement",
+        "requirements": []
+      },
+      "selection": {
+        "providerInstanceId": "google",
+        "provider": "Google",
+        "model": "gemini-3.8-flash-high",
+        "label": "Gemini 3.8 Flash High",
+        "effort": "model_encoded_high",
+        "selection_basis": "user-directed functioning gemini-3.8-flash-high"
+      },
+      "bench_ledger_evidence": {
+        "database": "D:/develop/works/bench-ledger-engine/bench_ledger.db",
+        "rank": 13,
+        "best_score": 100.0,
+        "best_source": "measured",
+        "cost_output": null,
+        "vendor": "google",
+        "notes": "Effort encoded in model ID; multiple measured test runs; task cost output null",
+        "epistemic_boundary": "Ledger coding benchmark scores reflect harness task pass/fail and do not constitute proof of scientific quality or empirical validity."
+      }
+    }
+  }
+}

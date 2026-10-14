@@ -1,0 +1,76 @@
+{
+  "caseId": "dev_dr_03",
+  "domain": "document_research",
+  "caseType": "duplicate_provenance",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_dr_03.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_dr_03.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_dr_03",
+    "goal": "Verify whether AeroTech carbon footprint reduction of 34% is validated by two independent environmental audit briefs.",
+    "mode": "explain",
+    "successCriteria": [
+      "Investigate independence of environmental audit reports."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_dr_03_01",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/document_research/aerotech_brief_original.md",
+        "sourceGroup": "sustainability_audits",
+        "retrievedAt": "2026-10-14T02:30:00Z",
+        "version": "2026.1",
+        "scope": "environmental_claims",
+        "passage": "AeroTech manufacturing facilities achieved an audited 34.2% reduction in Scope 1 carbon intensity between 2024 and 2026.",
+        "contentHash": "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a",
+        "validity": "current"
+      },
+      {
+        "id": "ev_dev_dr_03_02",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/document_research/aerotech_brief_reprint.md",
+        "sourceGroup": "sustainability_syndication",
+        "retrievedAt": "2026-10-14T02:31:00Z",
+        "version": "2026.1",
+        "scope": "environmental_claims",
+        "passage": "AeroTech manufacturing facilities achieved an audited 34.2% reduction in Scope 1 carbon intensity between 2024 and 2026.",
+        "contentHash": "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a",
+        "validity": "current"
+      }
+    ],
+    "capabilities": [
+      "document_read"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "AeroTech carbon footprint reduction of 34% is validated by two independent environmental audit briefs."
+  },
+  "goldStandard": {
+    "taskId": "dev_dr_03",
+    "domain": "document_research",
+    "requiredGapQuestions": [
+      "Are the two environmental briefs distinct independent audits or verbatim duplicates?"
+    ],
+    "criticalEvidenceHashes": [
+      "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a",
+      "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a"
+    ],
+    "expectedAnswerKeywords": [
+      "duplicate",
+      "verbatim reprint",
+      "syndication",
+      "circular citation"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_dr_03_01": "supported"
+    },
+    "targetDecision": "ready_for_requested_step"
+  }
+}

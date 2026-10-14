@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_02",
+  "goal": "Verify whether submitting a partial return in ERP-Link v2 automatically triggers credit memo generation.",
+  "mode": "explain",
+  "successCriteria": [
+    "Verify BPMN workflow routing for partial returns in ERP-Link."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_02_01",
+      "kind": "code",
+      "locator": "research/datasets/dev/evidence/workflow_automation/refund_workflow_rules.xml",
+      "sourceGroup": "bpmn_workflows",
+      "retrievedAt": "2026-10-14T01:45:00Z",
+      "version": "2.1.0",
+      "scope": "erp_returns",
+      "passage": "<rule id=\"R_PartialReturn\"><condition>return.type == 'PARTIAL'</condition><action target=\"ManualApprovalQueue\">suspend_and_await_supervisor</action></rule>",
+      "contentHash": "8030186a10a0d7622f9add5bb7d425a901debda3496b243ba5f6c183fcfac3c4",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "code_search",
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Submitting a partial return in ERP-Link v2 automatically triggers immediate credit memo generation."
+}

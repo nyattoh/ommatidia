@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_se_01",
+  "goal": "Verify whether NexusORM v4.2 connection pool automatically initiates reconnect with exponential backoff on TCP drop.",
+  "mode": "explain",
+  "successCriteria": [
+    "Determine if NexusORM connection pool reconnects with exponential backoff on TCP RST."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_se_01_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/software_engineering/nexus_orm_pool.md",
+      "sourceGroup": "orm_specs",
+      "retrievedAt": "2026-10-14T01:00:00Z",
+      "version": "4.2",
+      "scope": "connection_pool",
+      "passage": "NexusORM initiates automatic reconnection using an exponential backoff schedule starting at 100ms up to a maximum ceiling of 5000ms.",
+      "contentHash": "e44758cb61eccc0b6d6f9adb93fcbb261d07078bd62a3b49f54d52f36940784b",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read",
+    "code_search"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "NexusORM v4.2 connection pool automatically initiates reconnect with exponential backoff (base 100ms, max 5000ms) upon detecting a broken TCP connection."
+}

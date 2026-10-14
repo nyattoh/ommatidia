@@ -1,0 +1,75 @@
+{
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "update",
+    "taskId": "ommatidia-audit-session-01",
+    "expectedRevision": 1,
+    "requestHash": "adc7ced676880fbe6c475a2d4437e7d9698630f33b377d76ee5c65e85811f939"
+  },
+  "proposal": {
+    "assessments": [
+      {
+        "claimId": "claim-protocol-count",
+        "evidenceIds": [
+          "ev-matrix-audit"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "reason": "Audit of PROTOCOL.md Section 6.1 confirms 720 runs mixes 24 dev and 24 held-out cases; held-out denominator must be 24."
+      },
+      {
+        "claimId": "claim-eval-blinding",
+        "evidenceIds": [
+          "ev-blinding-audit"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "reason": "Audit of EVALUATION_SPEC.md Section 6.2 confirms double-blind is unjustified since agents see condition prompts; blinding applies to assessors only, and repeated trials are clustered."
+      },
+      {
+        "claimId": "claim-lit-accuracy",
+        "evidenceIds": [
+          "ev-lit-audit"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "reason": "Audit confirms Adaptive-RAG has iterative retrieval, Reflexion has trajectory verbal reflection, and STORM has multi-turn search trajectories; sweeping absence claims overstate limitations."
+      },
+      {
+        "claimId": "claim-manuscript-status",
+        "evidenceIds": [
+          "ev-manuscript-status"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "reason": "Audit confirms manuscript Section 5 is pending with zero empirical data recorded before freeze."
+      }
+    ],
+    "resolutions": [
+      {
+        "gapId": "gap-heldout-denominator",
+        "reason": "supported",
+        "evidenceIds": [
+          "ev-matrix-audit"
+        ],
+        "explanation": "Held-out denominator corrected to 24; minimum approved pilot 24x5x1=120 and held-out 24x5x1=120 established."
+      },
+      {
+        "gapId": "gap-eval-blinding",
+        "reason": "supported",
+        "evidenceIds": [
+          "ev-blinding-audit"
+        ],
+        "explanation": "Reclassified to single-blind assessor grading; exact McNemar test on paired cases and Wilson intervals specified."
+      },
+      {
+        "gapId": "gap-lit-accuracy",
+        "reason": "supported",
+        "evidenceIds": [
+          "ev-lit-audit"
+        ],
+        "explanation": "Path and line text corrections formulated for Adaptive-RAG, Reflexion, and STORM based on primary texts."
+      }
+    ]
+  }
+}

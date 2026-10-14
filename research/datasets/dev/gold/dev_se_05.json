@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_se_05",
+  "domain": "software_engineering",
+  "requiredGapQuestions": [
+    "Did PyFlow 5.0 introduce a breaking change replacing unlimited execution timeout with 300 seconds?"
+  ],
+  "criticalEvidenceHashes": [
+    "40f7b055540fe23d54be89efb182e2c723ffd46797c86ebaddafb8de0e8fb012"
+  ],
+  "expectedAnswerKeywords": [
+    "300 seconds",
+    "superseded",
+    "v5.0 breaking change",
+    "timeout"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_se_05_01": "contradicted"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

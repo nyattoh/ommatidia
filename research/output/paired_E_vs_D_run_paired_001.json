@@ -1,0 +1,178 @@
+{
+  "runId": "run_paired_001",
+  "primaryCondition": "E",
+  "baselineCondition": "D",
+  "taskCount": 2,
+  "pairedStats": {
+    "metric": "final_decision_success",
+    "n": 2,
+    "tasks": [
+      "dev_mech_cache_01",
+      "dev_mech_duplicate_02"
+    ],
+    "differences": [
+      0.0,
+      0.0
+    ],
+    "meanDifference": 0.0,
+    "stdDev": 0.0,
+    "stdErr": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "smallSampleNote": "Caution: Small sample size (N <= 24). Results represent pilot observation and effect size estimate only, not a conclusive proof of general superiority."
+  },
+  "primaryRecords": [
+    {
+      "taskId": "dev_mech_cache_01",
+      "condition": "E",
+      "runId": "run_paired_001_p",
+      "finalDecisionSuccess": 0,
+      "requiredGapRecall": 1.0,
+      "unnecessaryCheckRate": 0.0,
+      "validEvidenceCount": 1,
+      "contradictionDetectionRate": 0.0,
+      "usage": {
+        "rounds": 1,
+        "modelCalls": 1,
+        "toolCalls": 2,
+        "elapsedMs": 210.0,
+        "totalTokens": null,
+        "costYen": null
+      },
+      "stageBreakdown": {
+        "planning": {
+          "rounds": 0,
+          "modelCalls": 0,
+          "toolCalls": 0,
+          "elapsedMs": 0.0,
+          "totalTokens": null,
+          "costYen": null
+        },
+        "synthesis": {
+          "rounds": 2,
+          "modelCalls": 2,
+          "toolCalls": 4,
+          "elapsedMs": 420.0,
+          "totalTokens": null,
+          "costYen": null
+        }
+      },
+      "notes": null
+    },
+    {
+      "taskId": "dev_mech_duplicate_02",
+      "condition": "E",
+      "runId": "run_paired_001_p",
+      "finalDecisionSuccess": 0,
+      "requiredGapRecall": 0.0,
+      "unnecessaryCheckRate": 0.0,
+      "validEvidenceCount": 0,
+      "contradictionDetectionRate": 1.0,
+      "usage": {
+        "rounds": 1,
+        "modelCalls": 1,
+        "toolCalls": 2,
+        "elapsedMs": 210.0,
+        "totalTokens": null,
+        "costYen": null
+      },
+      "stageBreakdown": {
+        "planning": {
+          "rounds": 0,
+          "modelCalls": 0,
+          "toolCalls": 0,
+          "elapsedMs": 0.0,
+          "totalTokens": null,
+          "costYen": null
+        },
+        "synthesis": {
+          "rounds": 4,
+          "modelCalls": 4,
+          "toolCalls": 8,
+          "elapsedMs": 840.0,
+          "totalTokens": null,
+          "costYen": null
+        }
+      },
+      "notes": null
+    }
+  ],
+  "baselineRecords": [
+    {
+      "taskId": "dev_mech_cache_01",
+      "condition": "D",
+      "runId": "run_paired_001_b",
+      "finalDecisionSuccess": 0,
+      "requiredGapRecall": 1.0,
+      "unnecessaryCheckRate": 0.0,
+      "validEvidenceCount": 1,
+      "contradictionDetectionRate": 0.0,
+      "usage": {
+        "rounds": 1,
+        "modelCalls": 1,
+        "toolCalls": 2,
+        "elapsedMs": 210.0,
+        "totalTokens": null,
+        "costYen": null
+      },
+      "stageBreakdown": {
+        "planning": {
+          "rounds": 0,
+          "modelCalls": 0,
+          "toolCalls": 0,
+          "elapsedMs": 0.0,
+          "totalTokens": null,
+          "costYen": null
+        },
+        "synthesis": {
+          "rounds": 3,
+          "modelCalls": 3,
+          "toolCalls": 6,
+          "elapsedMs": 630.0,
+          "totalTokens": null,
+          "costYen": null
+        }
+      },
+      "notes": null
+    },
+    {
+      "taskId": "dev_mech_duplicate_02",
+      "condition": "D",
+      "runId": "run_paired_001_b",
+      "finalDecisionSuccess": 0,
+      "requiredGapRecall": 0.0,
+      "unnecessaryCheckRate": 0.0,
+      "validEvidenceCount": 0,
+      "contradictionDetectionRate": 1.0,
+      "usage": {
+        "rounds": 1,
+        "modelCalls": 1,
+        "toolCalls": 2,
+        "elapsedMs": 210.0,
+        "totalTokens": null,
+        "costYen": null
+      },
+      "stageBreakdown": {
+        "planning": {
+          "rounds": 0,
+          "modelCalls": 0,
+          "toolCalls": 0,
+          "elapsedMs": 0.0,
+          "totalTokens": null,
+          "costYen": null
+        },
+        "synthesis": {
+          "rounds": 5,
+          "modelCalls": 5,
+          "toolCalls": 10,
+          "elapsedMs": 1050.0,
+          "totalTokens": null,
+          "costYen": null
+        }
+      },
+      "notes": null
+    }
+  ]
+}

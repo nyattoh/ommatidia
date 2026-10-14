@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_dr_07",
+  "domain": "document_research",
+  "requiredGapQuestions": [
+    "Do corporate bylaws require a quorum of at least three directors including the independent chair?"
+  ],
+  "criticalEvidenceHashes": [
+    "a0905b5c862c98fa7f8936098ab5d40c49bc7dd31828a5b1b6843db7d7c5bb09"
+  ],
+  "expectedAnswerKeywords": [
+    "three directors",
+    "independent chair",
+    "quorum",
+    "Section 3.2"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_dr_07_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

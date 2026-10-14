@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_05",
+  "goal": "Verify whether maritime freight carriers are mandated to lodge annual audited financial returns within 120 days of fiscal year end.",
+  "mode": "explain",
+  "successCriteria": [
+    "Review statutory updates for maritime regulatory filing deadlines."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_05_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/maritime_gazette_update_2026.md",
+      "sourceGroup": "government_gazettes",
+      "retrievedAt": "2026-10-14T02:40:00Z",
+      "version": "2026-41",
+      "scope": "maritime_compliance",
+      "passage": "Statutory Instrument 2026/41: Article 88 is repealed; maritime operators must lodge returns within 60 days of fiscal year end, superseding the former 120-day allowance.",
+      "contentHash": "b08fc491b238e5acfbb034840fd779f5ab25c1ee2fb2820006da9edbe0454029",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Maritime freight carriers are mandated to lodge annual audited financial returns within 120 days of fiscal year end."
+}

@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_wa_01",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Does PayGrid retain idempotency keys for 72 hours in Redis cache?"
+  ],
+  "criticalEvidenceHashes": [
+    "3977dc5be26bdc95b713d4fa8881d57008c4368bc8dac2be1e70d03f1d0f9882"
+  ],
+  "expectedAnswerKeywords": [
+    "72 hours",
+    "Redis",
+    "Idempotency-Key",
+    "TTL"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_01_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

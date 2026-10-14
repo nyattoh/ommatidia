@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_07",
+  "goal": "Confirm that corporate board resolutions require a quorum of at least three directors including the independent chair.",
+  "mode": "explain",
+  "successCriteria": [
+    "Verify board quorum clause in corporate bylaws."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_07_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/acorn_bylaws_section3.md",
+      "sourceGroup": "governance_bylaws",
+      "retrievedAt": "2026-10-14T02:50:00Z",
+      "version": "3.1",
+      "scope": "corporate_governance",
+      "passage": "Section 3.2 Quorum: No board resolution shall be validly adopted without a quorum of at least three directors present, which must include the independent chair.",
+      "contentHash": "a0905b5c862c98fa7f8936098ab5d40c49bc7dd31828a5b1b6843db7d7c5bb09",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Corporate board resolutions require a quorum of at least three directors including the independent chair."
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_08",
+  "goal": "Determine whether all cross-border licensing disputes are subject exclusively to the courts of London, England.",
+  "mode": "explain",
+  "successCriteria": [
+    "Examine jurisdiction clauses in MSA and Licensing Annex for potential conflict."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_08_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/techcorp_msa_clause22.md",
+      "sourceGroup": "commercial_contracts",
+      "retrievedAt": "2026-10-14T02:55:00Z",
+      "version": "1.0",
+      "scope": "dispute_jurisdiction",
+      "passage": "Clause 22: Governing law is English law and disputes shall be subject to the exclusive jurisdiction of the courts of London, England.",
+      "contentHash": "fa882b635614bd7e7b52415e26ff20b9d7a6694038f01fa2a9313618f8aa6710",
+      "validity": "current"
+    },
+    {
+      "id": "ev_dev_dr_08_02",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/techcorp_license_annex_clause15.md",
+      "sourceGroup": "licensing_agreements",
+      "retrievedAt": "2026-10-14T02:56:00Z",
+      "version": "1.0",
+      "scope": "dispute_jurisdiction",
+      "passage": "Clause 15: Notwithstanding any master agreement, all disputes arising from this software license shall be submitted to the courts of Zurich, Switzerland.",
+      "contentHash": "0a7e33e51fc8dec1b1738cda160a92cc91b5a18cc25447d7bae08d6bc5e127e2",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "All cross-border licensing disputes are subject exclusively to the courts of London, England."
+}

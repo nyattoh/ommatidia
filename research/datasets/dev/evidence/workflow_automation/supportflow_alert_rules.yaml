@@ -1,0 +1,7 @@
+# [FICTIONAL TEST DATASET - NOT REAL ENTITY OR OPERATIONAL RECORD]
+routing_matrix:
+  - urgency: P1-CRITICAL
+    actions:
+      - dispatch_pagerduty_immediate
+      - send_sms_oncall
+    escalation_window_sec: 180

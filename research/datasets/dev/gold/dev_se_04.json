@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_se_04",
+  "domain": "software_engineering",
+  "requiredGapQuestions": [
+    "Has cipher suite CHACHA20-POLY1305-OLD been withdrawn or revoked in security advisories?"
+  ],
+  "criticalEvidenceHashes": [
+    "fda7cf1664a841b2dce26e9d1743b8912cb31c91fc61fab3d887275335233c29"
+  ],
+  "expectedAnswerKeywords": [
+    "withdrawn",
+    "revoked",
+    "vulnerability",
+    "SEC-2026-08"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_se_04_01": "contradicted"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

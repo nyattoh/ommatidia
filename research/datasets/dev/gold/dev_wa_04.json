@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_wa_04",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Has secret key K-2025-A been revoked and withdrawn in key rotation notices?"
+  ],
+  "criticalEvidenceHashes": [
+    "9f4ff719dfc25f8fb4e7a0306901c42a935f45887e86c7dfdcf33bf5d43c557b"
+  ],
+  "expectedAnswerKeywords": [
+    "revoked",
+    "withdrawn",
+    "compromised",
+    "K-2026-B required"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_04_01": "contradicted"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

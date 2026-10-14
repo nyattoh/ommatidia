@@ -1,0 +1,14 @@
+<!-- [FICTIONAL TEST DATASET - NOT REAL ENTITY OR OPERATIONAL RECORD] -->
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="ERP_RefundRules">
+  <process id="Process_ReturnProcessing">
+    <!-- Automated full return vs manual partial return branch -->
+    <rule id="R_PartialReturn">
+      <condition>return.type == 'PARTIAL'</condition>
+      <action target="ManualApprovalQueue">suspend_and_await_supervisor</action>
+    </rule>
+    <rule id="R_FullReturn">
+      <condition>return.type == 'FULL'</condition>
+      <action target="CreditMemoGenerator">auto_emit_credit_memo</action>
+    </rule>
+  </process>
+</definitions>

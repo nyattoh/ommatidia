@@ -1,0 +1,18 @@
+{
+  "taskId": "dev_wa_06",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Is the settlement exchange rate for TX-9921 available in the gateway response?"
+  ],
+  "criticalEvidenceHashes": [],
+  "expectedAnswerKeywords": [
+    "unavailable",
+    "HTTP 503",
+    "unverified",
+    "rate null"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_06_01": "unverified"
+  },
+  "targetDecision": "blocked"
+}

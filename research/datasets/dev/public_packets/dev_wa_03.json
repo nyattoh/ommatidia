@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_03",
+  "goal": "Verify whether SyncBridge inventory batch confirmation is substantiated by two independent operational event logs.",
+  "mode": "explain",
+  "successCriteria": [
+    "Examine provenance of batch synchronization log outputs."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_03_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/sync_worker_stream_a.log",
+      "sourceGroup": "kafka_stream_a",
+      "retrievedAt": "2026-10-14T01:50:00Z",
+      "version": "1.0",
+      "scope": "inventory_sync",
+      "passage": "[2026-10-14T01:15:00Z] BATCH_SYNC_SUCCESS job_id=batch_inv_881 items_processed=4200 checksum=9d8e7f6a",
+      "contentHash": "94721f39ad3d93115644683b412ddd2570ca5c81fc6a294b58a16287a626a8b1",
+      "validity": "current"
+    },
+    {
+      "id": "ev_dev_wa_03_02",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/sync_worker_stream_b.log",
+      "sourceGroup": "kafka_stream_b_mirror",
+      "retrievedAt": "2026-10-14T01:51:00Z",
+      "version": "1.0",
+      "scope": "inventory_sync",
+      "passage": "[2026-10-14T01:15:00Z] BATCH_SYNC_SUCCESS job_id=batch_inv_881 items_processed=4200 checksum=9d8e7f6a",
+      "contentHash": "94721f39ad3d93115644683b412ddd2570ca5c81fc6a294b58a16287a626a8b1",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "SyncBridge inventory batch confirmation is substantiated by two independent operational event logs."
+}

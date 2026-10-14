@@ -1,0 +1,21 @@
+{
+  "taskId": "dev_wa_03",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Are the two batch sync event logs distinct sources or identical mirrored replicas?"
+  ],
+  "criticalEvidenceHashes": [
+    "94721f39ad3d93115644683b412ddd2570ca5c81fc6a294b58a16287a626a8b1",
+    "94721f39ad3d93115644683b412ddd2570ca5c81fc6a294b58a16287a626a8b1"
+  ],
+  "expectedAnswerKeywords": [
+    "duplicate",
+    "mirrored",
+    "identical checksum",
+    "circular replica"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_03_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

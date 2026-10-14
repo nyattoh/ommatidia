@@ -1,0 +1,21 @@
+{
+  "taskId": "dev_wa_08",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Do CRM sync contract and Finance ERP directive directly conflict on billing record mastership?"
+  ],
+  "criticalEvidenceHashes": [
+    "38fb712a3a1c6468bf9bfc1f924a2352ba1cadd8db60dbfc004d8a357bffd527",
+    "064293fd9efcfdc4017ef59fe4134036418466f1044aee113b625a9c4798a9c2"
+  ],
+  "expectedAnswerKeywords": [
+    "conflict",
+    "immutability dispute",
+    "unresolved precedence",
+    "disputed"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_08_01": "disputed"
+  },
+  "targetDecision": "needs_user_input"
+}

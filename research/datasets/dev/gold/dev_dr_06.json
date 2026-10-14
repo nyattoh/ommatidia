@@ -1,0 +1,18 @@
+{
+  "taskId": "dev_dr_06",
+  "domain": "document_research",
+  "requiredGapQuestions": [
+    "Is the indemnity cap figure in Clause 9 accessible in unredacted form?"
+  ],
+  "criticalEvidenceHashes": [],
+  "expectedAnswerKeywords": [
+    "redacted",
+    "unavailable",
+    "inaccessible",
+    "unverified"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_dr_06_01": "unverified"
+  },
+  "targetDecision": "blocked"
+}

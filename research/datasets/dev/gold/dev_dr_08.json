@@ -1,0 +1,21 @@
+{
+  "taskId": "dev_dr_08",
+  "domain": "document_research",
+  "requiredGapQuestions": [
+    "Do the Master Service Agreement and Software License Annex contain mutually conflicting exclusive jurisdiction clauses?"
+  ],
+  "criticalEvidenceHashes": [
+    "fa882b635614bd7e7b52415e26ff20b9d7a6694038f01fa2a9313618f8aa6710",
+    "0a7e33e51fc8dec1b1738cda160a92cc91b5a18cc25447d7bae08d6bc5e127e2"
+  ],
+  "expectedAnswerKeywords": [
+    "conflict",
+    "jurisdiction dispute",
+    "London vs Zurich",
+    "disputed"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_dr_08_01": "disputed"
+  },
+  "targetDecision": "needs_user_input"
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_se_02",
+  "goal": "Verify whether CoroSync channel write enforces full sequential consistency on ARM64 architectures.",
+  "mode": "explain",
+  "successCriteria": [
+    "Verify memory barrier semantics of CoroSync channel write on ARM64."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_se_02_01",
+      "kind": "code",
+      "locator": "research/datasets/dev/evidence/software_engineering/corosync_channel.c",
+      "sourceGroup": "kernel_drivers",
+      "retrievedAt": "2026-10-14T01:05:00Z",
+      "version": "2.0.4",
+      "scope": "arm64_concurrency",
+      "passage": "In channel_write_arm64(), only acquire-release ordering is emitted via asm volatile(\"dmb ishld\"); full sequential consistency (\"dmb sy\") is explicitly omitted for throughput optimization.",
+      "contentHash": "3b46285ae68ffb5315e067bb780366c9c18e85cbef1a887cd50b3ed3b4b4c27b",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "code_search",
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "CoroSync channel write operations guarantee full sequential consistency on ARM64 platforms."
+}

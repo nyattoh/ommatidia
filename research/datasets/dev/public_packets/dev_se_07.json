@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_se_07",
+  "goal": "Confirm that HashLibX Murmur3-32 produces hash 0x27b4e961 for input 'ommatidia_test'.",
+  "mode": "explain",
+  "successCriteria": [
+    "Verify deterministic Murmur3 hash output against regression unit test."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_se_07_01",
+      "kind": "test",
+      "locator": "research/datasets/dev/evidence/software_engineering/test_hashlibx.py",
+      "sourceGroup": "unit_tests",
+      "retrievedAt": "2026-10-14T01:30:00Z",
+      "version": "1.4.0",
+      "scope": "hash_algorithms",
+      "passage": "assert murmur3_32(b\"ommatidia_test\") == 0x27b4e961",
+      "contentHash": "1cdeb1671481cd8ecd5e58c7ac8d944e5fa68e075fad83ae3e389fe4e90dc27f",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "code_search",
+    "test_execute"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "HashLibX Murmur3-32 produces hash 0x27b4e961 for input 'ommatidia_test'."
+}

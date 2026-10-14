@@ -1,0 +1,62 @@
+{
+  "caseId": "dev_se_06",
+  "domain": "software_engineering",
+  "caseType": "mandatory_unavailable",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_se_06.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_se_06.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_se_06",
+    "goal": "Verify whether proprietary hardware watchdog timer reset is completed within 15 milliseconds upon IO signal.",
+    "mode": "explain",
+    "successCriteria": [
+      "Obtain verified watchdog register reset timing specification."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_se_06_01",
+        "kind": "code",
+        "locator": "research/datasets/dev/evidence/software_engineering/watchdog_stub.md",
+        "sourceGroup": "firmware_blobs",
+        "retrievedAt": "2026-10-14T01:25:00Z",
+        "version": "0.9.1",
+        "scope": "hardware_registers",
+        "passage": "",
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "validity": "current",
+        "passageUnavailable": true
+      }
+    ],
+    "capabilities": [
+      "code_search"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "FirmwareBlobX86 watchdog hardware register resets within 15 milliseconds upon IO signal."
+  },
+  "goldStandard": {
+    "taskId": "dev_se_06",
+    "domain": "software_engineering",
+    "requiredGapQuestions": [
+      "Is the proprietary watchdog register reset latency accessible in available sources?"
+    ],
+    "criticalEvidenceHashes": [],
+    "expectedAnswerKeywords": [
+      "unavailable",
+      "proprietary",
+      "inaccessible",
+      "unverified"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_se_06_01": "unverified"
+    },
+    "targetDecision": "blocked"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_01",
+  "goal": "Verify whether Article 14.3 of NeoGDPR Directive requires telemetry data to be permanently erased within 90 calendar days following customer contract termination.",
+  "mode": "explain",
+  "successCriteria": [
+    "Examine NeoGDPR regulatory text for data retention deadlines."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_01_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/neogdpr_directive_2026.md",
+      "sourceGroup": "statutory_directives",
+      "retrievedAt": "2026-10-14T02:20:00Z",
+      "version": "2026.1",
+      "scope": "privacy_regulations",
+      "passage": "Article 14.3: Service operators must permanently delete and scrub all collected telemetry logs within ninety (90) calendar days from the effective date of contract termination.",
+      "contentHash": "fa94df730e2d353a5cda147489213fadc8318dec95c885b2eac6f8f4b717be1d",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Article 14.3 of NeoGDPR Directive requires telemetry data to be permanently erased within 90 calendar days following customer contract termination."
+}

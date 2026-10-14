@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_08",
+  "goal": "Determine whether CRM customer updates unilaterally overwrite ERP billing addresses during sync collisions.",
+  "mode": "explain",
+  "successCriteria": [
+    "Investigate Master Data precedence rules between CRM and ERP agreements."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_08_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/crm_sync_contract.md",
+      "sourceGroup": "crm_integration",
+      "retrievedAt": "2026-10-14T02:15:00Z",
+      "version": "1.0",
+      "scope": "master_data_sync",
+      "passage": "CRM is designated as the sole system of record for customer records; all address mutations originate in CRM and overwrite downstream ERP records unconditionally.",
+      "contentHash": "38fb712a3a1c6468bf9bfc1f924a2352ba1cadd8db60dbfc004d8a357bffd527",
+      "validity": "current"
+    },
+    {
+      "id": "ev_dev_wa_08_02",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/finance_erp_contract.md",
+      "sourceGroup": "erp_governance",
+      "retrievedAt": "2026-10-14T02:16:00Z",
+      "version": "1.0",
+      "scope": "master_data_sync",
+      "passage": "Finance Directive: ERP billing address is immutable and cannot be updated via CRM webhooks without certified accountant sign-off.",
+      "contentHash": "064293fd9efcfdc4017ef59fe4134036418466f1044aee113b625a9c4798a9c2",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "During synchronization collisions, CRM customer updates always override ERP billing records."
+}

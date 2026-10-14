@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_04",
+  "goal": "Determine whether ZetaCRM inbound production webhook endpoint validates signatures using secret key K-2025-A.",
+  "mode": "explain",
+  "successCriteria": [
+    "Check security bulletins for webhook signing secret validity."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_04_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/zeta_secret_rotation.md",
+      "sourceGroup": "security_bulletins",
+      "retrievedAt": "2026-10-14T01:55:00Z",
+      "version": "1.1.0",
+      "scope": "webhook_security",
+      "passage": "Security Notice: Secret key K-2025-A was formally revoked and withdrawn on 2026-08-01 following key compromise; production verification requires K-2026-B.",
+      "contentHash": "9f4ff719dfc25f8fb4e7a0306901c42a935f45887e86c7dfdcf33bf5d43c557b",
+      "validity": "withdrawn"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "ZetaCRM inbound production webhook endpoint validates signatures using secret key K-2025-A."
+}

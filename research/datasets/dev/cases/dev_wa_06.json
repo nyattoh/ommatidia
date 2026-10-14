@@ -1,0 +1,62 @@
+{
+  "caseId": "dev_wa_06",
+  "domain": "workflow_automation",
+  "caseType": "mandatory_unavailable",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_wa_06.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_wa_06.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_wa_06",
+    "goal": "Verify whether settlement exchange rate for transaction TX-9921 was locked at 1.0845 EUR/USD.",
+    "mode": "explain",
+    "successCriteria": [
+      "Inspect gateway response for settlement quote validation."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_wa_06_01",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/workflow_automation/tx_9921_gateway_response.json",
+        "sourceGroup": "settlement_gateway",
+        "retrievedAt": "2026-10-14T02:05:00Z",
+        "version": "1.0",
+        "scope": "currency_settlement",
+        "passage": "",
+        "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "validity": "current",
+        "passageUnavailable": true
+      }
+    ],
+    "capabilities": [
+      "document_read"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "Settlement exchange rate for transaction TX-9921 was locked at 1.0845 EUR/USD."
+  },
+  "goldStandard": {
+    "taskId": "dev_wa_06",
+    "domain": "workflow_automation",
+    "requiredGapQuestions": [
+      "Is the settlement exchange rate for TX-9921 available in the gateway response?"
+    ],
+    "criticalEvidenceHashes": [],
+    "expectedAnswerKeywords": [
+      "unavailable",
+      "HTTP 503",
+      "unverified",
+      "rate null"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_wa_06_01": "unverified"
+    },
+    "targetDecision": "blocked"
+  }
+}

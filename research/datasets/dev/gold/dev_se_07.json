@@ -1,0 +1,19 @@
+{
+  "taskId": "dev_se_07",
+  "domain": "software_engineering",
+  "requiredGapQuestions": [
+    "Does the initial test fixture verify the Murmur3 output 0x27b4e961 for 'ommatidia_test'?"
+  ],
+  "criticalEvidenceHashes": [
+    "1cdeb1671481cd8ecd5e58c7ac8d944e5fa68e075fad83ae3e389fe4e90dc27f"
+  ],
+  "expectedAnswerKeywords": [
+    "0x27b4e961",
+    "murmur3_32",
+    "verified"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_se_07_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

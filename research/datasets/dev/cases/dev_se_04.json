@@ -1,0 +1,63 @@
+{
+  "caseId": "dev_se_04",
+  "domain": "software_engineering",
+  "caseType": "withdrawal",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_se_04.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_se_04.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_se_04",
+    "goal": "Determine if cipher suite CHACHA20-POLY1305-OLD remains approved for financial transport transactions in VanguardCrypto 3.1.",
+    "mode": "explain",
+    "successCriteria": [
+      "Check compliance status and validity of cipher suite CHACHA20-POLY1305-OLD."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_se_04_01",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/software_engineering/vanguard_sec_advisory.md",
+        "sourceGroup": "security_advisories",
+        "retrievedAt": "2026-10-14T01:15:00Z",
+        "version": "3.1.2",
+        "scope": "cryptography_compliance",
+        "passage": "Security Advisory SEC-2026-08: Certification for CHACHA20-POLY1305-OLD is formally withdrawn and revoked immediately due to multi-nonce collision vulnerabilities.",
+        "contentHash": "fda7cf1664a841b2dce26e9d1743b8912cb31c91fc61fab3d887275335233c29",
+        "validity": "withdrawn"
+      }
+    ],
+    "capabilities": [
+      "document_read"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "Cipher suite CHACHA20-POLY1305-OLD is certified and approved for financial transport transactions in VanguardCrypto 3.1."
+  },
+  "goldStandard": {
+    "taskId": "dev_se_04",
+    "domain": "software_engineering",
+    "requiredGapQuestions": [
+      "Has cipher suite CHACHA20-POLY1305-OLD been withdrawn or revoked in security advisories?"
+    ],
+    "criticalEvidenceHashes": [
+      "fda7cf1664a841b2dce26e9d1743b8912cb31c91fc61fab3d887275335233c29"
+    ],
+    "expectedAnswerKeywords": [
+      "withdrawn",
+      "revoked",
+      "vulnerability",
+      "SEC-2026-08"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_se_04_01": "contradicted"
+    },
+    "targetDecision": "ready_for_requested_step"
+  }
+}

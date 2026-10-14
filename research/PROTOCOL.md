@@ -1,71 +1,193 @@
-# Ommatidiaの最小実験計画
+# Ommatidia Empirical Research Protocol
 
-状態: 実験前の計画案。評価用データを閲覧する前に、設定と正解規則を固定する。
+**Document Version:** 1.0.0  
+**Status:** Pre-registration Protocol (Pre-experimental freeze).  
+**Language:** British English (as specified by repository standards).  
+**Ownership:** Design Sub-agent. (Code implementation and manuscript concurrently owned by code worker).  
 
-## 研究問い
+---
 
-同じモデル、初期資料、ツール、総予算の条件で、理解状態から探索役を構成する方式は、一般的な再点検、固定観点、単独の適応探索よりも重要な証拠の発見と最終判断を改善するか。
+## 1. Overview and Research Questions
 
-## 検証する仮説
+### 1.1 Context
+In autonomous AI agent research and complex investigative tasks, agents routinely form premature conclusions because underlying premises, hidden assumptions, temporal validity, and unverified edge conditions remain unexamined. Existing paradigms address this either via monolithic self-reflection (e.g. general re-inspection), static evaluation checklists, or iterative single-agent retrieval. 
 
-| 仮説 | 支持を調べる観測 | 反証や制約となる観測 |
-| --- | --- | --- |
-| H1 動的な観点選択が役立つ | 固定観点より重要事項を検査できる | 同じ結果で費用と遅延だけ増える |
-| H2 探索役の分割が役立つ | 単独の適応探索より有効な証拠が増える | 同じ資料の重複取得だけ増える |
-| H3 証拠の照合が役立つ | 出典の重複や対象の違いによる誤判定が減る | 有効な証拠を過剰に棄却する |
-| H4 状態更新が役立つ | 新証拠を受けて誤った結論を修正できる | 誤った候補で正しい結論を悪化させる |
+**Ommatidia** investigates a compound multi-perspective architecture. It externalises an explicit understanding state (comprising objectives, hypotheses, claims, evidence, unresolved gaps, and candidate lenses), derives focused investigative tasks (exploratory probe roles), executes these against targeted evidence sources, collates the gathered evidence while tracking provenance and scope, and systematically updates the understanding state.
 
-これらは結果ではない。初期の探索的実験では仮説ごとの観測を記録し、大きな一般化を行わない。
+### 1.2 Core Research Question (RQ)
+> **Under an identical base model (`gemini-3.8-flash-high`), identical initial materials, identical available tool registries, and an identical total resource budget, does dynamically deriving exploratory roles from an explicit external understanding state significantly improve the discovery of critical evidence and the accuracy of final judgements compared to general re-inspection, fixed static lenses, and sequential single-agent adaptive exploration?**
 
-## 比較条件
+---
 
-| 条件 | 内容 |
-| --- | --- |
-| A 通常探索 | 一般的な調査指示で資料と結論を得る |
-| B 一般的再点検 | Aに不足、反例、条件の再点検を追加する |
-| C 固定観点 | あらかじめ定めた観点へ探索を割り当てる |
-| D 単独の適応探索 | 理解状態と検査を使い、一つの探索役が調査を続ける |
-| E Ommatidia | 理解状態から必要な探索役と対象を構成し、証拠を照合する |
+## 2. Operational Hypotheses and Falsification Criteria
 
-主要比較はEとDである。EとBは構造化した検査全体の効果、EとCは観点の動的構成の効果を調べる。
+Each hypothesis is paired with precise observable metrics and explicit criteria for empirical falsification.
 
-探索役数を増やす条件にも、同じ総予算を適用する。各役の思考と通信、計画生成、状態更新、出力修復をすべて利用量に含める。
+| Hypothesis | Description | Supporting Observation | Falsification / Boundary Criteria |
+| :--- | :--- | :--- | :--- |
+| **H1: Dynamic Viewpoint Selection** | Dynamically synthesising investigation lenses and gaps tailored to the evolving task state outperforms static, pre-configured checklists. | Identifies mandatory critical evidence items missed by fixed checklists (Condition E vs Condition C; $\Delta \text{Recall}_{\text{crit}} > 0$). | Equivalent detection yield with strictly higher latency and call overhead ($\Delta \text{Recall}_{\text{crit}} \le 0$, $\Delta \text{Cost} > 0$), or generation of irrelevant distractor lenses. |
+| **H2: Exploratory Role Decomposition** | Decomposing investigation across modular, focused exploratory probe roles yields more valid evidence from disjoint sources than a monolithic adaptive explorer. | Statistically significant increase in unique, non-redundant evidence from independent source groups (Condition E vs Condition D; $\Delta \text{DSC} > 0$). | Redundant retrieval of identical documents across roles, coordination overhead exceeding yield, or equal disjoint evidence yield ($\Delta \text{DSC} \le 0$). |
+| **H3: Structured Evidence Collation** | Systematic cross-referencing, content-hash deduplication, and scope-matching eliminate misjudgements caused by circular citations or entity/temporal conflation. | Significant reduction in false-positive confirmations and erroneous resolutions (Condition E vs Condition D; lower False Alarm Rate $\text{FAR}$). | Excessive rejection of valid evidence (over-filtering) leading to reduced recall ($\text{Recall}_{\text{crit}}$ drops), or failure to detect conflicting sources. |
+| **H4: State-Driven Belief Revision** | Incrementally updating the understanding state allows agents to overturn incorrect initial draft answers when decisive counterevidence is observed. | Significantly higher Decision Correction Rate when presented with counterexamples or boundary violations (Condition E vs Condition B). | Decision Degradation: Spurious observations degrading initially correct draft answers into false alarms ($\text{DDR} > 0.05$), or failure to overturn wrong hypotheses. |
 
-## 初期予算案
+---
 
-- モデル呼び出し: 合計8回まで。
-- 外部ツール呼び出し: 合計12回まで。
-- 入力トークン: 合計48000まで。
-- 出力トークン: 合計16000まで。
-- 経過時間: 180秒まで。
-- 同時に動く探索役: 最大3。
+## 3. Experimental Conditions (A to E)
 
-この予算は実験案であり、TOMBOの初期版の上限とは別である。開発用データで実行可能性を確認し、評価用データを使う前に固定する。正確なトークン計数や費用見積もりを提供できない場合は、その制約を記録して金額比較を行わない。
+All conditions operate under the **identical base model** and strict resource ceilings.
 
-実使用量を併記し、同じ上限の比較に加えて、利用量に対する成績を示す。
+```
+       [Task Packet & Initial Draft]
+                    │
+   ┌────────────────┼────────────────┬────────────────┬────────────────┐
+   │                │                │                │                │
+┌──▼───┐        ┌───▼──┐         ┌───▼──┐         ┌───▼──┐         ┌───▼──┐
+│Cond A│        │Cond B│         │Cond C│         │Cond D│         │Cond E│
+│Base- │        │Gene- │         │Fixed │         │Single│         │Omma- │
+│line  │        │ral Re│         │Lenses│         │Adap- │         │tidia │
+│Mono- │        │-ins- │         │Check-│         │tive  │         │Com-  │
+│lith  │        │pect  │         │list  │         │State │         │pound │
+└──────┘        └──────┘         └──────┘         └──────┘         └──────┘
+```
 
-## ケース
+### Condition A: Baseline Exploration (Unguided Monolith)
+- **Architecture:** Single-agent direct synthesis.
+- **Workflow:** The model receives the task packet and initial draft, is granted access to the tool registry, and proceeds to explore unguided until it issues a final conclusion or exhausts its budget.
+- **Role:** Control baseline measuring raw unguided model capability.
 
-最小パイロットは開発、業務自動化、資料調査の各16件、合計48件を目標とする。各領域8件を開発用、8件を評価用へ分ける。各領域の対照ケース4件は開発用2件、評価用2件に分ける。
+### Condition B: General Re-inspection (Self-Reflection Baseline)
+- **Architecture:** Two-phase reflective prompting (mimicking standard Reflexion / Self-RAG approaches).
+- **Workflow:** 
+  1. *Phase 1:* Executes initial retrieval and drafts an assessment.
+  2. *Phase 2:* Receives a generalised self-critique prompt instructing it to re-inspect for omissions, overlooked edge cases, counterexamples, and unstated assumptions.
+- **Role:** Controls for the effect of simply adding a second inspection turn or extra tokens.
 
-ケースには、隠した重要資料、資料の時点の違い、異なる対象、転載による重複、反例、追加確認不要、結果なし、ツール利用不可を含める。同じケースの言い換えを両集合へ分けない。
+### Condition C: Fixed Viewpoints (Static Checklist Baseline)
+- **Architecture:** Static multi-perspective decomposition.
+- **Workflow:** The model is evaluated across five fixed, hardcoded investigative lenses:
+  1. *Scope & Applicability Boundaries*
+  2. *Counterexamples & Negative Scenarios*
+  3. *Temporal Validity & Version Divergence*
+  4. *Dependency Invariants*
+  5. *Source Duplication & Circularity*
+- **Role:** Controls for multi-perspective inspection without dynamic state-dependent generation (tests H1).
 
-正解側の必須確認事項と、証拠の適用範囲を先に定義する。正解や隠した資料を調査するモデルへ渡さない。探索対象の架空資料と正解規則は自作する。
+### Condition D: Single Adaptive Exploration (Sequential State Baseline)
+- **Architecture:** Sequential adaptive explorer maintaining an explicit understanding state.
+- **Workflow:** The agent maintains an explicit state (claims, gaps, probes), but executes strictly sequentially through a single worker persona. It selects one gap, issues one probe, evaluates the result, updates the state, and iterates until termination.
+- **Role:** Controls for the effect of explicit state maintenance without multi-role decomposition or parallelisation (tests H2).
 
-## 評価
+### Condition E: Ommatidia (Full Compound Multi-Lens Architecture)
+- **Architecture:** Explicit Understanding State $\to$ Dynamic Lens & Gap Derivation $\to$ Specialised Probe Roles $\to$ Structured Evidence Collation $\to$ State Update & Synthesis.
+- **Workflow:**
+  1. *State Initialisation:* Extracts claims, assumptions, and initial gaps from the task packet.
+  2. *Dynamic Derivation:* Derives candidate lenses and priority gaps based on trigger patterns in the evolving state.
+  3. *Role Specialisation:* Constructs focused probe roles (with restricted sub-budgets, target sources, and concrete refutation criteria).
+  4. *Targeted Execution:* Up to 3 probe roles execute concurrently.
+  5. *Evidence Collation:* Ingests observations, computes SHA-256 hashes, deduplicates identical passages, verifies scope matches, and resolves conflicts.
+  6. *State Transition:* Updates claim statuses (`unverified`, `supported`, `contradicted`, `disputed`), retires resolved gaps, and triggers follow-up probes if budget permits.
+  7. *Final Resolution:* Generates calibrated judgement and comprehensive audit trail.
 
-主要指標は最終判断の成功率と、必須確認事項の検出率とする。確認候補の適合率、不要確認、判断の悪化、誤った解決、異なる原資料からの有効証拠、利用量と遅延を併記する。
+---
 
-同じ意味の候補と同じ原資料を重複して数えない。ケースごとに最低3回実行する。反復を独立した別ケースとして扱わず、ケースを対応させた差とばらつきを示す。小規模パイロットでは効果の大きさの推定に留め、一般的な優位性を確定しない。
+## 4. Strict Resource Envelope and Budget Ceilings
 
-条件ラベルを隠した評価者が、固定の正解規則で判定する。モデル評価だけで結果を確定しない。
+To eliminate resource confounds, every condition is strictly bound to the following resource envelope:
 
-## 必要な追加比較
+| Resource Dimension | Upper Ceiling per Case Run | Enforcement Mechanism |
+| :--- | :--- | :--- |
+| **Base Model** | `gemini-3.8-flash-high` | Fixed provider instance (`Antigravity`, vendor `google`). |
+| **Model Invocations** | Max 8 calls | Hard counter terminated by execution wrapper. |
+| **Tool Invocations** | Max 12 calls | Hard counter terminated by execution wrapper. |
+| **Input Context** | Max 48,000 characters | Truncation / boundary check before dispatch. |
+| **Output Tokens** | Max 16,000 tokens (4,000 / call) | Host generation limit parameter. |
+| **Wall-Clock Latency** | Max 180 seconds | Async timer abort. |
+| **Concurrent Roles** | Max 3 (Condition E only) | Concurrency semaphore (within total budget). |
 
-Eの改善が見られた場合、観点の追加を固定する条件、状態の更新を省く条件、資料重複の照合を省く条件で、どの部分が結果へ効いたかを調べる。評価データを見て都合よく主要比較を入れ替えない。
+> **Accounting Rule:** All overheads—planning prompts, investigator tool calls, state serialization, JSON repair retries, synthesis, and coordination messages—are charged against the single unified budget.
 
-## 再現に残す情報
+---
 
-モデルの具体的識別子、推論設定、プロンプト版、ツール版、入力のハッシュ、設定、原出力、利用量、所要時間、失敗と再試行、評価者と判定根拠を記録する。公開ログには鍵、非公開コード、個人情報を含めない。
+## 5. Benchmark Dataset: 48 Balanced Synthetic Cases
 
-結果が不明、差なし、悪化した場合も記録する。研究を広げるかどうかは、先行研究との差、効果、費用、誤確認の増加を分けて判断する。
+To prevent contamination and guarantee known ground truth, the evaluation uses **48 purpose-designed synthetic benchmark cases**.
+
+### 5.1 Domain Stratification
+- **Domain 1: Software Engineering (SE)** (16 cases)  
+  *Scenarios:* API breaking changes, silent configuration deprecation, race conditions under concurrency, dependency version conflicts, semantic regressions in patches.
+- **Domain 2: Workflow Automation (WA)** (16 cases)  
+  *Scenarios:* Webhook retry idempotency failures, OAuth token expiry edge cases, asynchronous message re-ordering, pagination cursor off-by-one errors.
+- **Domain 3: Document & Policy Research (DR)** (16 cases)  
+  *Scenarios:* Superseded administrative regulations, contradictory policy clauses across versions, jurisdiction scope mismatches, circular citations between secondary briefs.
+
+### 5.2 Development vs Held-Out Partition
+The dataset is split into **24 Development (Dev)** cases and **24 Held-Out** cases (stratified 8 Dev / 8 Held-Out per domain).
+
+```
+Total: 48 Cases
+ ├── Software Engineering (16) ─── 8 Dev / 8 Held-Out
+ ├── Workflow Automation (16)  ─── 8 Dev / 8 Held-Out
+ └── Document Research (16)    ─── 8 Dev / 8 Held-Out
+```
+
+### 5.3 Balanced Negative Controls
+Each domain includes **4 balanced negative control cases** (2 Dev / 2 Held-Out per domain; 12 total across benchmark):
+1. **Control Type 1: Sufficient Initial State (No-Op):** Initial draft is already complete and accurate; any additional probe finding "fatal flaws" is penalized as a false alarm.
+2. **Control Type 2: Capability Limit / Unresolvable Abstention:** Decisive evidence is intentionally withheld or tools fail; the model must explicitly report `inconclusive` or `capability_limit`.
+3. **Control Type 3: Superficially Plausible Distractor:** Contains highly convincing but out-of-scope or outdated distractor evidence contradicting the correct claim.
+4. **Control Type 4: Genuine Irresolvable Conflict:** Two authoritative sources directly conflict without an overriding tie-break; requires calibrated verdict `disputed`.
+
+### 5.4 Pre-Registration and Contamination Freeze
+- **Freeze Boundary:** The ground-truth answers, mandatory evidence locators, and rubrics for the 24 held-out cases are generated, cryptographically hashed (`SHA-256`), and locked.
+- **Zero-Inspection Rule:** Neither human experimenters nor code/design agents may view or evaluate against the held-out answers during system development, prompt refinement, or unit testing.
+- **No Result Tuning:** Prompts, threshold parameters, and heuristic rules must be frozen using only the 24 Dev cases before running the final held-out evaluation.
+
+---
+
+## 6. Execution Plan and Host Measurement Boundaries
+
+### 6.1 Call Counts, Held-Out Denominator, and Execution Matrix
+To guarantee experimental integrity and avoid unapproved budget expansion, the evaluation enforces a strict held-out denominator ($N_{\text{heldout}} = 24$) and a phased execution matrix.
+
+- **Held-Out Isolation Mandate:** The benchmark comprises 48 total cases, partitioned strictly into 24 Development (Dev) cases and 24 Held-Out cases ($N_{\text{dev}} = 24$, $N_{\text{heldout}} = 24$). Held-out metric reporting must use the held-out denominator $N_{\text{heldout}} = 24$. Development cases must not be pooled into the held-out evaluation denominator.
+- **Recommended Minimum Execution Plan:**
+  1. **Phase 1: Dev Pilot (Calibration & Smoke Test):** 24 Dev cases $\times$ 5 conditions (A–E) $\times$ 1 replication = **120 runs** (Max 960 model calls, 1,440 tool calls).
+  2. **Phase 2: Pre-Registered Held-Out Evaluation:** 24 Held-Out cases $\times$ 5 conditions (A–E) $\times$ 1 replication = **120 runs** (Max 960 model calls, 1,440 tool calls).
+- **Separately Authorised Optional Replications:**
+  If multi-run stochastic variance characterisation is separately authorised, the 24 held-out cases may be evaluated across 3 replications ($24 \times 5 \times 3 = 360$ runs). The previously proposed unapproved expansion of 720 runs (which pooled all 48 cases across 3 replications without held-out isolation) is explicitly rejected and replaced by the isolated structure below.
+- **Strict Pre-Freeze Prohibition:** Zero experiment execution and zero gold label creation may occur prior to the pre-registration freeze boundary.
+
+| Phase | Evaluation Partition | Cases | Conditions | Replications | Total Runs | Max Model Calls | Max Tool Calls | Authorisation Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Phase 1: Dev Pilot** | Calibration (Dev) | 24 | 5 (A–E) | 1 | 120 | 960 | 1,440 | Minimum Recommended Plan |
+| **Phase 2: Held-Out Evaluation** | Generalisation (Held-Out) | 24 | 5 (A–E) | 1 | 120 | 960 | 1,440 | Minimum Recommended Plan |
+| *Optional: Extended Replications* | Generalisation (Held-Out) | 24 | 5 (A–E) | 3 | 360 | 2,880 | 4,320 | Requires Separate Authorisation |
+
+### 6.2 Host Measurement Boundaries
+The experiment environment must explicitly distinguish what the local host harness can measure from unmetered or unknown variables:
+
+```
+┌───────────────────────────────────────┬───────────────────────────────────────┐
+│     Directly Measurable by Host       │         Unmetered / Unknown           │
+├───────────────────────────────────────┼───────────────────────────────────────┤
+│ • Wall-clock execution time (ms)      │ • Exact token count (if API returns   │
+│ • Exact count of model call turns     │   null usage metadata)                │
+│ • Exact count of tool executions      │ • Monetary expenditure (USD / JPY)    │
+│ • Input prompt string character length│   (if provider subscription / local   │
+│ • Tool error and JSON repair retries  │   harness does not report billing)    │
+│ • Process exit codes and schema errors│ • Proprietary hidden model states     │
+└───────────────────────────────────────┴───────────────────────────────────────┘
+```
+
+> **Reporting Mandate:** Because the live Antigravity harness reports `cost.output: null` for `gemini-3.8-flash-high`, no speculative monetary cost comparisons shall be asserted. All efficiency comparisons shall be reported strictly in verifiable physical units: **elapsed wall-clock milliseconds**, **total model turns**, **total tool invocations**, and **input characters**.
+
+---
+
+## 7. Crucial Distinction: Mechanism Unit Validation vs Empirical Model Efficacy
+
+1. **Mechanism / Unit Fixture Validation:**  
+   The `tombo-view` SDK includes a deterministic unit test fixture (`fixture.ts`) featuring two fixed demo cases (`demo-account-close` and `demo-event-resend`). This fixture validates the JSON schema serialization, hash calculation, event ledger recording, and state-machine transitions of `session.mjs`. It is a static, mock replay mechanism.
+2. **Empirical Model Efficacy Evaluation:**  
+   Condition E is **NOT** the static `fixture.ts` demo. Condition E represents the live, multi-turn execution of Ommatidia driven by `gemini-3.8-flash-high` across the 48 benchmark cases.
+3. **Guard Against Conflation:**  
+   Under no circumstances shall the deterministic replay success of the 2-case `fixture.ts` be presented as evidence of model reasoning superiority or empirical research validation. The experimental framework must verify the execution harness via unit tests, but measure research claims solely against live experimental runs.

@@ -1,0 +1,19 @@
+{
+  "taskId": "dev_wa_07",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Does the alert rule specify immediate PagerDuty dispatch and SMS alerting for P1-CRITICAL?"
+  ],
+  "criticalEvidenceHashes": [
+    "0ad311d4a3c04312a16093cfa8f2c09d8fc0576ec2ae8c931bc5f9f23b26d3b8"
+  ],
+  "expectedAnswerKeywords": [
+    "dispatch_pagerduty_immediate",
+    "send_sms_oncall",
+    "verified"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_07_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

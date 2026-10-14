@@ -1,0 +1,18 @@
+{
+  "taskId": "dev_se_06",
+  "domain": "software_engineering",
+  "requiredGapQuestions": [
+    "Is the proprietary watchdog register reset latency accessible in available sources?"
+  ],
+  "criticalEvidenceHashes": [],
+  "expectedAnswerKeywords": [
+    "unavailable",
+    "proprietary",
+    "inaccessible",
+    "unverified"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_se_06_01": "unverified"
+  },
+  "targetDecision": "blocked"
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_05",
+  "goal": "Verify whether automated CSV export jobs are authorized for concurrency level 10 during the weekend window.",
+  "mode": "explain",
+  "successCriteria": [
+    "Determine current rate limit policy and effective scheduling rules."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_05_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/datapulse_schedule_policy_q3_2026.md",
+      "sourceGroup": "operational_policies",
+      "retrievedAt": "2026-10-14T02:00:00Z",
+      "version": "3.0.0",
+      "scope": "export_concurrency",
+      "passage": "Policy Revision Q3-2026 (effective 2026-09-01): Weekend export concurrency is reduced from 10 to 2; the 2025 high-concurrency schedule is superseded.",
+      "contentHash": "e4cb30f5e3d72a12be16c6a883ec9a093645371f775a2e2c7ad7468cbb4664fb",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Automated CSV export jobs are authorized for concurrency level 10 during the weekend window."
+}

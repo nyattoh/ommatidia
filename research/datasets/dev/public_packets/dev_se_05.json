@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_se_05",
+  "goal": "Verify whether PyFlow tasks execute with an unlimited default execution timeout.",
+  "mode": "explain",
+  "successCriteria": [
+    "Determine default timeout setting across PyFlow version releases."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_se_05_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/software_engineering/pyflow_migration_v5.md",
+      "sourceGroup": "release_notes",
+      "retrievedAt": "2026-10-14T01:20:00Z",
+      "version": "5.0.0",
+      "scope": "task_scheduling",
+      "passage": "Effective PyFlow version 5.0 (released 2026-06), default task execution timeout is 300 seconds; legacy version 4.0 unlimited execution is deprecated and superseded.",
+      "contentHash": "40f7b055540fe23d54be89efb182e2c723ffd46797c86ebaddafb8de0e8fb012",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "PyFlow tasks execute with an unlimited default execution timeout unless explicitly bounded."
+}

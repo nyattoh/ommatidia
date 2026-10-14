@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_wa_01",
+  "goal": "Verify whether PayGrid webhook gateway retains Idempotency-Key headers in Redis for 72 hours to prevent duplicate transactions.",
+  "mode": "explain",
+  "successCriteria": [
+    "Check idempotency retention duration and deduplication behavior in PayGrid."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_wa_01_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/workflow_automation/paygrid_idempotency.md",
+      "sourceGroup": "gateway_specs",
+      "retrievedAt": "2026-10-14T01:40:00Z",
+      "version": "2.6.0",
+      "scope": "webhook_idempotency",
+      "passage": "PayGrid persists every Idempotency-Key header in distributed Redis cache with a strict TTL of 72 hours (259200 seconds), returning HTTP 200 with original body on duplicate submissions.",
+      "contentHash": "3977dc5be26bdc95b713d4fa8881d57008c4368bc8dac2be1e70d03f1d0f9882",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "PayGrid webhook gateway retains Idempotency-Key headers in Redis for 72 hours to prevent duplicate transactions."
+}

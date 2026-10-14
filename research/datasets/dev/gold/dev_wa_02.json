@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_wa_02",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Does partial return route to manual approval rather than automatic credit memo generation?"
+  ],
+  "criticalEvidenceHashes": [
+    "8030186a10a0d7622f9add5bb7d425a901debda3496b243ba5f6c183fcfac3c4"
+  ],
+  "expectedAnswerKeywords": [
+    "ManualApprovalQueue",
+    "suspend_and_await_supervisor",
+    "manual",
+    "not automatic"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_02_01": "contradicted"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

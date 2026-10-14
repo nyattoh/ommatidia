@@ -1,0 +1,62 @@
+{
+  "caseId": "dev_wa_07",
+  "domain": "workflow_automation",
+  "caseType": "clean_no_extra_controls",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_wa_07.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_wa_07.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_wa_07",
+    "goal": "Confirm that tickets classified as 'P1-CRITICAL' in SupportFlow trigger instant PagerDuty dispatch and emergency SMS alerts.",
+    "mode": "explain",
+    "successCriteria": [
+      "Verify alert dispatch actions in SupportFlow routing configuration."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_wa_07_01",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/workflow_automation/supportflow_alert_rules.yaml",
+        "sourceGroup": "alert_configurations",
+        "retrievedAt": "2026-10-14T02:10:00Z",
+        "version": "2.4.1",
+        "scope": "incident_alerting",
+        "passage": "urgency: P1-CRITICAL -> actions: [dispatch_pagerduty_immediate, send_sms_oncall]",
+        "contentHash": "0ad311d4a3c04312a16093cfa8f2c09d8fc0576ec2ae8c931bc5f9f23b26d3b8",
+        "validity": "current"
+      }
+    ],
+    "capabilities": [
+      "document_read"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "Tickets classified as 'P1-CRITICAL' in SupportFlow trigger instant PagerDuty dispatch and emergency SMS alerts."
+  },
+  "goldStandard": {
+    "taskId": "dev_wa_07",
+    "domain": "workflow_automation",
+    "requiredGapQuestions": [
+      "Does the alert rule specify immediate PagerDuty dispatch and SMS alerting for P1-CRITICAL?"
+    ],
+    "criticalEvidenceHashes": [
+      "0ad311d4a3c04312a16093cfa8f2c09d8fc0576ec2ae8c931bc5f9f23b26d3b8"
+    ],
+    "expectedAnswerKeywords": [
+      "dispatch_pagerduty_immediate",
+      "send_sms_oncall",
+      "verified"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_wa_07_01": "supported"
+    },
+    "targetDecision": "ready_for_requested_step"
+  }
+}

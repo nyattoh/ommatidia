@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_02",
+  "goal": "Verify whether Annex IV provides an automatic exemption permitting corporate HR employee records transfer to non-signatory jurisdictions.",
+  "mode": "explain",
+  "successCriteria": [
+    "Analyze cross-border transfer exemption criteria in Annex IV."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_02_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/privacy_accord_annex_iv.md",
+      "sourceGroup": "international_accords",
+      "retrievedAt": "2026-10-14T02:25:00Z",
+      "version": "1.0",
+      "scope": "data_transfers",
+      "passage": "Section 4.1: Human resources records, employee performance evaluations, and personal payroll files are explicitly excluded from automatic cross-border transfer exemptions.",
+      "contentHash": "59c6c820461cd5fbeca2c6f9427460a7d12cf688924bce71c870e82857b9de87",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Annex IV provides an automatic exemption permitting corporate HR employee records transfer to non-signatory jurisdictions."
+}

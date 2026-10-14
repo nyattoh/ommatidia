@@ -1,0 +1,7 @@
+/* [FICTIONAL TEST DATASET - NOT REAL ENTITY OR OPERATIONAL RECORD] */
+{
+  "transaction_id": "TX-9921",
+  "status": "gateway_timeout",
+  "error": "HTTP 503 Service Unavailable from Interbank Settlement Gateway",
+  "settlement_rate": null
+}

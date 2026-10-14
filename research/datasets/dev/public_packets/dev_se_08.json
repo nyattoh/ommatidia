@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_se_08",
+  "goal": "Determine whether HelixCore Registry.getInstance() is guaranteed thread-safe in multi-tenant environments.",
+  "mode": "explain",
+  "successCriteria": [
+    "Examine architectural specifications and security audits regarding Registry thread safety."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_se_08_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/software_engineering/helix_arch_note.md",
+      "sourceGroup": "architecture_specs",
+      "retrievedAt": "2026-10-14T01:35:00Z",
+      "version": "3.0.0",
+      "scope": "concurrency_guarantee",
+      "passage": "Registry.getInstance() uses thread-safe double-checked locking with volatile instance reference, guaranteeing thread safety across concurrent requests.",
+      "contentHash": "4cd35e21bbace7103d85462e97b06e0b26f800d7790ad9e6a1ec5305ffed25f4",
+      "validity": "current"
+    },
+    {
+      "id": "ev_dev_se_08_02",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/software_engineering/helix_audit_report.md",
+      "sourceGroup": "audit_findings",
+      "retrievedAt": "2026-10-14T01:36:00Z",
+      "version": "3.0.0",
+      "scope": "concurrency_guarantee",
+      "passage": "Audit finding: Registry.getInstance() exhibits unsynchronized race conditions under multi-tenant classloaders, causing partial object publication and data leakage.",
+      "contentHash": "49d40ba48cad041a5035421f12ab8c6aa1a26540d4173b2ba7f1becd8c8d1f94",
+      "validity": "current"
+    }
+  ],
+  "capabilities": [
+    "document_read",
+    "code_search"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "HelixCore Registry.getInstance() is guaranteed thread-safe in multi-tenant environments."
+}

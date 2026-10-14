@@ -1,0 +1,76 @@
+{
+  "caseId": "dev_se_03",
+  "domain": "software_engineering",
+  "caseType": "duplicate_provenance",
+  "publicPacketPath": "research/datasets/dev/public_packets/dev_se_03.json",
+  "goldStandardPath": "research/datasets/dev/gold/dev_se_03.json",
+  "taskPacket": {
+    "schemaVersion": "0.1",
+    "taskId": "dev_se_03",
+    "goal": "Verify if KestrelMesh cache invalidation latency under 5ms is corroborated by two independent benchmark sources.",
+    "mode": "explain",
+    "successCriteria": [
+      "Evaluate independence and validity of KestrelMesh latency benchmarks."
+    ],
+    "evidence": [
+      {
+        "id": "ev_dev_se_03_01",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/software_engineering/kestrel_bench_alpha.md",
+        "sourceGroup": "benchmarks",
+        "retrievedAt": "2026-10-14T01:10:00Z",
+        "version": "1.0",
+        "scope": "cache_invalidation",
+        "passage": "Across a 10-node cluster, KestrelMesh 99th percentile cache invalidation latency measured 4.2ms under peak synthetic workload.",
+        "contentHash": "f9a0b9bbe2aabb23352065d4642513760cce4cc7bb46b063eca052a4fe9cbccb",
+        "validity": "current"
+      },
+      {
+        "id": "ev_dev_se_03_02",
+        "kind": "document",
+        "locator": "research/datasets/dev/evidence/software_engineering/kestrel_bench_beta.md",
+        "sourceGroup": "benchmarks_mirror",
+        "retrievedAt": "2026-10-14T01:11:00Z",
+        "version": "1.0",
+        "scope": "cache_invalidation",
+        "passage": "Across a 10-node cluster, KestrelMesh 99th percentile cache invalidation latency measured 4.2ms under peak synthetic workload.",
+        "contentHash": "f9a0b9bbe2aabb23352065d4642513760cce4cc7bb46b063eca052a4fe9cbccb",
+        "validity": "current"
+      }
+    ],
+    "capabilities": [
+      "document_read"
+    ],
+    "budget": {
+      "maxRounds": 5,
+      "maxModelCalls": 8,
+      "maxToolCalls": 12,
+      "maxElapsedMs": 180000,
+      "maxInputChars": 48000,
+      "maxOutputTokensPerCall": 16000,
+      "maxCostYen": null
+    },
+    "proposedAnswer": "KestrelMesh distributed cache invalidation completes in under 5ms, corroborated by two independent performance benchmarks."
+  },
+  "goldStandard": {
+    "taskId": "dev_se_03",
+    "domain": "software_engineering",
+    "requiredGapQuestions": [
+      "Are the two latency benchmark reports independent or circular copies?"
+    ],
+    "criticalEvidenceHashes": [
+      "f9a0b9bbe2aabb23352065d4642513760cce4cc7bb46b063eca052a4fe9cbccb",
+      "f9a0b9bbe2aabb23352065d4642513760cce4cc7bb46b063eca052a4fe9cbccb"
+    ],
+    "expectedAnswerKeywords": [
+      "duplicate",
+      "identical hash",
+      "mirror",
+      "circular"
+    ],
+    "groundTruthVerdicts": {
+      "claim_dev_se_03_01": "supported"
+    },
+    "targetDecision": "ready_for_requested_step"
+  }
+}

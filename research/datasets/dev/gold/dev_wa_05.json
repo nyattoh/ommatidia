@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_wa_05",
+  "domain": "workflow_automation",
+  "requiredGapQuestions": [
+    "Did Policy Q3-2026 supersede the weekend concurrency limit from 10 down to 2?"
+  ],
+  "criticalEvidenceHashes": [
+    "e4cb30f5e3d72a12be16c6a883ec9a093645371f775a2e2c7ad7468cbb4664fb"
+  ],
+  "expectedAnswerKeywords": [
+    "concurrency 2",
+    "superseded",
+    "reduced",
+    "Policy Q3-2026"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_wa_05_01": "contradicted"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

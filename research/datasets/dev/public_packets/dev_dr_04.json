@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_04",
+  "goal": "Determine whether Protocol NC-9 demonstrates a validated 40% improvement in autonomous task completion speed in peer-reviewed findings.",
+  "mode": "explain",
+  "successCriteria": [
+    "Check journal errata and retractions for Protocol NC-9."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_04_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/nc9_retraction_notice.md",
+      "sourceGroup": "journal_retractions",
+      "retrievedAt": "2026-10-14T02:35:00Z",
+      "version": "1.0",
+      "scope": "peer_review_status",
+      "passage": "Formal Retraction: Findings regarding Protocol NC-9 are retracted due to uncalibrated timing hardware; authors withdraw all claims of 40% speedup.",
+      "contentHash": "d2cacafd8d8abec3f7b60d268ba245b836507090e6a97d06166d4bf7b3c321d1",
+      "validity": "withdrawn"
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "Protocol NC-9 demonstrates a validated 40% improvement in autonomous task completion speed in peer-reviewed findings."
+}

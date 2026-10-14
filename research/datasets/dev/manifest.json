@@ -1,0 +1,415 @@
+{
+  "createdAt": "2026-10-14T02:45:00Z",
+  "dataset": "ommatidia_dev_24",
+  "files": {
+    "cases/dev_dr_01.json": {
+      "hash": "70e253e3a6502fc8691d7db10f43e9d3fee01a9fd7b601cb1c4bad599f412477",
+      "sizeBytes": 2403
+    },
+    "cases/dev_dr_02.json": {
+      "hash": "e65c427d649f9a46e714a7d7f39301165abdb1390404d113638fcd801c0b3b10",
+      "sizeBytes": 2327
+    },
+    "cases/dev_dr_03.json": {
+      "hash": "a0a3085ad5665cd4bac1d540c469aef021579dbb60fc1f4d010acf275ec619f7",
+      "sizeBytes": 2944
+    },
+    "cases/dev_dr_04.json": {
+      "hash": "bef9bf710ae031de31ddd9f4d14bf1453b6650b385b2c75e1d7f47905a014968",
+      "sizeBytes": 2265
+    },
+    "cases/dev_dr_05.json": {
+      "hash": "72e08a008e69f0e09c56ae04bfb2769c800b69256fc022b9d8f89411b4091283",
+      "sizeBytes": 2352
+    },
+    "cases/dev_dr_06.json": {
+      "hash": "c3ce6101ed52256b39e2eaed46d5349355111efb08639ea3a95e2c19970fa7e4",
+      "sizeBytes": 2057
+    },
+    "cases/dev_dr_07.json": {
+      "hash": "875bc3522fd8cae4421af913a57fbcba9bc1b3753ef50f0e74bcf5438b8e4a77",
+      "sizeBytes": 2286
+    },
+    "cases/dev_dr_08.json": {
+      "hash": "e40ccc7e52ebb952d535394ff6689c2f9a604b45030bf2ded8b219aff711c978",
+      "sizeBytes": 3018
+    },
+    "cases/dev_se_01.json": {
+      "hash": "d4f6d965cdef1d476ea4fff932642664ad72df44479c977adeaa4ca92d9fcc5b",
+      "sizeBytes": 2320
+    },
+    "cases/dev_se_02.json": {
+      "hash": "814a009c0b45e237caee1265ca2123a5e54df592f684cdfb40f03180c000a8bd",
+      "sizeBytes": 2306
+    },
+    "cases/dev_se_03.json": {
+      "hash": "fd80df5f9ea1c5af7497aad298b03c249e4c5a423a25e25906e0f5acda9c8ac8",
+      "sizeBytes": 2927
+    },
+    "cases/dev_se_04.json": {
+      "hash": "188927747b679a5f89b6694e36ed522de6510558309c545a36a4342932154ae2",
+      "sizeBytes": 2327
+    },
+    "cases/dev_se_05.json": {
+      "hash": "4132f9ca352ad3c0e71241689beb1e4e1856abe4524f07161b0216ed7cfdd1cd",
+      "sizeBytes": 2255
+    },
+    "cases/dev_se_06.json": {
+      "hash": "7d2baaba947ce8b7dd22b84eb0696f4b410403417bb31af17794d48dc90acb2c",
+      "sizeBytes": 2025
+    },
+    "cases/dev_se_07.json": {
+      "hash": "4b49f4cd7252d34fd0bf23a345892a47806fb90e7afa139b7ff6151f7e3f36a7",
+      "sizeBytes": 2102
+    },
+    "cases/dev_se_08.json": {
+      "hash": "070178deacb7231046376b3e732d0fc237e2e82af0626c7029911f70e35c6672",
+      "sizeBytes": 3046
+    },
+    "cases/dev_wa_01.json": {
+      "hash": "12bd5b952d867311597da1eb10ee66e416a9b4a7438ad59629cdbaf410ab03f5",
+      "sizeBytes": 2295
+    },
+    "cases/dev_wa_02.json": {
+      "hash": "47cda5434c4bcd847401428bd6f16f55daea2c94ad81cc908278edb6ac3219eb",
+      "sizeBytes": 2299
+    },
+    "cases/dev_wa_03.json": {
+      "hash": "e9ec71cb4ec7236ee65fcac34ca2d2f77ac7f3b437b263b991c1329a9e390b8d",
+      "sizeBytes": 2871
+    },
+    "cases/dev_wa_04.json": {
+      "hash": "25a5e7f85d062d126e698e4f3a54e68a3e70ba13de4abe4677ffdde0314aab21",
+      "sizeBytes": 2240
+    },
+    "cases/dev_wa_05.json": {
+      "hash": "99cd0e029596027686abc0c1789726f3e45b7da0d07b08d97ba769259712f6de",
+      "sizeBytes": 2266
+    },
+    "cases/dev_wa_06.json": {
+      "hash": "fe0fffd665a60cbbaaf8609b9bdc9c613db12b26fa6b51a1927ff59c6c8fe63a",
+      "sizeBytes": 2004
+    },
+    "cases/dev_wa_07.json": {
+      "hash": "2f46dd011002140df6b5bc18f1b024689732580ed38f143553564c19d8b78234",
+      "sizeBytes": 2234
+    },
+    "cases/dev_wa_08.json": {
+      "hash": "f87403647a4d2b42c82c392acb5b10d5b83261e500a677c64129215a0cc53d7d",
+      "sizeBytes": 2964
+    },
+    "evidence/document_research/acorn_bylaws_section3.md": {
+      "hash": "b50ff64c607076cc0671137cfdb4babcc02d876550e6e093136875b9a4244bc9",
+      "sizeBytes": 346
+    },
+    "evidence/document_research/aerotech_brief_original.md": {
+      "hash": "64e0cc03e27c6f8ff0f8973e55eaa3fa0e96f07f235530e604f369eed0f33dee",
+      "sizeBytes": 268
+    },
+    "evidence/document_research/aerotech_brief_reprint.md": {
+      "hash": "30e36096cd2d51c178c845ee7368e9265d222f4539971ab15bff73c840c63958",
+      "sizeBytes": 254
+    },
+    "evidence/document_research/arb_2026_904_redacted.md": {
+      "hash": "58b81531cc4e6bb2e27671d7e0248c55821be053dc9bb86f81e6dcce35495e80",
+      "sizeBytes": 299
+    },
+    "evidence/document_research/maritime_gazette_update_2026.md": {
+      "hash": "6e7acc9faa6bf89b94496c030a85b0e6a3c92a162d8982a8f3f4d31e2ab31181",
+      "sizeBytes": 388
+    },
+    "evidence/document_research/nc9_retraction_notice.md": {
+      "hash": "08b478cbd0419bb63b65aa158a048ae5f431c3872664403e2b52eb10f365ed9e",
+      "sizeBytes": 342
+    },
+    "evidence/document_research/neogdpr_directive_2026.md": {
+      "hash": "95fb11449f8c9f43c013bb4eea2cf8a6a581f97edfbd465f9546202d40797043",
+      "sizeBytes": 445
+    },
+    "evidence/document_research/privacy_accord_annex_iv.md": {
+      "hash": "215bfa808e1d3273da1bcdd662880242b930721ecd13606b13f7d368f8adfa08",
+      "sizeBytes": 428
+    },
+    "evidence/document_research/techcorp_license_annex_clause15.md": {
+      "hash": "9905f646ccda1153d618c05e7dadcdedb54abea7bc76e7012e919d25c53da3d7",
+      "sizeBytes": 288
+    },
+    "evidence/document_research/techcorp_msa_clause22.md": {
+      "hash": "e4f8230f5eedb178f4b0bc2a171ad7abe4d3440441c79835cd532bfafd177e83",
+      "sizeBytes": 270
+    },
+    "evidence/software_engineering/corosync_channel.c": {
+      "hash": "6e02794dc446b54901439d7fe23db25c431fd0091862a14194eb0b67de426489",
+      "sizeBytes": 578
+    },
+    "evidence/software_engineering/helix_arch_note.md": {
+      "hash": "49865d954391e35f5a9b5daa11883c429ebc214ed4b5b8d699e9d769b3006249",
+      "sizeBytes": 317
+    },
+    "evidence/software_engineering/helix_audit_report.md": {
+      "hash": "bde261110c0d55f39cb6c1f273e60825dc795f30007d6df0af5010cb36339fc5",
+      "sizeBytes": 357
+    },
+    "evidence/software_engineering/kestrel_bench_alpha.md": {
+      "hash": "7a052b5d6720386028bc41050825bfdd1601333f40a89ea1779fee6211b74efb",
+      "sizeBytes": 254
+    },
+    "evidence/software_engineering/kestrel_bench_beta.md": {
+      "hash": "a79fa2d00626b3d08dc3caa5ef806a36b440f2458efbf12c7ef54d561ad9ca9d",
+      "sizeBytes": 272
+    },
+    "evidence/software_engineering/nexus_orm_pool.md": {
+      "hash": "b24358e65847b06278005f44f387b14f1cf696f17530fb68ebfc4f94ea446135",
+      "sizeBytes": 724
+    },
+    "evidence/software_engineering/pyflow_migration_v5.md": {
+      "hash": "24d590a9289ab607b8d3b711f8a6bca4b7685f3f05612abc6c04bb169338b15e",
+      "sizeBytes": 430
+    },
+    "evidence/software_engineering/test_hashlibx.py": {
+      "hash": "8cb668d9eeb7dcb5d4a0a5316c618afef2fabeb08bb5b685551b6d0d527abdfb",
+      "sizeBytes": 249
+    },
+    "evidence/software_engineering/vanguard_sec_advisory.md": {
+      "hash": "57375f3462d9ef60e575b31c204774f77755baeba4362dae340cf5aad7569dbf",
+      "sizeBytes": 422
+    },
+    "evidence/software_engineering/watchdog_stub.md": {
+      "hash": "8371ba16d6d673f8172e4b56350301328acafd1c5ad0ae423d412020305bbdcf",
+      "sizeBytes": 342
+    },
+    "evidence/workflow_automation/crm_sync_contract.md": {
+      "hash": "eddb42d25f9d7e3e35494f00a95a9e2ff5d774bd8c35c69538268bc192b0daa4",
+      "sizeBytes": 289
+    },
+    "evidence/workflow_automation/datapulse_schedule_policy_q3_2026.md": {
+      "hash": "6394c53e787ff7d1c58f621c0561a84310e94030a9de951384b20b7e4370befb",
+      "sizeBytes": 395
+    },
+    "evidence/workflow_automation/finance_erp_contract.md": {
+      "hash": "cd82443eb523b957cf1e5edbeed28b6a61dbb08ba492ae1aa8bd26533f8d5dce",
+      "sizeBytes": 260
+    },
+    "evidence/workflow_automation/paygrid_idempotency.md": {
+      "hash": "d805b7abf974e73cb0e248a67ce1b12f7d1714dcca7305f50a37cec7fa27f406",
+      "sizeBytes": 435
+    },
+    "evidence/workflow_automation/refund_workflow_rules.xml": {
+      "hash": "1d42cad91a6d7b60b18a7c56f8fb21f0cd42873a912074076c32e77e28ef0c6f",
+      "sizeBytes": 657
+    },
+    "evidence/workflow_automation/supportflow_alert_rules.yaml": {
+      "hash": "6854fee7d8c047af11fe6342a662cf8f3f92ed559e607bac6488626f69fad6f6",
+      "sizeBytes": 220
+    },
+    "evidence/workflow_automation/sync_worker_stream_a.log": {
+      "hash": "67c2d9d9e6880e60048a13563e42675ad5176b5028812f2d1aa85425d4a3e63e",
+      "sizeBytes": 171
+    },
+    "evidence/workflow_automation/sync_worker_stream_b.log": {
+      "hash": "67c2d9d9e6880e60048a13563e42675ad5176b5028812f2d1aa85425d4a3e63e",
+      "sizeBytes": 171
+    },
+    "evidence/workflow_automation/tx_9921_gateway_response.json": {
+      "hash": "28b4b941bfab1780bd7ea5dfc14e5429c666d98c20db30b02073bce0384ce0ba",
+      "sizeBytes": 247
+    },
+    "evidence/workflow_automation/zeta_secret_rotation.md": {
+      "hash": "e351cf56943e1222e58a79464bd267df06ce65e59c3714b806ca792ce630f168",
+      "sizeBytes": 363
+    },
+    "gold/dev_dr_01.json": {
+      "hash": "20b32b7f77abcc654757c3f2791eaac1b8c31fa6cf3fc45c5db295aa6a7c706d",
+      "sizeBytes": 560
+    },
+    "gold/dev_dr_02.json": {
+      "hash": "23942c312267127dbe3f9d51a961dc60f881c3f3d568cda91b7f1cacbec1bfd3",
+      "sizeBytes": 543
+    },
+    "gold/dev_dr_03.json": {
+      "hash": "aa73dde34d06b0a86ccc1f09325bc23b1cb1c8880011383d573a4816537eb51c",
+      "sizeBytes": 619
+    },
+    "gold/dev_dr_04.json": {
+      "hash": "df06f4927eba14529b0a96299e88e19b19ec710940721e721006bac0957eef54",
+      "sizeBytes": 522
+    },
+    "gold/dev_dr_05.json": {
+      "hash": "64f3524b41a43740383089477779123a07f4bfb52ca599c674c8c1ae3c5ae4d8",
+      "sizeBytes": 562
+    },
+    "gold/dev_dr_06.json": {
+      "hash": "c1f766a4331ab0dd7f70ef6e66fc7d13920acaef7ba70924d4e60aab6aeb5b74",
+      "sizeBytes": 428
+    },
+    "gold/dev_dr_07.json": {
+      "hash": "9ccdfc6a0b9474b1dfad5d10babce41e2dea2a2a87fab4b0587eda6c34004d98",
+      "sizeBytes": 555
+    },
+    "gold/dev_dr_08.json": {
+      "hash": "5ace16c1dc10db0bb86232c1a9c1ebf377d00913e8d15c9f97f71134e97c3cb2",
+      "sizeBytes": 644
+    },
+    "gold/dev_se_01.json": {
+      "hash": "2f0cd10af2f8933eb9257a1270b4552fb9d2abf31f0cb8ed4c3ea8e7397d2c3e",
+      "sizeBytes": 535
+    },
+    "gold/dev_se_02.json": {
+      "hash": "dacda554acaff6f27a9480b4eb1ac70aead5e2787b8b82b73abe834359297ffe",
+      "sizeBytes": 552
+    },
+    "gold/dev_se_03.json": {
+      "hash": "68254bed62155cb51405af9fe707917aa2ca84c5e083db728059205842217192",
+      "sizeBytes": 591
+    },
+    "gold/dev_se_04.json": {
+      "hash": "8b205f3d2be0546671a334e6c7e2cf6e141052f707ce490fed06ac3dac9aeeca",
+      "sizeBytes": 543
+    },
+    "gold/dev_se_05.json": {
+      "hash": "f8ef340557ca937a722c557b880a6baa6b3b6a804d242b9e24289574e0364aa0",
+      "sizeBytes": 561
+    },
+    "gold/dev_se_06.json": {
+      "hash": "ceffe327aa5756aa88fd90e0995610ba1eccc046b149703d587ec18182ebce8f",
+      "sizeBytes": 447
+    },
+    "gold/dev_se_07.json": {
+      "hash": "e6fd6f46cb5684ce0247e412041cb0dad214ba2ec1fc104a4cb5d00ddc16cc13",
+      "sizeBytes": 519
+    },
+    "gold/dev_se_08.json": {
+      "hash": "40c23f3d6b6ffc6d9e7042219897d6c84dd56a44e2d384a0256c88dbd221d8c4",
+      "sizeBytes": 633
+    },
+    "gold/dev_wa_01.json": {
+      "hash": "b4a23e5f9ff36cdec95bcb9aa1e42f0e7ceda26059c191d560675f34dd8f1705",
+      "sizeBytes": 507
+    },
+    "gold/dev_wa_02.json": {
+      "hash": "a36fcb1eb3e30ab1525c033176ab26ae45a056383340f4dae7b2aaaf91ff9057",
+      "sizeBytes": 570
+    },
+    "gold/dev_wa_03.json": {
+      "hash": "14c5f28e6703ccac677527319c3e9a92f37601b9efd1187d5867e2bc5eb311b2",
+      "sizeBytes": 617
+    },
+    "gold/dev_wa_04.json": {
+      "hash": "bd5afc48e4ff1d7a1e2af91f95a7d8a59068ba2ffcac1c5f3be7dddb21fe5246",
+      "sizeBytes": 533
+    },
+    "gold/dev_wa_05.json": {
+      "hash": "1e37c1d5e8bd6f556e0042719976ecec1bcad38886620a3b745a68ce20441781",
+      "sizeBytes": 535
+    },
+    "gold/dev_wa_06.json": {
+      "hash": "4d88fe503284d9b93e3e91cadda265b616bd70fd30d1ef96313694dd7585628f",
+      "sizeBytes": 435
+    },
+    "gold/dev_wa_07.json": {
+      "hash": "82539828c5d197bb78b2191d4d9ed568eb5170cd8e39931e702552829346e51b",
+      "sizeBytes": 543
+    },
+    "gold/dev_wa_08.json": {
+      "hash": "004f4751e1a5f56e8d9c0e9b841dab28ad7ebd205dff5f5d7e0fc23dfba07926",
+      "sizeBytes": 626
+    },
+    "public_packets/dev_dr_01.json": {
+      "hash": "353840986a287e8c98c3b38605cc848041acc6bfd78f747ca7a30c858e3b79b7",
+      "sizeBytes": 1454
+    },
+    "public_packets/dev_dr_02.json": {
+      "hash": "aade69b48198e4033d5af3e0f08b21ec9f328dd97fffc9908f980d2249289e37",
+      "sizeBytes": 1393
+    },
+    "public_packets/dev_dr_03.json": {
+      "hash": "acc0a2f899bf867b5b3fc7992c573b5434b1b6947380fc1c1cbbc35635c75ba5",
+      "sizeBytes": 1903
+    },
+    "public_packets/dev_dr_04.json": {
+      "hash": "4475421de4eb00fff98c7dc53546713a46013386fff23d109b232bff8525a57f",
+      "sizeBytes": 1357
+    },
+    "public_packets/dev_dr_05.json": {
+      "hash": "a87bea03d47a9bf1efae464f193ec3878385b3e97e573bd68b5f3bc83e3aa321",
+      "sizeBytes": 1395
+    },
+    "public_packets/dev_dr_06.json": {
+      "hash": "f1f2df32595c913b273617b80a84bf3c68fb0f6c0219891821210c761578c492",
+      "sizeBytes": 1234
+    },
+    "public_packets/dev_dr_07.json": {
+      "hash": "4a083cb7ebdb271672470e9a88e858898073247f076c2e2baf6c7d4b6b797e3d",
+      "sizeBytes": 1332
+    },
+    "public_packets/dev_dr_08.json": {
+      "hash": "78eb24d1e72ba2338d9a5daed20030ec8ee94ec0e7cfdb359b2ce22bc7ab67f8",
+      "sizeBytes": 1951
+    },
+    "public_packets/dev_se_01.json": {
+      "hash": "fb45914b7afb1b11194b799c48c6e9b2e8867599fef17175f8e2ad9241708304",
+      "sizeBytes": 1391
+    },
+    "public_packets/dev_se_02.json": {
+      "hash": "a720d6cedd55928ac4da17d1d5bbfd427a15606b047493cd30443e9a587d9c1d",
+      "sizeBytes": 1358
+    },
+    "public_packets/dev_se_03.json": {
+      "hash": "09d3402f795f903a651d62b152597cac669b0291155d5cc8ae76893930f3250c",
+      "sizeBytes": 1911
+    },
+    "public_packets/dev_se_04.json": {
+      "hash": "61702850a7962c538681b30bea04805b52a6e9d92458e7979eeaf05e14fcfb2d",
+      "sizeBytes": 1395
+    },
+    "public_packets/dev_se_05.json": {
+      "hash": "972b661bda14ba4f5268e376a5dbe00699eca2b81e8591d8c11673589487c41a",
+      "sizeBytes": 1296
+    },
+    "public_packets/dev_se_06.json": {
+      "hash": "cdd3ff6f6a9a048d83c2868ecf595b14a1b820612f4e0fd2dea994a7a013397b",
+      "sizeBytes": 1180
+    },
+    "public_packets/dev_se_07.json": {
+      "hash": "e042cbf99f461978f26d39c0c7d06daa5c2a4766dcdad5a2bbfe973184aa1aa1",
+      "sizeBytes": 1181
+    },
+    "public_packets/dev_se_08.json": {
+      "hash": "81855e87302adac681d85efb891d99424d7e93888b942d6af661e5db83b796fc",
+      "sizeBytes": 1985
+    },
+    "public_packets/dev_wa_01.json": {
+      "hash": "988cbb96b1d586b04d11b19c616a6d25d91c385449874caaa31c2c8fb6eaf230",
+      "sizeBytes": 1397
+    },
+    "public_packets/dev_wa_02.json": {
+      "hash": "f20216ce248d19b8920b4eb3baa4693798b3678f2ec5f99e3faa6a96d1e70e17",
+      "sizeBytes": 1334
+    },
+    "public_packets/dev_wa_03.json": {
+      "hash": "52394ff42a19c2b555c4f9bc307f8f3d0cc08629f52e3186808c4229a639e38d",
+      "sizeBytes": 1830
+    },
+    "public_packets/dev_wa_04.json": {
+      "hash": "81147e8dd718650d0ea9b349b0e69381da1e70706c30c97f438bdf7c94defa71",
+      "sizeBytes": 1319
+    },
+    "public_packets/dev_wa_05.json": {
+      "hash": "d55d85bb232cdcb95f8cd6e608251d0504534f5d61023a1936079fbd20570743",
+      "sizeBytes": 1334
+    },
+    "public_packets/dev_wa_06.json": {
+      "hash": "6b748213d0c698a77efcb07bc417006f2585457ee929029e2b6b8cbf3fdfe201",
+      "sizeBytes": 1172
+    },
+    "public_packets/dev_wa_07.json": {
+      "hash": "2e78877ed3a47297472e12828728a694fbd735da0a82704012da443c9317b45e",
+      "sizeBytes": 1292
+    },
+    "public_packets/dev_wa_08.json": {
+      "hash": "351076cbe4de5b78636d6d7e8bd7eae9ee764f08a0d41fa8bf152566317a469a",
+      "sizeBytes": 1913
+    }
+  },
+  "schemaVersion": "0.1"
+}

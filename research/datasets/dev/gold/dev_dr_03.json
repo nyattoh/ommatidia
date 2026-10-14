@@ -1,0 +1,21 @@
+{
+  "taskId": "dev_dr_03",
+  "domain": "document_research",
+  "requiredGapQuestions": [
+    "Are the two environmental briefs distinct independent audits or verbatim duplicates?"
+  ],
+  "criticalEvidenceHashes": [
+    "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a",
+    "4ff3f2ba0bff5d34ca0cb93ae353e10fcd3f5b7030cdd9aefd19a17ce41f175a"
+  ],
+  "expectedAnswerKeywords": [
+    "duplicate",
+    "verbatim reprint",
+    "syndication",
+    "circular citation"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_dr_03_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

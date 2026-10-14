@@ -1,0 +1,20 @@
+{
+  "taskId": "dev_se_01",
+  "domain": "software_engineering",
+  "requiredGapQuestions": [
+    "Does NexusORM automatically reconnect on broken TCP socket with exponential backoff?"
+  ],
+  "criticalEvidenceHashes": [
+    "e44758cb61eccc0b6d6f9adb93fcbb261d07078bd62a3b49f54d52f36940784b"
+  ],
+  "expectedAnswerKeywords": [
+    "exponential backoff",
+    "100ms",
+    "5000ms",
+    "automatic"
+  ],
+  "groundTruthVerdicts": {
+    "claim_dev_se_01_01": "supported"
+  },
+  "targetDecision": "ready_for_requested_step"
+}

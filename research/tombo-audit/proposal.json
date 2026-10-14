@@ -1,0 +1,168 @@
+{
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "inspect",
+    "taskId": "ommatidia-audit-session-01",
+    "expectedRevision": -1,
+    "requestHash": "2452d88dd3561c0b173d3bc83bacc159efe54e80f5b6f41e9848595f9c2777fe"
+  },
+  "proposal": {
+    "claims": [
+      {
+        "id": "claim-protocol-count",
+        "role": "answer_claim",
+        "text": "PROTOCOL.md specifies 720 runs by pooling 24 dev and 24 held-out cases; the held-out denominator must be corrected to 24 cases, with minimum recommended pilot 120 and held-out 120.",
+        "scope": "research/PROTOCOL.md"
+      },
+      {
+        "id": "claim-eval-blinding",
+        "role": "answer_claim",
+        "text": "EVALUATION_SPEC.md asserts double-blind evaluation and treats repeated trials as independent; agents observe condition prompts, so blinding applies only to assessors, and repeated trials are clustered.",
+        "scope": "research/EVALUATION_SPEC.md"
+      },
+      {
+        "id": "claim-manuscript-status",
+        "role": "observation",
+        "text": "Section 5 of manuscript remains pending; no empirical execution or gold labels exist before freeze.",
+        "scope": "paper/manuscript-ja.md"
+      },
+      {
+        "id": "claim-lit-accuracy",
+        "role": "hypothesis",
+        "text": "Related work descriptions of Adaptive-RAG (cannot adapt), Reflexion (strictly scalar oracle), and STORM (static/no trajectory) overstate absence of capability compared to primary sources.",
+        "scope": "references/RELATED_WORK.md"
+      }
+    ],
+    "lenses": [
+      {
+        "id": "lens-protocol-rigor",
+        "label": "Protocol & Design Rigor",
+        "rationale": "Verify benchmark partitioning, trial count independence, and blinding terminology.",
+        "origin": "initial",
+        "status": "active"
+      },
+      {
+        "id": "lens-literature-fidelity",
+        "label": "Primary Literature Fidelity",
+        "rationale": "Verify accuracy of related work comparative characterizations against primary sources.",
+        "origin": "initial",
+        "status": "active"
+      }
+    ],
+    "gaps": [
+      {
+        "id": "gap-heldout-denominator",
+        "kind": "unsupported_claim",
+        "lensId": "lens-protocol-rigor",
+        "question": "Does the 720-run matrix dilute the held-out benchmark by including 24 dev cases, and what is the minimum approved execution plan?",
+        "triggerRefs": [
+          "ev-protocol-matrix"
+        ],
+        "whyItMatters": "Mixing dev cases into held-out evaluation corrupts pre-registration boundary and inflates execution budget.",
+        "importance": "required",
+        "claimIds": [
+          "claim-protocol-count"
+        ],
+        "probeIds": [
+          "probe-verify-matrix"
+        ]
+      },
+      {
+        "id": "gap-eval-blinding",
+        "kind": "unsupported_claim",
+        "lensId": "lens-protocol-rigor",
+        "question": "Is the double-blind designation justified, and are repeated trials on the same case erroneously treated as independent units?",
+        "triggerRefs": [
+          "ev-eval-blinding"
+        ],
+        "whyItMatters": "Unjustified blinding claims and pseudo-replication undermine scientific validity of statistical tests.",
+        "importance": "required",
+        "claimIds": [
+          "claim-eval-blinding"
+        ],
+        "probeIds": [
+          "probe-verify-blinding"
+        ]
+      },
+      {
+        "id": "gap-lit-accuracy",
+        "kind": "conflicting_evidence",
+        "lensId": "lens-literature-fidelity",
+        "question": "Do the primary papers of Adaptive-RAG, Reflexion, and STORM contradict the sweeping negative assertions in manuscript-ja.md?",
+        "triggerRefs": [
+          "ev-related-work-ledger"
+        ],
+        "whyItMatters": "Misrepresenting prior work undermines paper credibility and violates working rules.",
+        "importance": "required",
+        "claimIds": [
+          "claim-lit-accuracy"
+        ],
+        "probeIds": [
+          "probe-verify-literature"
+        ]
+      },
+      {
+        "id": "gap-empirical-results-pending",
+        "kind": "missing_fact",
+        "lensId": "lens-protocol-rigor",
+        "question": "Are empirical evaluation results, full monetary costs, and open-web generalisation measured and validated?",
+        "triggerRefs": [
+          "ev-manuscript-status"
+        ],
+        "whyItMatters": "Empirical metrics, monetary costs, and generalisation cannot be resolved prior to authorised experiment execution.",
+        "importance": "required",
+        "claimIds": [
+          "claim-manuscript-status"
+        ],
+        "probeIds": []
+      }
+    ],
+    "probes": [
+      {
+        "id": "probe-verify-matrix",
+        "gapIds": [
+          "gap-heldout-denominator"
+        ],
+        "method": "boundary",
+        "question": "Check PROTOCOL.md run counts against the 24 dev / 24 held-out partition to establish the correct held-out denominator and minimum run count.",
+        "requiredCapability": "schema_validation",
+        "sourceGroups": [
+          "research/PROTOCOL.md"
+        ],
+        "successCondition": "Held-out denominator is corrected to 24, with pilot 24x5x1=120 and held-out 24x5x1=120 as the recommended minimum plan.",
+        "refutationCondition": "Protocol already isolates held-out runs to 24 cases without unapproved expansion.",
+        "inconclusiveCondition": "Protocol text is ambiguous or contradictory."
+      },
+      {
+        "id": "probe-verify-blinding",
+        "gapIds": [
+          "gap-eval-blinding"
+        ],
+        "method": "boundary",
+        "question": "Audit blinding definition and trial independence assumptions in EVALUATION_SPEC.md.",
+        "requiredCapability": "statistical_review",
+        "sourceGroups": [
+          "research/EVALUATION_SPEC.md"
+        ],
+        "successCondition": "Blinding is corrected to single-blind assessor grading; repeated trials are noted as clustered within cases requiring case-level exact McNemar tests.",
+        "refutationCondition": "Agents are genuinely blinded to prompts and repeated runs are independent.",
+        "inconclusiveCondition": "Specification text cannot be interpreted."
+      },
+      {
+        "id": "probe-verify-literature",
+        "gapIds": [
+          "gap-lit-accuracy"
+        ],
+        "method": "corroboration",
+        "question": "Compare manuscript statements with primary arXiv papers: does Adaptive-RAG have multi-step iterative retrieval, does Reflexion have trajectory reflection, does STORM have conversational search trajectories?",
+        "requiredCapability": "literature_audit",
+        "sourceGroups": [
+          "references/RELATED_WORK.md"
+        ],
+        "successCondition": "Primary sources confirm that statements overstate absence, necessitating concrete text corrections.",
+        "refutationCondition": "Manuscript statements perfectly align with primary text.",
+        "inconclusiveCondition": "Primary texts unavailable."
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "dev_dr_06",
+  "goal": "Verify whether the commercial damages indemnity cap in Arbitration Award ARB-2026-904 is fixed at \u00a32,500,000 under Clause 9.",
+  "mode": "explain",
+  "successCriteria": [
+    "Examine unredacted text of arbitration award Clause 9."
+  ],
+  "evidence": [
+    {
+      "id": "ev_dev_dr_06_01",
+      "kind": "document",
+      "locator": "research/datasets/dev/evidence/document_research/arb_2026_904_redacted.md",
+      "sourceGroup": "arbitration_awards",
+      "retrievedAt": "2026-10-14T02:45:00Z",
+      "version": "1.0",
+      "scope": "commercial_disputes",
+      "passage": "",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "validity": "current",
+      "passageUnavailable": true
+    }
+  ],
+  "capabilities": [
+    "document_read"
+  ],
+  "budget": {
+    "maxRounds": 5,
+    "maxModelCalls": 8,
+    "maxToolCalls": 12,
+    "maxElapsedMs": 180000,
+    "maxInputChars": 48000,
+    "maxOutputTokensPerCall": 16000,
+    "maxCostYen": null
+  },
+  "proposedAnswer": "The commercial damages indemnity cap in Arbitration Award ARB-2026-904 is fixed at \u00a32,500,000 under Clause 9."
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "executionId": "exec-matrix-audit-01",
+    "probeId": "probe-verify-matrix",
+    "outcome": "completed",
+    "evidence": [
+      {
+        "id": "ev-matrix-audit",
+        "kind": "document",
+        "locator": "research/PROTOCOL.md#L110-L140",
+        "sourceGroup": "research/PROTOCOL.md",
+        "retrievedAt": "2026-10-14T02:35:00+09:00",
+        "version": "1.0.0",
+        "scope": "research/PROTOCOL.md",
+        "passage": "Audit of PROTOCOL.md Section 6.1 reveals 720 runs by pooling 24 dev and 24 held-out cases across 3 replications. To avoid unapproved expansion and maintain pre-registration isolation, the held-out denominator is corrected to 24 cases, with minimum recommended pilot 24x5x1=120 and held-out 24x5x1=120 runs.",
+        "contentHash": "4128e9fff519beab3a537ad938a8cbb218c614e525d8a2b0f8898433287af2df",
+        "validity": "current"
+      }
+    ],
+    "toolCalls": 1,
+    "elapsedMs": 35,
+    "costYen": null
+  },
+  {
+    "executionId": "exec-blinding-audit-01",
+    "probeId": "probe-verify-blinding",
+    "outcome": "completed",
+    "evidence": [
+      {
+        "id": "ev-blinding-audit",
+        "kind": "document",
+        "locator": "research/EVALUATION_SPEC.md#L280-L295",
+        "sourceGroup": "research/EVALUATION_SPEC.md",
+        "retrievedAt": "2026-10-14T02:35:00+09:00",
+        "version": "1.0.0",
+        "scope": "research/EVALUATION_SPEC.md",
+        "passage": "Audit of EVALUATION_SPEC.md Section 6.2 reveals unjustified double-blind designation; agents observe condition prompts, so blinding applies strictly to assessors and automated scoring scripts (single-blind / masked assessor evaluation). Furthermore, repeated trials on the same case are clustered, not independent units; case-level paired exact McNemar tests and Wilson intervals must be applied.",
+        "contentHash": "d92572d4aaba3af8a04d7fb805a5ddf60316d047e07f8d006f232363fa379708",
+        "validity": "current"
+      }
+    ],
+    "toolCalls": 1,
+    "elapsedMs": 40,
+    "costYen": null
+  },
+  {
+    "executionId": "exec-literature-audit-01",
+    "probeId": "probe-verify-literature",
+    "outcome": "completed",
+    "evidence": [
+      {
+        "id": "ev-lit-audit",
+        "kind": "document",
+        "locator": "references/RELATED_WORK.md#L10-L90",
+        "sourceGroup": "references/RELATED_WORK.md",
+        "retrievedAt": "2026-10-14T02:35:00+09:00",
+        "version": "1.0.0",
+        "scope": "references/RELATED_WORK.md",
+        "passage": "Audit of primary literature reveals: (1) Adaptive-RAG (Jeong et al., NAACL 2024) implements an iterative multi-step retrieval branch where subsequent retrieval hops adapt to prior queries; claiming it cannot adapt overstates absence. (2) Reflexion (Shinn et al., NeurIPS 2023) maintains trajectory-based linguistic self-reflection; claiming it is strictly a scalar oracle overstates absence. (3) STORM (Shao et al., NAACL 2024) executes multi-turn conversational dialogue with search trajectories; claiming it is static without trajectory overstates absence.",
+        "contentHash": "2b4c09013df8dce3f50f829811bd3233082fdceb9bfff4ff497ca87b1007223b",
+        "validity": "current"
+      }
+    ],
+    "toolCalls": 1,
+    "elapsedMs": 50,
+    "costYen": null
+  }
+]
