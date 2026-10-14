@@ -18,7 +18,34 @@ from ommatidia.types import (
 
 class ConcurrencyLockError(RuntimeError):
     """Raised when an active run lock prevents duplicate execution."""
+
     pass
+
+
+def _pid_alive(pid: int) -> bool:
+    """Best-effort check that a process with this PID exists. PIDs can be reused."""
+    if os.name == "nt":
+        import ctypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+        handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+        if not handle:
+            return (
+                ctypes.get_last_error() == 5
+            )  # ERROR_ACCESS_DENIED: the process exists
+        # A handle can outlive the process (e.g. held by Popen), so check the exit code too.
+        code = ctypes.c_ulong()
+        kernel32.GetExitCodeProcess(handle, ctypes.byref(code))
+        kernel32.CloseHandle(handle)
+        return code.value == 259  # STILL_ACTIVE
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
 
 
 class RunLedger:
@@ -37,17 +64,28 @@ class RunLedger:
         self._lock_acquired = False
 
     def acquire_lock(self, run_id: str) -> None:
-        """Acquire an atomic run lock file to prevent duplicate runs."""
+        """Acquire an atomic run lock file to prevent duplicate runs.
+
+        A lock whose owning process no longer exists (for example after a crash) is
+        stale and is replaced. A lock that cannot be parsed, or has no PID, is not
+        assumed stale and blocks the run.
+        """
         if self.lock_path.exists():
             try:
-                content = self.lock_path.read_text(encoding="utf-8").strip()
-                lock_data = json.loads(content)
+                lock_data = json.loads(
+                    self.lock_path.read_text(encoding="utf-8").strip()
+                )
+            except json.JSONDecodeError:
+                raise ConcurrencyLockError(
+                    f"Active run lock file exists at {self.lock_path}"
+                )
+            pid = lock_data.get("pid")
+            if not isinstance(pid, int) or _pid_alive(pid):
                 raise ConcurrencyLockError(
                     f"Active run lock already held by run '{lock_data.get('runId')}' "
                     f"since {lock_data.get('timestamp')}"
                 )
-            except json.JSONDecodeError:
-                raise ConcurrencyLockError(f"Active run lock file exists at {self.lock_path}")
+            self.lock_path.unlink()
 
         lock_data = {
             "runId": run_id,
@@ -131,7 +169,9 @@ class RunLedger:
                     data = json.loads(clean)
                     entries.append(LedgerEntry.from_dict(data))
                 except Exception as exc:
-                    raise ValueError(f"Corrupted ledger entry at line {line_no}: {exc}") from exc
+                    raise ValueError(
+                        f"Corrupted ledger entry at line {line_no}: {exc}"
+                    ) from exc
         return entries
 
     def aggregate_usage_by_stage(self) -> Dict[str, Usage]:

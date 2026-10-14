@@ -2,6 +2,8 @@
 
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -27,7 +29,7 @@ class TestRunLedger(unittest.TestCase):
             tool_calls=3,
             elapsed_ms=1200.0,
             total_tokens=None,  # unknown
-            cost_yen=None,      # unknown
+            cost_yen=None,  # unknown
         )
 
         entry = self.ledger.record_stage(
@@ -106,6 +108,33 @@ class TestRunLedger(unittest.TestCase):
         ledger2.acquire_lock("run_beta")
         self.assertTrue(ledger2.lock_path.exists())
         ledger2.release_lock()
+
+    def test_stale_lock_from_dead_process_is_replaced(self) -> None:
+        # A lock left by a process that has exited (crash) must not block a new run.
+        dead = subprocess.Popen([sys.executable, "-c", "pass"])
+        dead.wait()
+        self.ledger.lock_path.write_text(
+            json.dumps(
+                {
+                    "runId": "crashed",
+                    "timestamp": "2026-10-14T00:00:00+00:00",
+                    "pid": dead.pid,
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.ledger.acquire_lock("run_gamma")
+        data = json.loads(self.ledger.lock_path.read_text(encoding="utf-8"))
+        self.assertEqual(data["runId"], "run_gamma")
+        self.ledger.release_lock()
+
+    def test_lock_without_pid_blocks_run(self) -> None:
+        # Cannot prove a lock without a PID is stale, so it must still block.
+        self.ledger.lock_path.write_text(
+            json.dumps({"runId": "unknown"}), encoding="utf-8"
+        )
+        with self.assertRaises(ConcurrencyLockError):
+            self.ledger.acquire_lock("run_delta")
 
 
 if __name__ == "__main__":

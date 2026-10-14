@@ -52,7 +52,8 @@ def create_initial_state(task: TaskPacket) -> UnderstandingState:
         lenses=[],
         gaps=[],
         probes=[],
-        usage=Usage(),
+        # A new run has consumed nothing yet, so its cost and tokens start at 0 (known).
+        usage=Usage(cost_yen=0.0, total_tokens=0),
         decision=Decision.NEEDS_CHECK,
         stop_reason=None,
         applied_executions=[],
@@ -83,7 +84,9 @@ def apply_observations(
         - error -> ProbeStatus.ERROR
     - Usage accumulation (tool calls, elapsed time, tokens, cost).
     """
-    existing_execution_ids: Set[str] = {a.execution_id for a in state.applied_executions}
+    existing_execution_ids: Set[str] = {
+        a.execution_id for a in state.applied_executions
+    }
     probe_map: Dict[str, Probe] = {p.id: p for p in state.probes}
 
     new_evidence: List[Evidence] = []
@@ -93,7 +96,11 @@ def apply_observations(
     for obs in observations:
         if obs.execution_id in existing_execution_ids:
             # Check existing record
-            existing_rec = next(a for a in state.applied_executions if a.execution_id == obs.execution_id)
+            existing_rec = next(
+                a
+                for a in state.applied_executions
+                if a.execution_id == obs.execution_id
+            )
             p_hash = raw_payload_hash or compute_payload_hash(obs.to_dict())
             if existing_rec.payload_hash != p_hash:
                 raise ValueError(
@@ -105,7 +112,9 @@ def apply_observations(
         p_hash = raw_payload_hash or compute_payload_hash(obs.to_dict())
         probe = probe_map.get(obs.probe_id)
         if probe is None:
-            raise ValueError(f"Observation references unknown probe ID: '{obs.probe_id}'")
+            raise ValueError(
+                f"Observation references unknown probe ID: '{obs.probe_id}'"
+            )
 
         # Update probe status
         if obs.outcome == ObservationOutcome.COMPLETED:
@@ -119,7 +128,9 @@ def apply_observations(
             probe.status = ProbeStatus.ERROR
 
         # Deduplicate and register incoming evidence
-        accepted, rejected = deduplicate_evidence(state.evidence + new_evidence, obs.evidence)
+        accepted, rejected = deduplicate_evidence(
+            state.evidence + new_evidence, obs.evidence
+        )
         new_evidence.extend(accepted)
         rejected_evidence.extend(rejected)
 
@@ -207,7 +218,9 @@ def apply_proposal(
     # 5. Incorporate Assessments and update claim statuses
     if proposal.assessments:
         claim_map = {c.id: c for c in state.claims}
-        valid_evidence_ids = {e.id for e in state.evidence if e.validity == EvidenceValidity.CURRENT}
+        valid_evidence_ids = {
+            e.id for e in state.evidence if e.validity == EvidenceValidity.CURRENT
+        }
 
         for asm in proposal.assessments:
             claim = claim_map.get(asm.claim_id)
@@ -221,8 +234,12 @@ def apply_proposal(
             claim.assessments.append(asm)
 
             # Recompute claim status
-            supports = sum(1 for a in claim.assessments if a.verdict == AssessmentVerdict.SUPPORTS)
-            refutes = sum(1 for a in claim.assessments if a.verdict == AssessmentVerdict.REFUTES)
+            supports = sum(
+                1 for a in claim.assessments if a.verdict == AssessmentVerdict.SUPPORTS
+            )
+            refutes = sum(
+                1 for a in claim.assessments if a.verdict == AssessmentVerdict.REFUTES
+            )
             if supports > 0 and refutes > 0:
                 claim.status = ClaimStatus.DISPUTED
             elif supports > 0:
@@ -233,7 +250,9 @@ def apply_proposal(
     # 6. Incorporate Resolutions
     if proposal.resolutions:
         gap_map = {g.id: g for g in state.gaps}
-        valid_evidence_ids = {e.id for e in state.evidence if e.validity == EvidenceValidity.CURRENT}
+        valid_evidence_ids = {
+            e.id for e in state.evidence if e.validity == EvidenceValidity.CURRENT
+        }
         for res_dict in proposal.resolutions:
             gid = res_dict.get("gapId")
             gap = gap_map.get(gid)
