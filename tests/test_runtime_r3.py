@@ -45,6 +45,18 @@ def setup(tmp_path):
     return tmp_path / "output", manifest, task
 
 
+TEST_HOST_COST_CAP_YEN = 5.0
+
+
+def host_boundary():
+    """Test double for a host that attests its configured per-call cap. It tests transport handling only."""
+    flags = dict.fromkeys(
+        ["publicOnly", "singleModelInvocation", "enforcesStepBudget", "hostUsageVerified"], True
+    )
+    flags["enforcedCostCapYen"] = TEST_HOST_COST_CAP_YEN
+    return lambda _payload: dict(flags)
+
+
 def make_harness(setup, **kwargs):
     output, manifest, _ = setup
     kwargs.setdefault("runtime_freeze_path", write_current_freeze(output.parent))
@@ -277,22 +289,15 @@ def test_execution_and_plan_use_same_graph_and_injected_transport(setup, conditi
         return {
             "status": "completed",
             "summary": json.dumps(active[args["taskId"]]),
-            "hostUsage": {"modelCalls": 1, "toolCalls": 0},
+            "hostUsage": {"modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
         }
 
-    boundary = lambda _: dict.fromkeys(
-        [
-            "publicOnly",
-            "singleModelInvocation",
-            "enforcesStepBudget",
-            "hostUsageVerified",
-        ],
-        True,
-    )
+    boundary = host_boundary()
     adapter = T3DelegationAdapter(
         "test_provider",
         "test_model",
         in_session_dispatcher=dispatcher,
+        host_cost_cap_yen=TEST_HOST_COST_CAP_YEN,
         public_boundary=boundary,
         poll_interval_seconds=0,
     )
@@ -696,30 +701,26 @@ def test_timeout_cancels_each_attempt_and_keeps_task_ids_and_usage(setup):
             return {"status": "cancelled"}
         return {"status": "running"}
 
-    boundary = lambda _: dict.fromkeys(
-        [
-            "publicOnly",
-            "singleModelInvocation",
-            "enforcesStepBudget",
-            "hostUsageVerified",
-        ],
-        True,
-    )
+    boundary = host_boundary()
     adapter = T3DelegationAdapter(
         "test",
         "test",
         timeout_seconds=0,
         in_session_dispatcher=dispatcher,
+        host_cost_cap_yen=TEST_HOST_COST_CAP_YEN,
         public_boundary=boundary,
     )
-    record = make_harness(setup).run_cohort(
-        [task],
-        [ConditionType.A],
-        "timeout",
-        create_t3_executor(adapter),
-        executor_name="t3_simulation",
-    )[0]
-    assert record.status == "failed" and record.usage.model_calls == 2
+    # Cancelled attempts leave cost unsettled, so the campaign stops for audit and keeps the trial record.
+    with pytest.raises(ValueError, match="audit required"):
+        make_harness(setup).run_cohort(
+            [task],
+            [ConditionType.A],
+            "timeout",
+            create_t3_executor(adapter),
+            executor_name="t3_simulation",
+        )
+    record = TrialRecord.from_dict(json.loads(next((setup[0] / "dev/trials").glob("*.json")).read_text()))
+    assert record.status == "failed" and record.usage.model_calls == len(dispatched) >= 1
     assert dispatched == cancelled
     assert [step["taskId"] for step in record.steps] == dispatched
     assert not record.usage_known and record.usage.tool_calls == 12
@@ -797,17 +798,9 @@ def test_ambiguous_dispatch_stops_campaign_after_persisting_failure(setup):
         calls.append(tool)
         raise ConnectionError("Synthetic lost acknowledgement")
 
-    boundary = lambda _: dict.fromkeys(
-        [
-            "publicOnly",
-            "singleModelInvocation",
-            "enforcesStepBudget",
-            "hostUsageVerified",
-        ],
-        True,
-    )
+    boundary = host_boundary()
     executor = create_t3_executor(
-        T3DelegationAdapter(in_session_dispatcher=dispatcher, public_boundary=boundary)
+        T3DelegationAdapter(in_session_dispatcher=dispatcher, public_boundary=boundary, host_cost_cap_yen=TEST_HOST_COST_CAP_YEN)
     )
     with pytest.raises(ValueError, match="audit required"):
         make_harness(setup).run_cohort(
