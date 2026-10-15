@@ -628,8 +628,14 @@ class ResearchHarness:
         hashes = self.verify_environment()
         if executor_func is None:
             raise ValueError("executor_func is required")
+        if executor_name.startswith("t3"):
+            if getattr(executor_func, "synthetic_fallback", False):
+                raise ValueError("Synthetic fallback cannot be used for a T3 campaign")
+            if not hasattr(executor_func, "require_public_boundary"):
+                raise ValueError("T3 executor requires a verified public boundary")
+            executor_func.require_public_boundary()
         # The synthetic path makes no paid calls, so each step reserves 0 yen.
-        # Paid (t3) executors must still declare an enforced per-call cap.
+        # Paid executors must still declare an enforced per-call cap.
         if executor_name == "synthetic":
             cost_cap = 0.0
         else:
@@ -638,12 +644,6 @@ class ResearchHarness:
                 raise ValueError(
                     "Executor must expose a finite, non-negative enforced_cost_cap_yen per call"
                 )
-        if executor_name.startswith("t3"):
-            if getattr(executor_func, "synthetic_fallback", False):
-                raise ValueError("Synthetic fallback cannot be used for a T3 campaign")
-            if not hasattr(executor_func, "require_public_boundary"):
-                raise ValueError("T3 executor requires a verified public boundary")
-            executor_func.require_public_boundary()
         if executor_name == "t3":
             self.verify_environment(require_release=True)
         trial_key = f"{partition}/{task.task_id}/{condition.value}/{replication}"
@@ -759,6 +759,10 @@ class ResearchHarness:
                     error = exc
                     known = False
                 finally:
+                    if executor_name == "synthetic":
+                        # The synthetic path makes no paid call, so its spend is known to be zero.
+                        known = True
+                        measured.cost_yen = 0.0
                     with step_lock:
                         measured.elapsed_ms = max(
                             measured.elapsed_ms,

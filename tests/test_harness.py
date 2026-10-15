@@ -90,7 +90,10 @@ class TestResearchHarness(unittest.TestCase):
         def mock_fallback(step_name: str, payload: dict) -> dict:
             nonlocal fallback_called
             fallback_called = True
-            return {"answer": "fallback conclusion", "usage": {"rounds": 1}}
+            return {
+                "answer": "fallback conclusion",
+                "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
+            }
 
         executor = create_t3_executor(fallback_executor=mock_fallback)
         res = executor("single_pass", {})
@@ -158,7 +161,10 @@ class TestResearchHarness(unittest.TestCase):
         def mock_executor(step_name: str, payload: dict) -> dict:
             nonlocal call_count
             call_count += 1
-            return {"answer": "done", "usage": {"rounds": 1, "modelCalls": 1}}
+            return {
+                "answer": "done",
+                "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
+            }
 
         # First run executes
         records1 = harness.run_cohort(
@@ -198,7 +204,10 @@ class TestResearchHarness(unittest.TestCase):
         def mock_executor(step_name: str, payload: dict) -> dict:
             nonlocal call_count
             call_count += 1
-            return {"answer": "done", "usage": {"rounds": 1, "modelCalls": 1}}
+            return {
+                "answer": "done",
+                "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
+            }
 
         # First run as synthetic
         harness.run_cohort(

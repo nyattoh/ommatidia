@@ -145,7 +145,10 @@ def test_retry_is_charged_and_reserved_before_each_dispatch(setup):
         assert registry["calls"][calls[-1]]["status"] == "reserved"
         if len(calls) == 1:
             raise ConnectionError("Transient synthetic transport error")
-        return {**judgement(task.task_id), "usage": {"modelCalls": 1, "toolCalls": 0}}
+        return {
+            **judgement(task.task_id),
+            "usage": {"modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
+        }
 
     record = make_harness(setup).run_cohort(
         [task], [ConditionType.A], "retry", executor
@@ -391,6 +394,8 @@ def test_cli_failure_exit(setup, monkeypatch):
                 str(output),
                 "--manifest",
                 str(manifest),
+                "--runtime-freeze",
+                str(write_current_freeze(output.parent)),
                 "--condition-primary",
                 "A",
             ]
@@ -582,6 +587,8 @@ def test_cli_paired_tests_require_24_saved_pairs_and_apply_holm(setup):
                 str(output),
                 "--manifest",
                 str(manifest),
+                "--runtime-freeze",
+                str(write_current_freeze(output.parent)),
                 "--records-file",
                 str(saved),
                 "--analysis-design",
@@ -643,6 +650,8 @@ def test_cli_evaluate_scores_complete_saved_matrix_without_changing_trials(setup
                 str(output),
                 "--manifest",
                 str(manifest),
+                "--runtime-freeze",
+                str(write_current_freeze(output.parent)),
                 "--records-file",
                 str(saved),
                 "--rubric-file",

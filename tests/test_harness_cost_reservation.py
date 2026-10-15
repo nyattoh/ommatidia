@@ -27,7 +27,9 @@ def setup(tmp_path):
 
 def harness(setup):
     output, manifest, freeze, _ = setup
-    return ResearchHarness(output, seal_manifest_path=manifest, runtime_freeze_path=freeze)
+    return ResearchHarness(
+        output, seal_manifest_path=manifest, runtime_freeze_path=freeze
+    )
 
 
 def registry(output):
@@ -40,8 +42,10 @@ def capped(cap, cost_yen=1.5, respond=dummy_synthetic_executor):
     def executor(step, payload):
         calls.append(payload["clientRequestId"])
         result = respond(step, payload)
+        usage = {k: v for k, v in result["usage"].items() if k != "costYen"}
         if cost_yen is not None:
-            result["usage"] = {**result["usage"], "costYen": cost_yen}
+            usage["costYen"] = cost_yen
+        result["usage"] = usage
         return result
 
     executor.enforced_cost_cap_yen = cap
@@ -58,7 +62,9 @@ def test_executor_without_cost_cap_is_refused_before_any_call(setup):
         return dummy_synthetic_executor(step, payload)
 
     with pytest.raises(ValueError, match="enforced_cost_cap_yen"):
-        harness(setup).run_cohort([task], [ConditionType.A], "uncapped", uncapped)
+        harness(setup).run_cohort(
+            [task], [ConditionType.A], "uncapped", uncapped, executor_name="paid_probe"
+        )
     assert calls == []
     assert not (output / "dev/trials").exists()
 
@@ -68,7 +74,13 @@ def test_invalid_cost_cap_is_refused_before_any_call(setup, cap):
     output, _, _, task = setup
     executor = capped(cap)
     with pytest.raises(ValueError, match="enforced_cost_cap_yen"):
-        harness(setup).run_cohort([task], [ConditionType.A], "invalid_cap", executor)
+        harness(setup).run_cohort(
+            [task],
+            [ConditionType.A],
+            "invalid_cap",
+            executor,
+            executor_name="paid_probe",
+        )
     assert executor.calls == []
     assert not (output / "dev/trials").exists()
 
@@ -76,9 +88,9 @@ def test_invalid_cost_cap_is_refused_before_any_call(setup, cap):
 def test_cap_beyond_campaign_ceiling_stops_before_dispatch(setup):
     output, _, _, task = setup
     executor = capped(600.0)
-    record = harness(setup).run_cohort([task], [ConditionType.A], "too_big", executor)[
-        0
-    ]
+    record = harness(setup).run_cohort(
+        [task], [ConditionType.A], "too_big", executor, executor_name="paid_probe"
+    )[0]
     assert executor.calls == []
     assert record.status == "failed"
     assert record.error_message == "Campaign cost ceiling would be exceeded"
@@ -102,9 +114,9 @@ def test_each_call_reserves_cap_before_dispatch_and_settles_actual_cost(setup):
         return dummy_synthetic_executor(step, payload)
 
     executor = capped(50.0, cost_yen=1.5, respond=respond)
-    record = harness(setup).run_cohort([task], [ConditionType.B], "metered", executor)[
-        0
-    ]
+    record = harness(setup).run_cohort(
+        [task], [ConditionType.B], "metered", executor, executor_name="paid_probe"
+    )[0]
     assert record.status == "completed", record.error_message
     assert seen == [("reserved", 50.0, None, 50.0), ("reserved", 50.0, None, 51.5)]
     saved = registry(output)
@@ -118,7 +130,11 @@ def test_unknown_or_over_cap_cost_keeps_reservation_and_stops_campaign(setup, co
     executor = capped(50.0, cost_yen=cost_yen)
     with pytest.raises(ValueError, match="audit required"):
         harness(setup).run_cohort(
-            [task], [ConditionType.A, ConditionType.B], "audit", executor
+            [task],
+            [ConditionType.A, ConditionType.B],
+            "audit",
+            executor,
+            executor_name="paid_probe",
         )
     assert len(executor.calls) == 1
     saved = registry(output)
@@ -130,7 +146,9 @@ def test_unknown_or_over_cap_cost_keeps_reservation_and_stops_campaign(setup, co
         True,
     )
     with pytest.raises(ValueError, match="audit"):
-        harness(setup).run_cohort([task], [ConditionType.B], "audit", executor)
+        harness(setup).run_cohort(
+            [task], [ConditionType.B], "audit", executor, executor_name="paid_probe"
+        )
     assert len(executor.calls) == 1
 
 
@@ -142,7 +160,9 @@ def test_transport_error_with_unknown_cost_is_not_retried(setup):
 
     executor = capped(50.0, respond=lost)
     with pytest.raises(ValueError, match="audit required"):
-        harness(setup).run_cohort([task], [ConditionType.A], "retry", executor)
+        harness(setup).run_cohort(
+            [task], [ConditionType.A], "retry", executor, executor_name="paid_probe"
+        )
     assert len(executor.calls) == 1
     saved = registry(output)
     assert saved["committedCostYen"] == 50.0
@@ -187,9 +207,9 @@ def test_parallel_roles_each_hold_a_reservation_until_settled(setup):
         return result
 
     executor = capped(50.0, cost_yen=1.5, respond=respond)
-    record = harness(setup).run_cohort([task], [ConditionType.E], "parallel", executor)[
-        0
-    ]
+    record = harness(setup).run_cohort(
+        [task], [ConditionType.E], "parallel", executor, executor_name="paid_probe"
+    )[0]
     assert record.status == "completed", record.error_message
     assert committed_at_barrier == [101.5, 101.5]
     assert len(executor.calls) == 4

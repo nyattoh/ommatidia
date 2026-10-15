@@ -46,7 +46,7 @@ def run(setup, task_cost_yen, cost_yen, condition=ConditionType.E):
     harness = ResearchHarness(
         output, seal_manifest_path=manifest, runtime_freeze_path=freeze
     )
-    record = harness.run_cohort([task], [condition], "task_cost", executor)[0]
+    record = harness.run_cohort([task], [condition], "task_cost", executor, executor_name="paid_probe")[0]
     saved = json.loads((output / "resource_registry.json").read_text(encoding="utf-8"))
     return record, calls, saved
 

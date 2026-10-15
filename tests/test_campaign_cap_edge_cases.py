@@ -176,7 +176,7 @@ def test_harness_refuses_any_trial_after_a_crash_left_a_call_reserved(harness_se
         output, seal_manifest_path=manifest, runtime_freeze_path=freeze
     )
     with pytest.raises(ValueError, match="audit"):
-        harness.run_cohort([task], [ConditionType.B], "after_crash", executor)
+        harness.run_cohort([task], [ConditionType.B], "after_crash", executor, executor_name="paid_probe")
     assert calls == []
     assert list(
         json.loads((output / "resource_registry.json").read_text(encoding="utf-8"))[
