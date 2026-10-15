@@ -1,0 +1,27 @@
+{
+  "tasks": [
+    {
+      "id": "task-runtime-fields-implement-r2",
+      "kind": "implement",
+      "model": "claude-sonnet-5-5",
+      "vendor": "anthropic",
+      "status": "done",
+      "artifact": "research/hand_over_runtime_fields_r2.md",
+      "domain": "coding-implement",
+      "cost_usd": null
+    },
+    {
+      "id": "task-runtime-fields-verify-r2",
+      "kind": "verify",
+      "model": "gemini-3.8-flash-high",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "task-runtime-fields-implement-r2",
+      "artifact": "research/review-runtime-fields-round2.md",
+      "domain": "coding-verify",
+      "no_cross_vendor_candidate": false,
+      "cost_usd": null
+    }
+  ]
+}

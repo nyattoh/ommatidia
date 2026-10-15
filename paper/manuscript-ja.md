@@ -1,6 +1,12 @@
 # Ommatidia: 理解状態に基づく複眼型探索の設計と評価計画
 
-**状態**: 論文下書き（提案・プロトコル設計段階）。実験未実施（Pending）。著者情報・ライセンス・DOIは未付与。
+**状態**: 論文下書き（提案・プロトコル設計段階）。実験未実施（Pending）。実証結果は未取得で、結果を待っている。
+
+- **著者**: Ryoko Sakakibara（Independent Researcher）
+- **ORCID**: [0009-0009-9544-6315](https://orcid.org/0009-0009-9544-6315)
+- **本文ライセンス**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **DOI**: 未付与。実験結果と最終確認の後、Zenodo 登録時に付与予定。
+- **著者情報の照合先**: [Zenodo record 22925518](https://zenodo.org/records/22925518)
 
 ---
 

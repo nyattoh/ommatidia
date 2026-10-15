@@ -14,6 +14,7 @@ from ommatidia.seal import (
     create_seal_manifest,
     verify_seal_manifest,
 )
+from ommatidia.integrity import verify_runtime_freeze
 
 
 def main() -> int:
@@ -27,6 +28,7 @@ def main() -> int:
 
     verify_parser = subparsers.add_parser("verify", help="Verify files against an existing seal manifest")
     verify_parser.add_argument("--manifest", type=Path, default=Path("research/seal_manifest.json"), help="Path to seal manifest")
+    verify_parser.add_argument("--runtime-freeze", type=Path, default=Path("research/runtime_freeze_r4.json"))
 
     args = parser.parse_args()
 
@@ -52,6 +54,8 @@ def main() -> int:
         try:
             data = json.loads(args.manifest.read_text(encoding="utf-8"))
             results = verify_seal_manifest(data, base_dir=Path.cwd())
+            runtime = verify_runtime_freeze(args.runtime_freeze)
+            print(f"Runtime core/driver/prompt/spec hashes verified: {runtime['codeHash']}")
             print("Seal verification passed successfully.")
             for key, ok in results.items():
                 print(f"  {key}: {'OK' if ok else 'FAIL'}")

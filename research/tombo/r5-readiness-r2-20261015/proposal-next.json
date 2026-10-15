@@ -1,0 +1,103 @@
+{
+  "proposal": {
+    "resolutions": [
+      {
+        "evidenceIds": [
+          "r5-gates-readback-evidence"
+        ],
+        "gapId": "r5-live-gate-gap",
+        "reason": "refuted",
+        "explanation": "The saved independent audit fails and the current runtime freeze blocks held-out execution."
+      },
+      {
+        "evidenceIds": [
+          "packet-roundtrip-readback-evidence"
+        ],
+        "gapId": "packet-fields-gap",
+        "reason": "refuted",
+        "explanation": "The synthetic runtime conversion test reproduces loss of required fields."
+      }
+    ],
+    "assessments": [
+      {
+        "evidenceIds": [
+          "r5-gates-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "r5-release-claim",
+        "reason": "The current audit first-line is fail and the current freeze remains blocked.",
+        "verdict": "refutes"
+      },
+      {
+        "evidenceIds": [
+          "r5-gates-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "r5-review-observation",
+        "reason": "The fresh readback confirms the saved report verdict.",
+        "verdict": "supports"
+      },
+      {
+        "evidenceIds": [
+          "r5-gates-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "freeze-observation",
+        "reason": "The fresh readback confirms the current frozen block and zero trials.",
+        "verdict": "supports"
+      },
+      {
+        "evidenceIds": [
+          "helper-scoped-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "helper-probe-observation",
+        "reason": "The scoped command completed, which supports only that observed operation.",
+        "verdict": "supports"
+      },
+      {
+        "evidenceIds": [
+          "helper-scoped-readback-evidence"
+        ],
+        "scopeMatched": false,
+        "claimId": "helper-restored-claim",
+        "reason": "Two successful scoped operations do not establish recovery of all helper-backed operations.",
+        "verdict": "inconclusive"
+      },
+      {
+        "evidenceIds": [
+          "packet-roundtrip-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "packet-contract-claim",
+        "reason": "The synthetic required-field round-trip lost both fields.",
+        "verdict": "refutes"
+      },
+      {
+        "evidenceIds": [
+          "packet-roundtrip-readback-evidence"
+        ],
+        "scopeMatched": false,
+        "claimId": "spec-requirement-observation",
+        "reason": "The round-trip test establishes code behaviour, not the specification wording.",
+        "verdict": "inconclusive"
+      },
+      {
+        "evidenceIds": [
+          "packet-roundtrip-readback-evidence"
+        ],
+        "scopeMatched": true,
+        "claimId": "roundtrip-observation",
+        "reason": "The synthetic round-trip probe returned both fields absent.",
+        "verdict": "supports"
+      }
+    ]
+  },
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "update",
+    "taskId": "ommatidia-r5-readiness-recheck-20261015",
+    "expectedRevision": 1,
+    "requestHash": "d755f15f5d3431a5729a600de3bb059d6e40d16f9d30c35177800f370655e883"
+  }
+}

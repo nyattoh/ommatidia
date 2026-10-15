@@ -18,6 +18,8 @@ class SealMismatchError(ValueError):
 
 def hash_file(file_path: Path) -> str:
     """Compute the SHA-256 hash of a file."""
+    if file_path.name == "unblinding_key.json" or any(part.lower() in ("gold", "cases") for part in file_path.resolve().parts):
+        raise ValueError("Private answer assets cannot be read by runtime seal verification")
     if not file_path.exists():
         raise FileNotFoundError(f"Cannot hash non-existent file: {file_path}")
     hasher = hashlib.sha256()

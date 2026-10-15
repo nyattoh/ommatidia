@@ -1,0 +1,40 @@
+{
+  "candidates": [
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "Claude",
+      "model": "claude-sonnet-5-5",
+      "vendor": "anthropic",
+      "label": "Claude Sonnet 5.5",
+      "efforts": ["low", "medium", "high", "xhigh", "max", "ultrathink"],
+      "cost": {"input": 2.0, "output": 10.0},
+      "benchmark": {"best_score": 80.0, "best_source": "measured"},
+      "evidence": "ledger",
+      "rank": 1
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "Claude",
+      "model": "claude-opus-5-5",
+      "vendor": "anthropic",
+      "label": "Claude Opus 5.5",
+      "efforts": ["low", "medium", "high", "xhigh", "max", "ultracode", "ultrathink"],
+      "cost": {"input": 4.0, "output": 20.0},
+      "benchmark": {"best_score": 85.0, "best_source": "measured"},
+      "evidence": "ledger",
+      "rank": 2
+    },
+    {
+      "providerInstanceId": "antigravity",
+      "provider": "Google",
+      "model": "gemini-3.8-flash-high",
+      "label": "Gemini 3.8 Flash High",
+      "vendor": "google",
+      "efforts": [],
+      "cost": {"input": null, "output": null},
+      "benchmark": null,
+      "evidence": "unknown",
+      "rank": 3
+    }
+  ]
+}

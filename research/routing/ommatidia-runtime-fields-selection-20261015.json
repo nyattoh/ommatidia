@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "task": "TaskPacket domain and availableSources runtime repair",
+  "catalogueTimestampUtc": "2026-10-15 08:23:11 UTC",
+  "workspace": {
+    "root": "D:/develop/works/ommatidia",
+    "branch": "main",
+    "state": "dirty; existing changes preserved"
+  },
+  "classification": {
+    "implementation": {
+      "kind": "implement",
+      "domain": "coding-implement",
+      "requirements": [
+        "coding-implement"
+      ]
+    },
+    "verification": {
+      "kind": "verify",
+      "domain": "coding-verify",
+      "requirements": [
+        "coding-verify",
+        "coding-implement"
+      ]
+    }
+  },
+  "implementation": {
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-sonnet-5-5",
+    "effortOption": {
+      "key": "effort",
+      "value": "high"
+    },
+    "assignment": "main implement, best_score_per_cost, rank 1",
+    "benchmarkEvidence": {
+      "domain": "coding-implement",
+      "score": 80.0,
+      "source": "measured",
+      "costReferenceUsdPerMillion": {
+        "input": 2.0,
+        "output": 10.0
+      }
+    },
+    "taskId": "node:delegated-task:command%3Amcp%3A46753392-1513-4d6c-b21f-77a16e2dd011%3Adelegate-task%3Aommatidia-runtime-fields-claude-implementation-20261015"
+  },
+  "verification": {
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "effort": "host_default",
+    "assignment": "main test_integrate, cross_vendor_verify",
+    "benchmarkEvidence": "unknown; no scored ledger entry for the live model",
+    "no_cross_vendor_candidate": false,
+    "taskId": "node:delegated-task:command%3Amcp%3A46753392-1513-4d6c-b21f-77a16e2dd011%3Adelegate-task%3Aommatidia-runtime-fields-agy-review-round1-20261015"
+  },
+  "studyCallsUsed": 0,
+  "taskCosts": "not reported by host"
+}

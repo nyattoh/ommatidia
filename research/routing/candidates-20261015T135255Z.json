@@ -1,0 +1,903 @@
+{
+  "candidates": [
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "label": "GPT-6-Luna",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": 0.5
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 1
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "composer-2.5",
+      "label": "Composer 2.5",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": 0.5,
+        "output": 2.5
+      },
+      "benchmark": {
+        "best_score": 79.8,
+        "best_source": "external"
+      },
+      "evidence": "ledger",
+      "vendor": "cursor",
+      "rank": 2
+    },
+    {
+      "providerInstanceId": "antigravity",
+      "provider": "antigravity",
+      "model": "gemini-3.8-flash-medium",
+      "label": "Gemini 3.8 Flash (Medium)",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": 0.75,
+        "output": 3.75
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "google",
+      "rank": 3
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "grok-4.7",
+      "label": "Grok 4.7",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ],
+      "cost": {
+        "input": 2.0,
+        "output": 6.0
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "xai",
+      "rank": 4
+    },
+    {
+      "providerInstanceId": "grok",
+      "provider": "grok",
+      "model": "grok-4.7",
+      "label": "Grok 4.7",
+      "efforts": [
+        "xhigh",
+        "high",
+        "medium",
+        "low"
+      ],
+      "cost": {
+        "input": 2.0,
+        "output": 6.0
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "xai",
+      "rank": 5
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-6.1-sol",
+      "label": "GPT-6.1-Sol",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
+      "cost": {
+        "input": 2.0,
+        "output": 10.0
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 6
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-sonnet-5-5",
+      "label": "Claude Sonnet 5.5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": 2.0,
+        "output": 10.0
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 7
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-6-sol",
+      "label": "GPT-6-Sol",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
+      "cost": {
+        "input": 2.0,
+        "output": 10.0
+      },
+      "benchmark": {
+        "best_score": 83.2,
+        "best_source": "external"
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 8
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-6-astra",
+      "label": "GPT-6-Astra",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
+      "cost": {
+        "input": null,
+        "output": 15.0
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 9
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-fable-5-1",
+      "label": "Claude Fable 5.1",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultracode",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": null,
+        "output": 12.0
+      },
+      "benchmark": {
+        "best_score": 83.8,
+        "best_source": "external"
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 10
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "claude-fable-5-1",
+      "label": "Claude Fable 5.1",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": 12.0
+      },
+      "benchmark": {
+        "best_score": 83.8,
+        "best_source": "external"
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 11
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-opus-5-5",
+      "label": "Claude Opus 5.5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultracode",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": 4.0,
+        "output": 20.0
+      },
+      "benchmark": {
+        "best_score": 85.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 12
+    },
+    {
+      "providerInstanceId": "antigravity",
+      "provider": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "label": "Gemini 3.8 Flash (High)",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "google",
+      "rank": 13
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/glm-5.3",
+      "label": "GLM-5.3",
+      "efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": {
+        "best_score": 100.0,
+        "best_source": "measured"
+      },
+      "evidence": "ledger",
+      "vendor": "zai",
+      "rank": 14
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-5.6-terra",
+      "label": "GPT-5.6-Terra",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": {
+        "best_score": 87.4,
+        "best_source": "external"
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 15
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-5.6-sol",
+      "label": "GPT-5.6-Sol",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
+      "cost": {
+        "input": 4.0,
+        "output": 20.0
+      },
+      "benchmark": {
+        "best_score": null,
+        "best_source": null
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 16
+    },
+    {
+      "providerInstanceId": "codex",
+      "provider": "codex",
+      "model": "gpt-5.6-luna",
+      "label": "GPT-5.6-Luna",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": {
+        "best_score": null,
+        "best_source": null
+      },
+      "evidence": "ledger",
+      "vendor": "openai",
+      "rank": 17
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-opus-5",
+      "label": "Claude Opus 5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultracode",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": {
+        "best_score": null,
+        "best_source": null
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 18
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-sonnet-5",
+      "label": "Claude Sonnet 5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 19
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-sonnet-4-6",
+      "label": "Claude Sonnet 4.6",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "max",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 20
+    },
+    {
+      "providerInstanceId": "claudeAgent",
+      "provider": "claudeAgent",
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultrathink"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 21
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "claude-fable-5",
+      "label": "Claude Fable 5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": 10.0,
+        "output": 50.0
+      },
+      "benchmark": {
+        "best_score": null,
+        "best_source": null
+      },
+      "evidence": "ledger",
+      "vendor": "anthropic",
+      "rank": 22
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "muse-spark-1.3",
+      "label": "Muse Spark 1.3",
+      "efforts": [
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 23
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "claude-haiku-5-5",
+      "label": "Claude Haiku 5.5",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 24
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "gemini-3.5-flash",
+      "label": "Gemini 3.5 Flash",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 25
+    },
+    {
+      "providerInstanceId": "cursor",
+      "provider": "cursor",
+      "model": "kimi-k3",
+      "label": "Kimi K3",
+      "efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 26
+    },
+    {
+      "providerInstanceId": "grok",
+      "provider": "grok",
+      "model": "grok-4.7-build-fast",
+      "label": "Grok 4.7 Fast",
+      "efforts": [
+        "xhigh",
+        "high",
+        "medium",
+        "low"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 27
+    },
+    {
+      "providerInstanceId": "grok",
+      "provider": "grok",
+      "model": "grok-4.6",
+      "label": "Grok 4.6",
+      "efforts": [
+        "xhigh",
+        "high",
+        "medium",
+        "low"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 28
+    },
+    {
+      "providerInstanceId": "grok",
+      "provider": "grok",
+      "model": "grok-4.5",
+      "label": "Grok 4.5",
+      "efforts": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 29
+    },
+    {
+      "providerInstanceId": "grok",
+      "provider": "grok",
+      "model": "grok-build",
+      "label": "Grok Build",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 30
+    },
+    {
+      "providerInstanceId": "antigravity",
+      "provider": "antigravity",
+      "model": "gemini-3.8-flash-low",
+      "label": "Gemini 3.8 Flash (Low)",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 31
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "label": "DeepSeek V4.1 Flash",
+      "efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 32
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/glm-5.3-flash",
+      "label": "GLM-5.3-Flash",
+      "efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 33
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/kimi-k3",
+      "label": "Kimi K3",
+      "efforts": [
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 34
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/cat-jam-free",
+      "label": "Cat Jam Free",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 35
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "opencode-go/gemini-4-argon-contributor",
+      "label": "Gemini 4 Argon Contributor",
+      "efforts": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 36
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/~unbiased/pareto-latest",
+      "label": "Pareto Latest",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 37
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/google/gemini-4-argon",
+      "label": "Google: Gemini 4 Argon",
+      "efforts": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 38
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/google/gemini-4-argon:batch",
+      "label": "Google: Gemini 4 Argon (batch)",
+      "efforts": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 39
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/liquid/lfm-2.5-24b-a2b",
+      "label": "LiquidAI: LFM2.5-24B-A2B",
+      "efforts": [
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 40
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/openrouter/pareto-code",
+      "label": "Pareto Code Router",
+      "efforts": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 41
+    },
+    {
+      "providerInstanceId": "pi",
+      "provider": "pi",
+      "model": "openrouter/unbiased/pareto-26.9",
+      "label": "Pareto 26.9",
+      "efforts": [
+        "default"
+      ],
+      "cost": {
+        "input": null,
+        "output": null
+      },
+      "benchmark": null,
+      "evidence": "unknown",
+      "vendor": null,
+      "rank": 42
+    }
+  ],
+  "policy": "performance-max cost-min; ledger evidence ranks before unknown",
+  "catalogue": "catalogue-20261015T135255Z.json"
+}

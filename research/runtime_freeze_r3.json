@@ -1,0 +1,64 @@
+{
+  "codeHash": "67916037000453ca273fab0e684afc53f95a624ecbd735b1debcb7b3753cdc9f",
+  "promptHash": "049722a66ba3900687017449ba3a6031272ed6058dc903c02f12fd32aec68019",
+  "specHash": "b478e261253891c0944e40cceea3a463904e63fd3b1d558bf444756cdbbfcbd4",
+  "files": {
+    "src/ommatidia/conditions.py": "cf0310e4f55197b0858f543acfe6cbf354b1f77de7369f22cd79fb8f2c45e703",
+    "src/ommatidia/types.py": "1052b5e6e415e5c1d2d6bb0ab6bde8378e6e2bb3d18638381edebdaad0c22571",
+    "src/ommatidia/evaluator.py": "d29efee0aa7897e8f7264beae13da60fe678cc05a9a289ab094bd449dd2fb3c8",
+    "src/ommatidia/campaign.py": "0ba0558b78230253c97bdca4d6de4b25498fedede1d2398fcfe63b13fb4ba5d8",
+    "src/ommatidia/contracts.py": "0ede1c2332c2a833c734e5ab2709da7d0612382bcf67febfc98996fdfcb9ddd8",
+    "src/ommatidia/runtime.py": "1c44dd5c483dedffa9bae79032bd7cb65e688f3b23e27aade776b5c94d0d7653",
+    "src/ommatidia/scoring.py": "fdac452e61a55606b30507bb832a89aa2d7b9cf1f723b2c2457a0db776d2f87d",
+    "src/ommatidia/integrity.py": "d17ab47c081a01b93e6db0d31842b9b3eac596af7912283416e9f4107973efa9",
+    "src/ommatidia/harness.py": "72382d4719b01708e62a393111bb4f53747e55333b1c0f201a8bae2f98d0952c",
+    "src/ommatidia/t3_adapter.py": "2002e4010098340bd6e485849b9198b2063fd810a0264e0e6ec253d03f1b53ad",
+    "src/ommatidia/ingestion.py": "effe68c19d4785dd1fb180963d0ca6f00f5f6cf967944f3246535cf6044cbc10",
+    "src/ommatidia/state.py": "171e161d65d5c7240640fc4002f606809d9b72eaefe74e720a57f7e7ad6bf522",
+    "src/ommatidia/invalidation.py": "ee8b39d40983f7f0b3b32797cedb036468056d4e4149912af9f4802d6bc51ba9",
+    "src/ommatidia/ledger.py": "48e6dce52aec26c7e3b685024f9e85b0d2fc462bc450dd6dd1c30b81ee58ba3f",
+    "src/ommatidia/seal.py": "884ff54c0c6d38365ad0a6d2ddf7dd6d0b4c109cc8c1e055b724e6caf1c4e964",
+    "research/PROTOCOL.md": "a8e928a19d2a390ef017da638bad87682c8e81f01f0081ec3f1c488915d7fefe",
+    "research/EVALUATION_SPEC.md": "61734daec67d4b3a66f40ddf490bdc338498f6c37de99732a26fb9394e314865",
+    "scripts/run_harness.py": "e488983649ca9f0d79cc469ff1eaa388176c1e545b3e469653da9d67951350e4",
+    "scripts/verify_seals.py": "255bb3a19b1ab58694482cbfd0fb446326a69dae45040379dd34fd2bce165116",
+    "pyproject.toml": "f4049030d0857feabff1db79e33fcff69d6cde8c8c19f246ef3223b5eec1bd63"
+  },
+  "prompts": {
+    "PROMPT_CONDITION_A": "8d80fa8d728519c4706f7b345f9f0c0bc2c6abebdb462cb8c24f2d0e5f51e23a",
+    "PROMPT_CONDITION_B_PHASE1": "8d80fa8d728519c4706f7b345f9f0c0bc2c6abebdb462cb8c24f2d0e5f51e23a",
+    "PROMPT_CONDITION_B_PHASE2": "394c34c15b12540227a6b70277c77ba790b3546c975beb61ad0ad45ec00dc69d",
+    "PROMPT_CONDITION_C": "fd0a08e0a4b95c7666187759f44e59c58f4d020d02cdf9f7b2bba3fdf1843fd3",
+    "PROMPT_CONDITION_D": "b27268ab46c41b5e5d9b50920f395fec4ba9d25f7214d753c3a24d58506f3ef6",
+    "PROMPT_CONDITION_E_COORDINATOR": "49acdbb2b5ad250302370c6ff046c5b5c7a6940c5ceb2b8072a91faf142cd899",
+    "PROMPT_CONDITION_E_INVESTIGATOR": "a51ad4afb3afed2eb7bd2fed38cb750f87b461f00150b005019ec3ad199f1df8",
+    "PROMPT_CONDITION_E_SYNTHESIS": "7e9a3caf46a11274bf1c04ba5c1b7d4802112767e83bfe017d114bcf7606fadc",
+    "dispatchInstruction": "11cd6280494e00e9f864db5d1c8110d71450bf4208348c048cdde11e722d680d",
+    "executableGraph": "304aad3021651d46e102d03c7ec9f133553d142c09ef65b59580f90841635667"
+  },
+  "schemaVersion": 3,
+  "runtimePackageVersion": "r3",
+  "createdAt": "2026-10-15T05:19:21.720780+00:00",
+  "baseCommit": "56ef2f1871286af0111884de5f3a094b88fa26a0",
+  "history": {
+    "research/holdout_manifest.json": "8dcd491ea916e5e0183204302170f5fa439e48cb0a47159a826cedc4ba7fc6b2",
+    "research/seal_manifest.json": "e52f174acf405ea018fe3c13e5752402568473b5614dd2116c920e3cddc78383"
+  },
+  "historicalCore": {
+    "src/ommatidia/conditions.py": "cf0310e4f55197b0858f543acfe6cbf354b1f77de7369f22cd79fb8f2c45e703",
+    "src/ommatidia/types.py": "1052b5e6e415e5c1d2d6bb0ab6bde8378e6e2bb3d18638381edebdaad0c22571",
+    "src/ommatidia/evaluator.py": "d29efee0aa7897e8f7264beae13da60fe678cc05a9a289ab094bd449dd2fb3c8",
+    "research/PROTOCOL.md": "a8e928a19d2a390ef017da638bad87682c8e81f01f0081ec3f1c488915d7fefe",
+    "research/EVALUATION_SPEC.md": "61734daec67d4b3a66f40ddf490bdc338498f6c37de99732a26fb9394e314865"
+  },
+  "coreFiles": [
+    "src/ommatidia/conditions.py",
+    "src/ommatidia/types.py",
+    "src/ommatidia/evaluator.py"
+  ],
+  "evaluationPackageStatus": "blocked_rebuild_required",
+  "boundaryIncident": "A prior reviewer process loaded held-out gold. No values were reportedly displayed or transmitted. Zero-inspection was nevertheless violated. Preserve the old package; future evaluation requires a new version built without reading old answers.",
+  "studyTrialsExecuted": 0,
+  "costYen": null,
+  "totalTokens": null
+}

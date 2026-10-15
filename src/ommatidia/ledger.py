@@ -93,10 +93,13 @@ class RunLedger:
             "pid": os.getpid(),
         }
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)
-        # Write lock atomically
-        temp_lock = self.lock_path.with_suffix(".tmp")
-        temp_lock.write_text(json.dumps(lock_data), encoding="utf-8")
-        temp_lock.replace(self.lock_path)
+        try:
+            with self.lock_path.open("x", encoding="utf-8") as stream:
+                json.dump(lock_data, stream)
+                stream.flush()
+                os.fsync(stream.fileno())
+        except FileExistsError as exc:
+            raise ConcurrencyLockError(f"Run lock already held: {self.lock_path}") from exc
         self._lock_acquired = True
 
     def release_lock(self) -> None:
@@ -151,6 +154,7 @@ class RunLedger:
         with open(self.ledger_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry.to_dict()) + "\n")
             f.flush()
+            os.fsync(f.fileno())
 
         return entry
 
