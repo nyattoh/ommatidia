@@ -22,3 +22,13 @@
 1. held-out の未追跡ファイルは、コミットしない。
 2. release 検査は、作業ツリーが clean かつ承認済みの評価パッケージを要求する。現時点では満たさないため、実験は開始できない。
 3. 実 T3 ホストの費用上限、予算の強制、独立監査が揃うまで、実験は行わない。
+
+## 監査結果（2026-10-16）
+
+- r6 公開パッケージの独立監査（監査者: antigravity / gemini-3.8-flash-medium、PM: claudeAgent / claude-opus-5-5）は、判定 needs_review。公開側の欠陥は見つからなかった。
+- 非公開側の照合は未完了。
+  - sealedPrivateManifestSha256 は、`cases/private_manifest.json` のハッシュ（`9924a137…23fa`）と一致することを確認済み（中身は未読）。
+  - 反例 12 件のタグは、オーナーが `cases/validate_private.py` で確認する。
+- 公開マニフェストの改行コードは LF に固定した（ハッシュ `5e8f…160f`）。
+- `research/datasets/heldout/manifest.json` は `.gitignore` に追加した。封印の検証には影響しない。ただし、ignore されたファイルは release 検査の dirty 判定に含まれない。
+- 監査者が許可外のファイル（`harness.py`、`validate_public.py` の実行、`hand_over_holdout_r6.md`、`.gitattributes`）に触れたことは、オーナーの判断で容認した。書き込みはアーカイブに残っていない。
