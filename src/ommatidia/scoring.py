@@ -1,5 +1,6 @@
 """Score saved traces; unavailable observations are errors, not invented metrics."""
 
+import hashlib
 import math
 import random
 from statistics import NormalDist
@@ -31,9 +32,18 @@ def score_saved_trial(record, rubric, metrics=("fda", "recallCrit", "dsc", "warr
     input_hashes = {e.content_hash for e in state.task.evidence}
     verified = {e.content_hash: e for e in state.evidence
                 if e.validity == EvidenceValidity.CURRENT and e.content_hash not in input_hashes}
-    retrieved = {e.content_hash for e in fj.cited_evidence
-                 if e.content_hash in verified and e.locator == verified[e.content_hash].locator
-                 and e.source_group == verified[e.content_hash].source_group}
+    retrieved = set()
+    for cited in fj.cited_evidence:
+        observed = verified.get(cited.content_hash)
+        if (
+            observed is not None
+            and cited.locator == observed.locator
+            and cited.source_group == observed.source_group
+            and cited.passage == observed.passage
+            and hashlib.sha256(cited.passage.encode("utf-8")).hexdigest()
+            == cited.content_hash
+        ):
+            retrieved.add(cited.content_hash)
     if failed:
         retrieved = set()
     critical = set(rubric.get("criticalEvidenceHashes", []))
@@ -92,6 +102,7 @@ def validate_matrix(records, conditions, task_ids, run_id=None):
         raise ValueError("The preregistered denominator is exactly 24 distinct cases")
     matrix = {condition: {} for condition in conditions}
     identities = set()
+    task_hashes = {}
     for record in records:
         if record.condition.value not in matrix:
             continue
@@ -99,6 +110,14 @@ def validate_matrix(records, conditions, task_ids, run_id=None):
             raise ValueError("Mixed run or replication in saved matrix")
         if record.task_id in matrix[record.condition.value]:
             raise ValueError("Duplicate trial in saved matrix")
+        if record.task_hash is None:
+            raise ValueError("Missing task packet provenance in saved matrix")
+        if (
+            record.task_id in task_hashes
+            and task_hashes[record.task_id] != record.task_hash
+        ):
+            raise ValueError("Mismatched task packet provenance across paired conditions")
+        task_hashes[record.task_id] = record.task_hash
         matrix[record.condition.value][record.task_id] = record
         identities.add((record.code_hash, record.prompt_hash, record.spec_hash, record.executor))
     if len(identities) != 1 or any(part is None for identity in identities for part in identity):
