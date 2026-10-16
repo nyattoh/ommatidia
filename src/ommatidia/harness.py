@@ -635,8 +635,17 @@ class ResearchHarness:
                 raise ValueError("T3 executor requires a verified public boundary")
             executor_func.require_public_boundary()
         # The synthetic path makes no paid calls, so each step reserves 0 yen.
+        # A metered or capped executor cannot take the synthetic path, whatever its name.
         # Paid executors must still declare an enforced per-call cap.
         if executor_name == "synthetic":
+            if (
+                getattr(executor_func, "host_metered", False)
+                or hasattr(executor_func, "enforced_cost_cap_yen")
+                or hasattr(executor_func, "require_public_boundary")
+            ):
+                raise ValueError(
+                    "Synthetic path cannot run a metered or capped executor"
+                )
             cost_cap = 0.0
         else:
             cost_cap = getattr(executor_func, "enforced_cost_cap_yen", None)
@@ -760,9 +769,11 @@ class ResearchHarness:
                     known = False
                 finally:
                     if executor_name == "synthetic":
-                        # The synthetic path makes no paid call, so its spend is known to be zero.
+                        # No paid call is made, so an unreported cost is known to be zero.
+                        # A reported cost is never overwritten.
                         known = True
-                        measured.cost_yen = 0.0
+                        if measured.cost_yen is None:
+                            measured.cost_yen = 0.0
                     with step_lock:
                         measured.elapsed_ms = max(
                             measured.elapsed_ms,
