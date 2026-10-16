@@ -32,3 +32,10 @@
 - 公開マニフェストの改行コードは LF に固定した（ハッシュ `5e8f…160f`）。
 - `research/datasets/heldout/manifest.json` は `.gitignore` に追加した。封印の検証には影響しない。ただし、ignore されたファイルは release 検査の dirty 判定に含まれない。
 - 監査者が許可外のファイル（`harness.py`、`validate_public.py` の実行、`hand_over_holdout_r6.md`、`.gitattributes`）に触れたことは、オーナーの判断で容認した。書き込みはアーカイブに残っていない。
+
+## 非公開側の照合（2026-10-16、オーナー実行）
+
+- `cases/validate_private.py` を実行し、`PRIVATE VALIDATION PASS checks=181 records=24`。
+- 評価用 24 件（ドメインごとに 8 件）、反例 12 件（タグと一致）、非公開マニフェストのハッシュ（公開側の `sealedPrivateManifestSha256` と一致）を確認。
+- このスクリプトはプロジェクト内の整合性検査であり、第三者監査ではない。
+- r6 を正式版にするかは未決（オーナーの判断待ち）。
