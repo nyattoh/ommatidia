@@ -31,7 +31,7 @@ from ommatidia.conditions import (
 from ommatidia.evaluator import compute_paired_differences, score_run_objectively
 from ommatidia.ingestion import ingest_final_judgement
 from ommatidia.ledger import RunLedger
-from ommatidia.seal import hash_file, verify_seal_manifest
+from ommatidia.seal import SealMismatchError, hash_file, verify_seal_manifest
 from ommatidia.state import compute_payload_hash
 from ommatidia.campaign import atomic_json, is_bounded_cost, validate_usage
 from ommatidia.integrity import fingerprints, verify_runtime_freeze
@@ -577,8 +577,20 @@ class ResearchHarness:
         verify_seal_manifest(
             json.loads(self.seal_manifest_path.read_text(encoding="utf-8"))
         )
+        freeze = json.loads(self.runtime_freeze_path.read_text(encoding="utf-8"))
+        if (
+            require_release
+            and freeze.get("evaluationPackageStatus") != "rebuilt_and_approved"
+        ):
+            raise SealMismatchError(
+                "Replacement evaluation package is required after boundary violation"
+            )
+        # Check cleanliness before the lock once. During the locked cohort, generated
+        # registry/ledger/trial files are expected; source and specification hashes
+        # are still verified on every trial.
         return verify_runtime_freeze(
-            self.runtime_freeze_path, require_release=require_release
+            self.runtime_freeze_path,
+            require_release=require_release and not self._locked,
         )
 
     def _load_registry(self):
@@ -627,9 +639,7 @@ class ResearchHarness:
             finally:
                 self._locked = False
                 self.campaign_lock.release_lock()
-        hashes = self.verify_environment(
-            require_release=executor_name != "synthetic"
-        )
+        hashes = self.verify_environment(require_release=executor_name != "synthetic")
         if executor_func is None:
             raise ValueError("executor_func is required")
         if executor_name.startswith("t3"):

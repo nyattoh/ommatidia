@@ -180,6 +180,145 @@ class TestUnderstandingState(unittest.TestCase):
         self.assertIsNone(self.state.usage.cost_yen)
         self.assertIsNone(self.state.usage.total_tokens)
 
+    def test_apply_observations_preserves_known_host_cost_when_omitted_and_allows_continuation_under_cap(
+        self,
+    ) -> None:
+        # Step host cost is already known before applying observation with cost omitted
+        self.state.usage.cost_yen = 25.0
+
+        obs_omitted = Observation(
+            execution_id="exec_cost_omitted",
+            probe_id="probe_cost_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=50.0,
+            cost_yen=None,
+        )
+        apply_observations(self.state, [obs_omitted])
+        # Preserves known host cost instead of resetting to None
+        self.assertEqual(self.state.usage.cost_yen, 25.0)
+
+        # Continuation under cap via closest existing focused stopping/budget path
+        capped_budget = Budget(
+            max_rounds=self.task.budget.max_rounds,
+            max_model_calls=self.task.budget.max_model_calls,
+            max_tool_calls=self.task.budget.max_tool_calls,
+            max_elapsed_ms=self.task.budget.max_elapsed_ms,
+            max_input_chars=self.task.budget.max_input_chars,
+            max_output_tokens_per_call=self.task.budget.max_output_tokens_per_call,
+            max_cost_yen=50.0,
+        )
+        should_stop, reason, dec = evaluate_stopping_conditions(self.state, capped_budget)
+        self.assertFalse(should_stop)
+        self.assertIsNone(reason)
+        self.assertEqual(dec, Decision.NEEDS_CHECK)
+
+        # Explicit observation cost adds once to existing known cost
+        obs_explicit = Observation(
+            execution_id="exec_cost_explicit",
+            probe_id="probe_cost_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=50.0,
+            cost_yen=10.0,
+        )
+        apply_observations(self.state, [obs_explicit])
+        self.assertEqual(self.state.usage.cost_yen, 35.0)
+
+        # Re-applying identical execution skips idempotently without adding cost again
+        apply_observations(self.state, [obs_explicit])
+        self.assertEqual(self.state.usage.cost_yen, 35.0)
+
+        # Unknown remains None on observation with cost omitted or explicit cost
+        self.state.usage.cost_yen = None
+        obs_omitted_when_unk = Observation(
+            execution_id="exec_cost_omitted_unk",
+            probe_id="probe_cost_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=10.0,
+            cost_yen=None,
+        )
+        apply_observations(self.state, [obs_omitted_when_unk])
+        self.assertIsNone(self.state.usage.cost_yen)
+
+        obs_explicit_when_unk = Observation(
+            execution_id="exec_cost_explicit_unk",
+            probe_id="probe_cost_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=10.0,
+            cost_yen=5.0,
+        )
+        apply_observations(self.state, [obs_explicit_when_unk])
+        self.assertIsNone(self.state.usage.cost_yen)
+
+    def test_apply_observations_preserves_known_step_tokens_when_omitted(
+        self,
+    ) -> None:
+        # Step host tokens already known before applying observation with total_tokens omitted
+        self.state.usage.total_tokens = 300
+
+        obs_omitted = Observation(
+            execution_id="exec_tokens_omitted",
+            probe_id="probe_tokens_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=50.0,
+            total_tokens=None,
+        )
+        apply_observations(self.state, [obs_omitted])
+        # Preserves known step tokens instead of resetting to None
+        self.assertEqual(self.state.usage.total_tokens, 300)
+
+        # Explicit observation tokens add once to existing known tokens
+        obs_explicit = Observation(
+            execution_id="exec_tokens_explicit",
+            probe_id="probe_tokens_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=50.0,
+            total_tokens=75,
+        )
+        apply_observations(self.state, [obs_explicit])
+        self.assertEqual(self.state.usage.total_tokens, 375)
+
+        # Re-applying identical execution skips idempotently without adding tokens again
+        apply_observations(self.state, [obs_explicit])
+        self.assertEqual(self.state.usage.total_tokens, 375)
+
+        # Unknown remains None on observation with tokens omitted or explicit tokens
+        self.state.usage.total_tokens = None
+        obs_omitted_when_unk = Observation(
+            execution_id="exec_tokens_omitted_unk",
+            probe_id="probe_tokens_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=10.0,
+            total_tokens=None,
+        )
+        apply_observations(self.state, [obs_omitted_when_unk])
+        self.assertIsNone(self.state.usage.total_tokens)
+
+        obs_explicit_when_unk = Observation(
+            execution_id="exec_tokens_explicit_unk",
+            probe_id="probe_tokens_test",
+            outcome=ObservationOutcome.COMPLETED,
+            evidence=[],
+            tool_calls=1,
+            elapsed_ms=10.0,
+            total_tokens=50,
+        )
+        apply_observations(self.state, [obs_explicit_when_unk])
+        self.assertIsNone(self.state.usage.total_tokens)
+
     def test_apply_observations_tolerant_to_unregistered_probe(self) -> None:
         obs = Observation(
             execution_id="exec_unregistered_probe",

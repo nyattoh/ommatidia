@@ -158,15 +158,13 @@ def apply_observations(
         # Cost and token accounting:
         # Unknown cost or tokens (None) remain unknown (None).
         # Never promote unknown (None) to known by adding an observation's known value.
+        # When an observation omits cost or tokens (None), existing known step host usage
+        # is preserved rather than invalidated to None.
         if obs.cost_yen is not None and state.usage.cost_yen is not None:
             state.usage.cost_yen += obs.cost_yen
-        else:
-            state.usage.cost_yen = None
 
         if obs.total_tokens is not None and state.usage.total_tokens is not None:
             state.usage.total_tokens += obs.total_tokens
-        else:
-            state.usage.total_tokens = None
 
         applied = AppliedExecution(
             execution_id=obs.execution_id,

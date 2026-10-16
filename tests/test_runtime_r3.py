@@ -594,6 +594,72 @@ def test_saved_scoring_uses_observations_and_refuses_unavailable_metrics(setup):
     assert score_saved_trial(record, rubric, ["far"])["far"] == 1.0
 
 
+@pytest.mark.parametrize("hypothesis", ["H1", "H2", "H3", "H4"])
+@pytest.mark.parametrize("favourable", [True, False], ids=["favourable", "adverse"])
+def test_saved_analysis_significance_requires_predicted_direction(setup, hypothesis, favourable):
+    from ommatidia.evaluator import compute_wilcoxon_signed_rank
+    from ommatidia.harness import compute_exact_mcnemar, compute_holm_bonferroni
+
+    records = saved_matrix(setup)
+    ids = sorted({record.task_id for record in records})
+    if not favourable:
+        for record in records:
+            record.metrics["fda"] = 1 - record.metrics["fda"]
+            record.metrics["recallCrit"] = 1 - record.metrics["recallCrit"]
+            record.metrics["dsc"] = 3 - record.metrics["dsc"]
+            record.metrics["far"] = 1 - record.metrics["far"]
+
+    result = analyse_saved_trials(records, ids, ids[:12])
+    expected_p = [
+        compute_exact_mcnemar(24, 0),
+        compute_wilcoxon_signed_rank([i % 3 + 1 for i in range(24)])["pValue"],
+        compute_wilcoxon_signed_rank([-(i % 3 + 1) / 4 for i in range(24)])["pValue"],
+        compute_exact_mcnemar(12, 0),
+    ]
+    assert [item["test"]["pValue"] for item in result["hypotheses"]] == expected_p
+    assert [item["holmAdjustedP"] for item in result["hypotheses"]] == compute_holm_bonferroni(expected_p)
+    direction = 1 if favourable else -1
+    assert [item["meanDifference"] for item in result["hypotheses"]] == [
+        direction, 2 * direction, -0.5 * direction, direction
+    ]
+    report = next(item for item in result["hypotheses"] if item["hypothesis"] == hypothesis)
+    assert report["holmAdjustedP"] < 0.05
+    assert report["significant"] is (favourable and hypothesis != "H4")
+    assert report["directionalSignificanceAvailable"] is (hypothesis != "H4")
+
+
+@pytest.mark.parametrize("hypothesis", ["H2", "H3"])
+def test_saved_analysis_uses_signed_rank_direction_not_mean_for_wilcoxon(hypothesis, setup):
+    records = saved_matrix(setup)
+    by_pair = {
+        (record.condition.value, record.task_id): record
+        for record in records
+    }
+    ids = sorted({record.task_id for record in records})
+
+    for index, task_id in enumerate(ids):
+        if hypothesis == "H2":
+            # Mean E-D is positive, but signed ranks strongly favour D.
+            by_pair[("D", task_id)].metrics["dsc"] = 0 if index < 3 else 1
+            by_pair[("E", task_id)].metrics["dsc"] = 100 if index < 3 else 0
+        else:
+            # Mean E-D FAR is negative, but signed ranks strongly favour D.
+            by_pair[("D", task_id)].metrics["far"] = 1.0 if index < 3 else 0.5
+            by_pair[("E", task_id)].metrics["far"] = 0.0 if index < 3 else 0.51
+
+    result = analyse_saved_trials(records, ids, ids[:12])
+    report = next(item for item in result["hypotheses"] if item["hypothesis"] == hypothesis)
+
+    if hypothesis == "H2":
+        assert report["meanDifference"] > 0
+        assert report["test"]["wPlus"] < report["test"]["wMinus"]
+    else:
+        assert report["meanDifference"] < 0
+        assert report["test"]["wPlus"] > report["test"]["wMinus"]
+    assert report["holmAdjustedP"] < 0.05
+    assert report["significant"] is False
+
+
 def test_cli_paired_tests_require_24_saved_pairs_and_apply_holm(setup):
     output, manifest, _ = setup
     records = saved_matrix(setup)

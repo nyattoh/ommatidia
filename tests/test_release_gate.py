@@ -1,6 +1,7 @@
 """Research partitions require an approved, clean release before dispatch."""
 
 import json
+import subprocess
 
 import pytest
 
@@ -172,3 +173,131 @@ def test_direct_rejection_does_not_acquire_lock_or_write_registry(setup, monkeyp
     assert lock_calls == []
     assert not harness.campaign_lock.lock_path.exists()
     assert not harness.resource_registry.storage_path.exists()
+
+
+class RepoLocalGit:
+    """Fake `git status` for a repository whose unignored output holds the campaign lock."""
+
+    def __init__(self, harness, monkeypatch, tmp_path, base=""):
+        self.events, self.extra, self.base = [], "", base
+        self.lock = harness.campaign_lock.lock_path
+        monkeypatch.setattr("ommatidia.harness.ROOT", tmp_path, raising=False)
+        real = subprocess.check_output
+
+        def check_output(args, **kwargs):
+            if args[:2] != ["git", "status"]:
+                return real(args, **kwargs)
+            self.events.append(("status", self.lock.exists()))
+            lock = f"?? {self.lock.relative_to(tmp_path).as_posix()}\n" if self.lock.exists() else ""
+            return self.base + lock + self.extra
+
+        monkeypatch.setattr(subprocess, "check_output", check_output)
+        acquire = harness.campaign_lock.acquire_lock
+
+        def track_acquire(run_id):
+            self.events.append(("acquire", None))
+            return acquire(run_id)
+
+        monkeypatch.setattr(harness.campaign_lock, "acquire_lock", track_acquire)
+
+
+@pytest.mark.parametrize("method", ["evaluate_task", "run_cohort"])
+def test_repo_local_lock_does_not_block_first_dispatch(setup, monkeypatch, tmp_path, method):
+    harness, task = setup
+    git = RepoLocalGit(harness, monkeypatch, tmp_path)
+    calls = []
+    executor = capped_executor(calls)
+    if method == "evaluate_task":
+        harness.evaluate_task(task, condition=ConditionType.A, executor_func=executor,
+                              executor_name="paid_probe", partition="dev")
+    else:
+        harness.run_cohort([task], [ConditionType.A], "local", executor,
+                           executor_name="paid_probe", partition="dev")
+    assert calls
+    assert git.events[0] == ("status", False)  # clean before the lock exists
+    assert git.events[1] == ("acquire", None)
+    assert [event for event in git.events if event[0] == "status"] == [
+        ("status", False)
+    ]  # cleanliness is checked once before locking
+    assert not harness.campaign_lock.lock_path.exists()
+
+
+def test_repo_local_campaign_outputs_do_not_block_next_trial(setup, monkeypatch, tmp_path):
+    harness, task = setup
+    git = RepoLocalGit(harness, monkeypatch, tmp_path)
+    second_task = type(task).from_dict(
+        {**task.to_dict(), "taskId": f"{task.task_id}-second"}
+    )
+    calls = []
+    executor = capped_executor(calls)
+    original_executor = executor
+
+    def writes_campaign_outputs(step, payload):
+        result = original_executor(step, payload)
+        if len(calls) == 1:
+            git.extra = (
+                "?? output/resource_registry.json\n"
+                "?? output/ledger.jsonl\n"
+                "?? output/dev/trials/first.json\n"
+            )
+        return result
+
+    writes_campaign_outputs.enforced_cost_cap_yen = executor.enforced_cost_cap_yen
+    records = harness.run_cohort(
+        [task, second_task],
+        [ConditionType.A],
+        "local-multiple-trials",
+        writes_campaign_outputs,
+        executor_name="paid_probe",
+        partition="dev",
+    )
+
+    assert len(records) == 2
+    assert calls
+    assert [event for event in git.events if event[0] == "status"] == [
+        ("status", False)
+    ]
+
+
+@pytest.mark.parametrize("method", ["evaluate_task", "run_cohort"])
+def test_repo_local_dirty_tree_creates_no_lock_and_no_dispatch(setup, monkeypatch, tmp_path, method):
+    harness, task = setup
+    git = RepoLocalGit(harness, monkeypatch, tmp_path, base="?? src/stray.py\n")
+    calls = []
+    with pytest.raises(SealMismatchError, match="clean freeze"):
+        if method == "evaluate_task":
+            harness.evaluate_task(task, condition=ConditionType.A, executor_func=capped_executor(calls),
+                                  executor_name="paid_probe", partition="dev")
+        else:
+            harness.run_cohort([task], [ConditionType.A], "dirty", capped_executor(calls),
+                               executor_name="paid_probe", partition="dev")
+    assert calls == []
+    assert ("acquire", None) not in git.events
+    assert not harness.campaign_lock.lock_path.exists()
+
+
+@pytest.mark.parametrize("method", ["evaluate_task", "run_cohort"])
+def test_runtime_freeze_change_after_lock_is_still_rejected(
+    setup, monkeypatch, tmp_path, method
+):
+    harness, task = setup
+    RepoLocalGit(harness, monkeypatch, tmp_path)
+    acquire = harness.campaign_lock.acquire_lock
+
+    def acquire_then_change_freeze(run_id):
+        acquire(run_id)
+        freeze = json.loads(harness.runtime_freeze_path.read_text(encoding="utf-8"))
+        freeze["codeHash"] = "0" * 64
+        harness.runtime_freeze_path.write_text(json.dumps(freeze), encoding="utf-8")
+
+    monkeypatch.setattr(harness.campaign_lock, "acquire_lock", acquire_then_change_freeze)
+    calls = []
+    with pytest.raises(SealMismatchError, match="Runtime freeze mismatch: codeHash"):
+        if method == "evaluate_task":
+            harness.evaluate_task(task, condition=ConditionType.A, executor_func=capped_executor(calls),
+                                  executor_name="paid_probe", partition="dev")
+        else:
+            harness.run_cohort([task], [ConditionType.A], "changed", capped_executor(calls),
+                               executor_name="paid_probe", partition="dev")
+    assert calls == []
+    assert not harness.campaign_lock.lock_path.exists()

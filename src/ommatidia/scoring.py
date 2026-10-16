@@ -178,5 +178,19 @@ def analyse_saved_trials(records, task_ids, counterexample_ids):
     adjusted = compute_holm_bonferroni([p if p is not None else 1.0 for p in raw])
     for report, p, adj in zip(reports, raw, adjusted):
         report["holmAdjustedP"] = adj if p is not None else None
-        report["significant"] = p is not None and adj < 0.05
+        hypothesis = report["hypothesis"]
+        test = report["test"]
+        if hypothesis == "H1":
+            direction_matches = test.get("b", 0) > test.get("c", 0)
+        elif hypothesis == "H2":
+            direction_matches = test.get("wPlus", 0) > test.get("wMinus", 0)
+        elif hypothesis == "H3":
+            direction_matches = test.get("wPlus", 0) < test.get("wMinus", 0)
+        else:
+            # H4's preregistered DCR outcome does not match the current FDA test.
+            direction_matches = False
+        report["directionalSignificanceAvailable"] = hypothesis != "H4"
+        report["significant"] = (
+            p is not None and adj < 0.05 and direction_matches
+        )
     return {"sampleSize": 24, "familySize": 4, "multiplicity": "Holm-Bonferroni", "hypotheses": reports}
