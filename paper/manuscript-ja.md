@@ -197,7 +197,7 @@ $$S = \langle G, C, H, E, U, I \rangle$$
 
 評価用の指標は評価用24件だけを分母とし（$N_{\text{heldout}} = 24$）、開発用のケースを分母に混ぜない。評価用ケースの正解、必須証拠の所在、採点規則は、実行前に SHA-256 で封印する。プロンプト、閾値、発見的規則は開発用24件だけで固定してから評価用の実行に進む。
 
-現時点の状態は次の通りである。作業記録（`research/hand_over_dev_cases.md`）によれば、開発用24件は8種類のケース型 × 3件として作成済みである。評価用24件は未作成であり、封印記録（`research/seal_manifest.json`）にはデータセットの項目がない。
+現時点の状態は次の通りである。作業記録（`research/hand_over_dev_cases.md`）によれば、開発用24件は8種類のケース型 × 3件として作成済みである。評価用24件は正式版として承認されておらず、本稿の実行には用いない。封印記録（`research/seal_manifest.json`）には、開発用 manifest（`research/datasets/dev/manifest.json`）と評価用 manifest（`research/datasets/heldout/manifest.json`）の項目がある。評価用 manifest の実ファイルは、未追跡の作業コピーとして管理する。実行時の凍結（`research/runtime_freeze_r4.json`）は未更新であり、コードの確定後に作成する。
 
 ### 4.4 評価指標 (Metrics)
 
