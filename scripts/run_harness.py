@@ -9,7 +9,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ommatidia.campaign import atomic_json
+from ommatidia.campaign import atomic_json, is_bounded_cost
 from ommatidia.harness import (
     ResearchHarness,
     TrialRecord,
@@ -62,6 +62,9 @@ def dummy_synthetic_executor(step_name, payload):
         },
         "usage": usage,
     }
+
+
+dummy_synthetic_executor.synthetic_only = True
 
 
 def parse_conditions(value):
@@ -133,6 +136,7 @@ def main(argv=None, dispatcher=None, public_boundary=None):
         "--runtime-freeze", type=Path, default=Path("research/runtime_freeze_r4.json")
     )
     parser.add_argument("--executor", choices=["synthetic", "t3"], default="synthetic")
+    parser.add_argument("--host-cost-cap-yen", type=float)
     parser.add_argument("--synthetic-check", action="store_true")
     parser.add_argument("--resume", action="store_true", default=True)
     parser.add_argument("--no-resume", action="store_false", dest="resume")
@@ -183,8 +187,12 @@ def main(argv=None, dispatcher=None, public_boundary=None):
         execution_modes = ("mechanism_check", "run_dev")
         executor = dummy_synthetic_executor
         if args.mode in execution_modes and args.executor == "t3":
+            if not is_bounded_cost(args.host_cost_cap_yen):
+                raise ValueError("T3 execution requires a finite, non-negative host cost cap (yen)")
             adapter = T3DelegationAdapter(
-                in_session_dispatcher=dispatcher, public_boundary=public_boundary
+                in_session_dispatcher=dispatcher,
+                public_boundary=public_boundary,
+                host_cost_cap_yen=args.host_cost_cap_yen,
             )
             adapter.require_public_boundary()
             executor = create_t3_executor(adapter)

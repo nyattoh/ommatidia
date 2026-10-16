@@ -608,6 +608,8 @@ class ResearchHarness:
         partition="mechanism",
     ):
         if not self._locked:
+            self.verify_environment(require_release=executor_name != "synthetic")
+            self._check_synthetic_executor(executor_name, executor_func)
             self.campaign_lock.acquire_lock(run_id)
             self._locked = True
             try:
@@ -625,7 +627,9 @@ class ResearchHarness:
             finally:
                 self._locked = False
                 self.campaign_lock.release_lock()
-        hashes = self.verify_environment()
+        hashes = self.verify_environment(
+            require_release=executor_name != "synthetic"
+        )
         if executor_func is None:
             raise ValueError("executor_func is required")
         if executor_name.startswith("t3"):
@@ -638,14 +642,7 @@ class ResearchHarness:
         # A metered or capped executor cannot take the synthetic path, whatever its name.
         # Paid executors must still declare an enforced per-call cap.
         if executor_name == "synthetic":
-            if (
-                getattr(executor_func, "host_metered", False)
-                or hasattr(executor_func, "enforced_cost_cap_yen")
-                or hasattr(executor_func, "require_public_boundary")
-            ):
-                raise ValueError(
-                    "Synthetic path cannot run a metered or capped executor"
-                )
+            self._check_synthetic_executor(executor_name, executor_func)
             cost_cap = 0.0
         else:
             cost_cap = getattr(executor_func, "enforced_cost_cap_yen", None)
@@ -653,8 +650,6 @@ class ResearchHarness:
                 raise ValueError(
                     "Executor must expose a finite, non-negative enforced_cost_cap_yen per call"
                 )
-        if executor_name == "t3":
-            self.verify_environment(require_release=True)
         trial_key = f"{partition}/{task.task_id}/{condition.value}/{replication}"
         identity = {key: hashes[key] for key in ("codeHash", "promptHash", "specHash")}
         identity.update(
@@ -900,6 +895,19 @@ class ResearchHarness:
         )
         return rec
 
+    @staticmethod
+    def _check_synthetic_executor(executor_name, executor_func):
+        if executor_name != "synthetic":
+            return
+        if (
+            getattr(executor_func, "host_metered", False)
+            or hasattr(executor_func, "enforced_cost_cap_yen")
+            or hasattr(executor_func, "require_public_boundary")
+        ):
+            raise ValueError("Synthetic path cannot run a metered or capped executor")
+        if getattr(executor_func, "synthetic_only", False) is not True:
+            raise ValueError("Synthetic path requires a synthetic_only executor")
+
     def run_cohort(
         self,
         tasks,
@@ -912,7 +920,10 @@ class ResearchHarness:
         replication=1,
         executor_name="synthetic",
     ):
-        self.verify_environment()
+        self.verify_environment(
+            require_release=executor_name != "synthetic"
+        )
+        self._check_synthetic_executor(executor_name, executor_func)
         if len({task.task_id for task in tasks}) != len(tasks) or len(
             set(conditions)
         ) != len(conditions):

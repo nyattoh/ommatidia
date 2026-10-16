@@ -55,6 +55,9 @@ def verify_runtime_freeze(path, root=ROOT, require_release=False):
     if require_release:
         if data.get("evaluationPackageStatus") != "rebuilt_and_approved":
             raise SealMismatchError("Replacement evaluation package is required after boundary violation")
-        if subprocess.check_output(["git", "status", "--porcelain"], cwd=root, text=True).strip():
+        if subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=all", "--ignore-submodules=none"],
+            cwd=root, text=True,
+        ).strip():
             raise SealMismatchError("Study execution requires a committed, clean freeze")
     return current

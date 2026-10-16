@@ -25,7 +25,7 @@ from ommatidia.t3_adapter import (
 )
 from ommatidia.types import ConditionType, Usage
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
-from tests.freeze_fixture import write_current_freeze
+from tests.freeze_fixture import clean_git_status, write_current_freeze
 
 
 class TestResearchHarness(unittest.TestCase):
@@ -166,6 +166,8 @@ class TestResearchHarness(unittest.TestCase):
                 "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
             }
 
+        mock_executor.synthetic_only = True
+
         # First run executes
         records1 = harness.run_cohort(
             tasks=[self.task],
@@ -209,6 +211,8 @@ class TestResearchHarness(unittest.TestCase):
                 "usage": {"rounds": 1, "modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
             }
 
+        mock_executor.synthetic_only = True
+
         # First run as synthetic
         harness.run_cohort(
             tasks=[self.task],
@@ -222,16 +226,18 @@ class TestResearchHarness(unittest.TestCase):
         self.assertEqual(call_count, 1)
 
         # An incompatible record is preserved, rather than overwritten by a new executor.
-        with self.assertRaisesRegex(ValueError, "provenance mismatch"):
-            harness.run_cohort(
-                tasks=[self.task],
-                conditions=[ConditionType.A],
-                run_id="run_mismatch_test",
-                executor_func=mock_executor,
-                partition="test_part",
-                resume=True,
-                executor_name="t3",
-            )
+        harness.runtime_freeze_path = write_current_freeze(self.base, release_ready=True)
+        with clean_git_status():
+            with self.assertRaisesRegex(ValueError, "provenance mismatch"):
+                harness.run_cohort(
+                    tasks=[self.task],
+                    conditions=[ConditionType.A],
+                    run_id="run_mismatch_test",
+                    executor_func=mock_executor,
+                    partition="test_part",
+                    resume=True,
+                    executor_name="t3",
+                )
         self.assertEqual(call_count, 1)
 
     def test_failed_trial_recorded_and_stays_in_denominator(self) -> None:
@@ -243,6 +249,8 @@ class TestResearchHarness(unittest.TestCase):
 
         def failing_executor(step_name: str, payload: dict) -> dict:
             raise RuntimeError("Synthetic delegation network failure")
+
+        failing_executor.synthetic_only = True
 
         rec = harness.evaluate_task(
             task=self.task,

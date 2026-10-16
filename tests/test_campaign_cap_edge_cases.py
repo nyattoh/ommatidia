@@ -10,11 +10,11 @@ from ommatidia.campaign import (
     atomic_json,
 )
 from ommatidia.harness import ResearchHarness
-from ommatidia.integrity import fingerprints
 from ommatidia.seal import create_seal_manifest
 from ommatidia.types import Budget, ConditionType, Usage
 from scripts.run_harness import dummy_synthetic_executor
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
+from tests.freeze_fixture import report_clean_git_status, write_current_freeze
 
 
 def budget(max_cost_yen=500.0):
@@ -148,13 +148,13 @@ def test_previous_schema_is_rejected_with_an_audited_migration_error(tmp_path):
 
 
 @pytest.fixture
-def harness_setup(tmp_path):
+def harness_setup(tmp_path, monkeypatch):
+    report_clean_git_status(monkeypatch)
     protocol = tmp_path / "protocol.md"
     protocol.write_text("Synthetic protocol", encoding="utf-8")
     manifest = tmp_path / "seal.json"
     create_seal_manifest(protocol, [], manifest)
-    freeze = tmp_path / "freeze.json"
-    atomic_json(freeze, {**fingerprints(), "baseCommit": "HEAD"})
+    freeze = write_current_freeze(tmp_path, release_ready=True)
     return tmp_path / "output", manifest, freeze, get_mechanism_check_fixtures()[0][0]
 
 

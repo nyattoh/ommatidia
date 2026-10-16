@@ -59,5 +59,7 @@ def test_reported_spend_on_the_synthetic_path_is_not_overwritten(setup):
         result["usage"] = {**result["usage"], "costYen": 3.0}
         return result
 
+    spends.synthetic_only = True
+
     with pytest.raises(ValueError, match="audit required"):
         harness(setup).run_cohort([setup[2]], [ConditionType.A], "spend", spends)

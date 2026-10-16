@@ -7,7 +7,7 @@ from ommatidia.seal import create_seal_manifest
 from ommatidia.t3_adapter import T3DelegationAdapter, create_t3_executor
 from ommatidia.types import ConditionType
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
-from tests.freeze_fixture import write_current_freeze
+from tests.freeze_fixture import report_clean_git_status, write_current_freeze
 
 ATTESTED_FLAGS = (
     "publicOnly",
@@ -28,13 +28,14 @@ def attesting(cap):
 
 
 @pytest.fixture
-def setup(tmp_path):
+def setup(tmp_path, monkeypatch):
+    report_clean_git_status(monkeypatch)
     protocol = tmp_path / "protocol.md"
     protocol.write_text("Synthetic protocol", encoding="utf-8")
     manifest = tmp_path / "seal.json"
     create_seal_manifest(protocol, [], manifest)
     task = get_mechanism_check_fixtures()[0][0]
-    return tmp_path / "output", manifest, task, write_current_freeze(tmp_path)
+    return tmp_path / "output", manifest, task, write_current_freeze(tmp_path, release_ready=True)
 
 
 def harness(setup):

@@ -32,11 +32,12 @@ from ommatidia.t3_adapter import (
 from ommatidia.types import ConditionType, Decision, GoldStandard, Usage
 from scripts.run_harness import dummy_synthetic_executor, main
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
-from tests.freeze_fixture import write_current_freeze
+from tests.freeze_fixture import report_clean_git_status, write_current_freeze
 
 
 @pytest.fixture
-def setup(tmp_path):
+def setup(tmp_path, monkeypatch):
+    report_clean_git_status(monkeypatch)
     protocol = tmp_path / "protocol.md"
     protocol.write_text("Synthetic protocol", encoding="utf-8")
     manifest = tmp_path / "seal.json"
@@ -59,7 +60,7 @@ def host_boundary():
 
 def make_harness(setup, **kwargs):
     output, manifest, _ = setup
-    kwargs.setdefault("runtime_freeze_path", write_current_freeze(output.parent))
+    kwargs.setdefault("runtime_freeze_path", write_current_freeze(output.parent, release_ready=True))
     return ResearchHarness(output, seal_manifest_path=manifest, **kwargs)
 
 
@@ -89,6 +90,8 @@ def test_actual_child_verdict_survives_roundtrip(setup, condition, nested):
         response = judgement(task.task_id)
         return {"finalJudgement": response} if nested else response
 
+    executor.synthetic_only = True
+
     record = make_harness(setup).run_cohort([task], [condition], "verdict", executor)[0]
     saved = TrialRecord.from_dict(
         json.loads(next((output / "dev/trials").glob("*.json")).read_text())
@@ -112,8 +115,12 @@ def test_actual_child_verdict_survives_roundtrip(setup, condition, nested):
 @pytest.mark.parametrize("condition", [ConditionType.A, ConditionType.B])
 def test_blank_invalid_response_is_inconclusive(setup, response, condition):
     _, _, task = setup
+    def executor(*_):
+        return response
+
+    executor.synthetic_only = True
     record = make_harness(setup).run_cohort(
-        [task], [condition], "invalid", lambda *_: response
+        [task], [condition], "invalid", executor
     )[0]
     assert record.status == "invalid_response"
     assert record.final_judgement.verdict == "inconclusive"
@@ -126,6 +133,8 @@ def test_failed_trials_persist_and_cohort_continues(setup):
 
     def fail(*_):
         raise RuntimeError("Synthetic outage")
+
+    fail.synthetic_only = True
 
     records = make_harness(setup).run_cohort(
         [task], [ConditionType.A, ConditionType.B], "outage", fail
@@ -161,6 +170,8 @@ def test_retry_is_charged_and_reserved_before_each_dispatch(setup):
             **judgement(task.task_id),
             "usage": {"modelCalls": 1, "toolCalls": 0, "costYen": 0.0},
         }
+
+    executor.synthetic_only = True
 
     record = make_harness(setup).run_cohort(
         [task], [ConditionType.A], "retry", executor
@@ -198,6 +209,8 @@ def test_campaign_caps_span_partitions_and_stop_before_call(setup):
     def executor(step, payload):
         calls.append(step)
         return dummy_synthetic_executor(step, payload)
+
+    executor.synthetic_only = True
 
     registry = GlobalResourceRegistry(max_aggregate_model_calls=1, max_total_trials=2)
     make_harness(setup, resource_registry=registry).run_cohort(
@@ -240,6 +253,8 @@ def test_crash_keeps_reservation_without_redispatch(setup):
     def crash(*_):
         raise KeyboardInterrupt()
 
+    crash.synthetic_only = True
+
     with pytest.raises(KeyboardInterrupt):
         make_harness(setup).run_cohort([task], [ConditionType.A], "crash", crash)
     registry = json.loads((output / "resource_registry.json").read_text())
@@ -252,11 +267,15 @@ def test_crash_keeps_reservation_without_redispatch(setup):
 
 def test_negative_usage_never_reduces_reserved_calls(setup):
     _, _, task = setup
+    def executor(*_):
+        return {"usage": {"modelCalls": -100, "toolCalls": -100}}
+
+    executor.synthetic_only = True
     record = make_harness(setup).run_cohort(
         [task],
         [ConditionType.A],
         "negative",
-        lambda *_: {"usage": {"modelCalls": -100, "toolCalls": -100}},
+        executor,
     )[0]
     assert record.status == "failed" and record.usage.model_calls == 1
     assert record.usage.tool_calls >= 0
@@ -391,7 +410,11 @@ def test_actual_mask_export_strips_nested_usage_and_separates_mapping(setup):
 
 def test_cli_failure_exit(setup, monkeypatch):
     output, manifest, _ = setup
-    monkeypatch.setattr("scripts.run_harness.dummy_synthetic_executor", lambda *_: {})
+    def blank_executor(*_):
+        return {}
+
+    blank_executor.synthetic_only = True
+    monkeypatch.setattr("scripts.run_harness.dummy_synthetic_executor", blank_executor)
     assert (
         main(
             [
@@ -458,6 +481,7 @@ def test_adaptive_graph_ingests_each_selected_probe_and_synthesises(setup, condi
             ]
         return output
 
+    executor.synthetic_only = True
     record = make_harness(setup).run_cohort([task], [condition], "probes", executor)[0]
     assert record.status == "completed"
     assert "synthesis" in calls[-1][0]
@@ -680,6 +704,8 @@ def test_per_trial_budget_stops_before_extra_dispatch(setup):
         dispatched.append(step)
         return dummy_synthetic_executor(step, payload)
 
+    executor.synthetic_only = True
+
     record = make_harness(setup).run_cohort(
         [task], [ConditionType.B], "one_call", executor
     )[0]
@@ -782,6 +808,7 @@ def test_e_roles_overlap_and_reservations_remain_consistent(setup):
             ]
         return output
 
+    executor.synthetic_only = True
     harness = make_harness(setup)
     record = harness.run_cohort([task], [ConditionType.E], "parallel", executor)[0]
     assert record.status == "completed", record.error_message
@@ -833,6 +860,8 @@ def test_reported_envelope_breach_is_durable_and_requires_audit(setup):
 
     def executor(*_):
         return {"usage": {"modelCalls": 9, "toolCalls": 0}}
+
+    executor.synthetic_only = True
 
     with pytest.raises(ValueError, match="audit required"):
         make_harness(setup).run_cohort(
