@@ -105,8 +105,9 @@ def check_public_payload(value):
             check_public_payload(item)
     elif isinstance(value, str):
         normal = value.lower().replace("\\", "/")
-        if any(
-            token in normal for token in ("/gold/", "/cases/", "unblinding_key.json")
+        if (
+            any(part in {"gold", "cases"} for part in normal.split("/"))
+            or "unblinding_key.json" in normal
         ):
             raise ValueError("Private locator in public payload")
 

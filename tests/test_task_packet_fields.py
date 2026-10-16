@@ -136,3 +136,72 @@ def test_public_guard_still_rejects_private_locator_in_sources():
         step_payload(
             task, ConditionType.A, condition_graph(ConditionType.A)[0], 1, "run"
         )
+
+
+@pytest.mark.parametrize(
+    "locator",
+    [
+        "gold/answer.json",
+        "cases/task.json",
+        "./gold/answer.json",
+        "./cases/task.json",
+        r".\gold\answer.json",
+        r"nested\cases\task.json",
+    ],
+)
+def test_public_guard_rejects_private_locator_path_components(locator):
+    task = TaskPacket.from_dict(
+        packet_dict(
+            domain="document_research",
+            availableSources=[
+                {
+                    "sourceGroup": "g",
+                    "description": "d",
+                    "entryLocator": locator,
+                }
+            ],
+        )
+    )
+
+    with pytest.raises(ValueError, match="Private locator"):
+        step_payload(
+            task, ConditionType.A, condition_graph(ConditionType.A)[0], 1, "run"
+        )
+
+
+@pytest.mark.parametrize(
+    "locator",
+    [
+        "public/guide.md",
+        "golden/answer.json",
+        "showcases/task.json",
+        "nested/mygold/answer.json",
+    ],
+)
+def test_public_guard_allows_locators_without_private_path_components(locator):
+    task = TaskPacket.from_dict(
+        packet_dict(
+            domain="document_research",
+            availableSources=[
+                {
+                    "sourceGroup": "g",
+                    "description": "d",
+                    "entryLocator": locator,
+                }
+            ],
+        )
+    )
+
+    step_payload(task, ConditionType.A, condition_graph(ConditionType.A)[0], 1, "run")
+
+
+@pytest.mark.parametrize("locator", ["gold/answer.json", "cases/task.json"])
+def test_public_guard_rejects_private_evidence_locators(locator):
+    data = packet_dict(domain="document_research", availableSources=SOURCES)
+    data["evidence"][0]["locator"] = locator
+    task = TaskPacket.from_dict(data)
+
+    with pytest.raises(ValueError, match="Private locator"):
+        step_payload(
+            task, ConditionType.A, condition_graph(ConditionType.A)[0], 1, "run"
+        )
