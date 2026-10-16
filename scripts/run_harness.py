@@ -17,9 +17,8 @@ from ommatidia.harness import (
     load_public_packets,
 )
 from ommatidia.integrity import ROOT
-from ommatidia.runtime import check_public_payload
 from ommatidia.scoring import analyse_saved_trials, score_saved_trial, validate_matrix
-from ommatidia.seal import hash_file
+from ommatidia.seal import ensure_non_private_asset_path, hash_file
 from ommatidia.t3_adapter import (
     T3DelegationAdapter,
     create_t3_executor,
@@ -85,13 +84,12 @@ def read_records(path):
 
 
 def reject_private_path(path):
-    if path.name == "unblinding_key.json" or any(
-        part.lower() in ("gold", "cases") for part in path.parts
-    ):
-        raise ValueError("Private evaluation asset path is not accepted by this driver")
+    return ensure_non_private_asset_path(path)
 
 
 def require_sealed_file(path, manifest_path):
+    path = reject_private_path(path)
+    manifest_path = reject_private_path(manifest_path)
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
     expected = data.get("datasets", {})
     matched = [
@@ -160,10 +158,11 @@ def main(argv=None, dispatcher=None, public_boundary=None):
             raise ValueError(
                 "Held-out actions are disabled pending a new approved evaluation package; no dataset was read"
             )
-        reject_private_path(args.dataset_dir)
-        for path in (args.rubric_file, args.analysis_design, args.records_file):
+        args.dataset_dir = reject_private_path(args.dataset_dir)
+        for attr in ("rubric_file", "analysis_design", "records_file", "manifest"):
+            path = getattr(args, attr)
             if path is not None:
-                reject_private_path(path)
+                setattr(args, attr, reject_private_path(path))
         if args.executor == "synthetic" and args.output_dir.resolve().is_relative_to(
             (ROOT / "research/output").resolve()
         ):
