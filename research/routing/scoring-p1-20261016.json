@@ -1,0 +1,93 @@
+{
+  "execution_contract": "pm_tdd_review",
+  "tasks": [
+    {
+      "id": "pm-scoring-p1",
+      "layer": "goal_pm",
+      "goal_id": "g-scoring-p1-20261016",
+      "kind": "planning",
+      "status": "done",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A3bb15ec3-d6a6-4247-b85b-47714debd197%3Adelegate-task%3Aommatidia-scoring-review-findings-goal-pm-20261016-r1",
+      "providerInstanceId": "codex",
+      "model": "gpt-6.1-sol"
+    },
+    {
+      "id": "test-scoring-passage-integrity-red",
+      "goal_id": "g-scoring-p1-20261016",
+      "kind": "test",
+      "status": "done",
+      "artifact": "tests/test_scoring_passage_integrity.py",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A8c6f9964-9f62-4790-8226-c758faad0004%3Adelegate-task%3Aommatidia-p1-passage-tests-red-20261016-r1",
+      "providerInstanceId": "codex",
+      "model": "gpt-6.1-sol",
+      "validation": {
+        "command": "python -B -m pytest -p no:cacheprovider tests/test_scoring_passage_integrity.py -q",
+        "exit_code": 1,
+        "result": "2 failed / 6 passed; changed passage and incorrect stored SHA-256 both received recallCrit=1.0"
+      }
+    },
+    {
+      "id": "test-scoring-task-hash-red",
+      "goal_id": "g-scoring-p1-20261016",
+      "kind": "test",
+      "status": "done",
+      "artifact": "tests/test_scoring_task_hash_provenance.py",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A8c6f9964-9f62-4790-8226-c758faad0004%3Adelegate-task%3Aommatidia-p1-task-hash-tests-red-20261016-r1",
+      "providerInstanceId": "codex",
+      "model": "gpt-6.1-sol",
+      "validation": {
+        "command": "python -B -m pytest -p no:cacheprovider tests/test_scoring_task_hash_provenance.py -q",
+        "exit_code": 1,
+        "result": "2 failed / 2 passed; mismatched and null task_hash values did not raise ValueError"
+      }
+    },
+    {
+      "id": "impl-scoring-provenance-p1",
+      "goal_id": "g-scoring-p1-20261016",
+      "kind": "implement",
+      "vendor": "openai",
+      "status": "done",
+      "artifact": "src/ommatidia/scoring.py; tests/test_scoring_passage_integrity.py; tests/test_scoring_task_hash_provenance.py",
+      "providerInstanceId": "codex",
+      "model": "gpt-6-luna",
+      "tdd": {
+        "red": {
+          "command": "python -B -m pytest -p no:cacheprovider tests/test_scoring_passage_integrity.py tests/test_scoring_task_hash_provenance.py -q",
+          "exit_code": 1
+        },
+        "green": {
+          "command": "python -B -m pytest -p no:cacheprovider tests/test_scoring_passage_integrity.py tests/test_scoring_task_hash_provenance.py -q",
+          "exit_code": 0
+        },
+        "regression": {
+          "command": "python -B -m pytest -p no:cacheprovider",
+          "exit_code": 0,
+          "result": "251 passed"
+        }
+      }
+    },
+    {
+      "id": "verify-scoring-provenance-p1",
+      "kind": "verify",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "impl-scoring-provenance-p1",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A607cf109-65ce-4be6-a64c-ad5d5f2e3bb3%3Adelegate-task%3Aommatidia-scoring-p1-agy-review-20261016-r1",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-4-argon-high",
+      "notes": "Independent reviewer also ran the two scoped test modules; 12 passed."
+    },
+    {
+      "id": "review-scoring-provenance-p1",
+      "kind": "code_review",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "impl-scoring-provenance-p1",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A607cf109-65ce-4be6-a64c-ad5d5f2e3bb3%3Adelegate-task%3Aommatidia-scoring-p1-agy-review-20261016-r1",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-4-argon-high"
+    }
+  ]
+}

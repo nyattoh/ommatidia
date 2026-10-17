@@ -7,6 +7,10 @@
     "research/datasets/dev/manifest.json": {
       "hash": "314901abb2faa9098a404ed92ededb4866f7e1ad9648cdf2ba17b33d4a8816c2",
       "sizeBytes": 16227
+    },
+    "research/datasets/heldout/manifest.json": {
+      "hash": "316570e170876fc7d73f9332ee6457b8affca3169fcd8f91bef3bb35a6b58dd8",
+      "sizeBytes": 16523
     }
   },
   "protocol": {

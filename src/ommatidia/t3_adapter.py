@@ -1,141 +1,362 @@
-"""Adapter bridging Ommatidia condition runners to T3 Code child delegation.
+"""Injected T3 transport for the same executable graph as the harness.
 
-Constructs strict, sealed payloads with prepare_child_task_payload and executes
-reasoning and investigation steps via T3 Code's delegate_task tool or ACP fallback.
+Native T3 worktree isolation alone is insufficient: it inherits the parent commit.
+A trusted controller must attest public-only files, one model invocation per step,
+and host-enforced budgets before any child dispatch is permitted.
 """
 
-from __future__ import annotations
-
+from dataclasses import dataclass, field
 import json
+import math
 import os
-import subprocess
+from pathlib import Path
 import time
-from typing import Any, Callable, Dict, Optional
 
-from ommatidia.ingestion import (
-    ingest_json_response,
-    prepare_child_task_payload,
-)
+from ommatidia.campaign import atomic_json
+from ommatidia.ingestion import ingest_json_response
+from ommatidia.runtime import FINAL_SCHEMA, condition_graph, render_prompt, step_payload
+
+FINAL_JUDGEMENT_SCHEMA = FINAL_SCHEMA
 
 
 class T3DelegationError(RuntimeError):
-    """Raised when T3 child delegation fails or returns unparseable outputs."""
     pass
 
 
-class T3DelegationAdapter:
-    """Dispatches reasoning and investigation tasks to T3 Code child delegation."""
+class CampaignAuditRequired(T3DelegationError):
+    """Dispatch or cancellation was ambiguous; no further campaign work is safe."""
 
-    def __init__(
-        self,
-        provider_instance_id: Optional[str] = None,
-        model_id: Optional[str] = None,
-        timeout_seconds: float = 300.0,
-        poll_interval_seconds: float = 2.0,
-    ) -> None:
-        self.provider_instance_id = provider_instance_id
-        self.model_id = model_id
-        self.timeout_seconds = timeout_seconds
-        self.poll_interval_seconds = poll_interval_seconds
 
-    def is_acp_cli_available(self) -> bool:
-        """Check if T3 ACP Node entrypoint is present in the environment."""
-        return bool(os.environ.get("T3_ACP_MCP_NODE"))
+@dataclass
+class DispatchReadyJob:
+    job_id: str
+    client_request_id: str
+    task_id: str
+    condition: str
+    step_name: str
+    target: dict
+    prompt: str
+    payload: dict
+    budget: dict
+    schema: dict = field(default_factory=lambda: dict(FINAL_SCHEMA))
 
-    def call_acp_mcp(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute a tool via T3 ACP MCP Node CLI fallback."""
-        node_bin = os.environ.get("T3_ACP_MCP_NODE")
-        if not node_bin:
-            raise T3DelegationError("T3_ACP_MCP_NODE environment variable not set")
-
-        entrypoint = os.environ.get("T3_ACP_MCP_ENTRYPOINT")
-        cmd = [node_bin]
-        if entrypoint:
-            cmd.append(entrypoint)
-        cmd.extend(["acp-mcp-call", tool_name, json.dumps(arguments)])
-
-        env = os.environ.copy()
-        env["ELECTRON_RUN_AS_NODE"] = "1"
-
-        try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                env=env,
-                timeout=self.timeout_seconds,
-                check=True,
-            )
-            return json.loads(proc.stdout)
-        except Exception as exc:
-            raise T3DelegationError(f"ACP MCP call '{tool_name}' failed: {exc}") from exc
-
-    def delegate_step(
-        self,
-        step_name: str,
-        payload: Dict[str, Any],
-        client_request_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Delegate a step to a child subagent and wait for structured response."""
-        req_id = client_request_id or f"ommatidia_step_{int(time.time() * 1000)}"
-
-        target: Dict[str, Any] = {}
-        if self.provider_instance_id:
-            target["providerInstanceId"] = self.provider_instance_id
-        if self.model_id:
-            target["model"] = self.model_id
-
-        task_prompt = (
-            f"Step: {step_name}\n"
-            f"Instruction: Execute the following task step and return your response strictly as a JSON object matching the requested schema.\n"
-            f"Payload:\n{json.dumps(payload, indent=2)}\n"
-        )
-
-        args = {
-            "task": task_prompt,
-            "target": target,
-            "mode": "async",
-            "clientRequestId": req_id,
+    def to_dict(self):
+        return {
+            "jobId": self.job_id,
+            "clientRequestId": self.client_request_id,
+            "taskId": self.task_id,
+            "condition": self.condition,
+            "stepName": self.step_name,
+            "target": self.target,
+            "prompt": self.prompt,
+            "payload": self.payload,
+            "budget": self.budget,
+            "schema": self.schema,
+            "isTemplate": True,
+            "execution": "ResearchHarness executable graph only",
         }
 
-        if self.is_acp_cli_available():
-            resp = self.call_acp_mcp("delegate_task", args)
-            task_id = resp.get("taskId")
-            if not task_id:
-                raise T3DelegationError(f"No taskId returned in delegation response: {resp}")
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            data["jobId"],
+            data["clientRequestId"],
+            data["taskId"],
+            data["condition"],
+            data["stepName"],
+            data["target"],
+            data["prompt"],
+            data["payload"],
+            data["budget"],
+            data["schema"],
+        )
 
-            # Poll for completion
-            deadline = time.time() + self.timeout_seconds
-            while time.time() < deadline:
-                status_resp = self.call_acp_mcp("task_status", {"taskId": task_id})
-                status = status_resp.get("status")
-                if status == "completed":
-                    result_text = status_resp.get("result", "")
-                    return ingest_json_response(result_text)
-                elif status in ("failed", "cancelled"):
-                    raise T3DelegationError(f"Delegated task {task_id} {status}: {status_resp.get('error')}")
-                time.sleep(self.poll_interval_seconds)
 
-            raise TimeoutError(f"Delegated task {task_id} timed out after {self.timeout_seconds}s")
-        else:
+def create_condition_dispatch_jobs(
+    task,
+    condition,
+    run_id,
+    provider_instance_id="agy",
+    model_id="gemini-3.8-flash-high",
+):
+    jobs = []
+    graph = condition_graph(condition)
+    for index, step in enumerate(graph, 1):
+        payload = step_payload(
+            task,
+            condition,
+            step,
+            index,
+            run_id,
+            {
+                "dependsOn": graph[index - 2].name if index > 1 else None,
+                "materialisation": "previous responses and updated state are supplied at execution",
+                "repeat": "bounded adaptive loop"
+                if step.kind == "proposal"
+                else "per selected probe"
+                if step.name == "ommatidia_investigator"
+                else "once",
+            },
+        )
+        jobs.append(
+            DispatchReadyJob(
+                "job_" + payload["clientRequestId"],
+                payload["clientRequestId"],
+                task.task_id,
+                condition.value,
+                step.name,
+                {"providerInstanceId": provider_instance_id, "model": model_id},
+                render_prompt(payload),
+                payload,
+                task.budget.to_dict(),
+                step.schema,
+            )
+        )
+    return jobs
+
+
+def create_condition_dispatch_job(*args, **kwargs):
+    return create_condition_dispatch_jobs(*args, **kwargs)[0]
+
+
+def export_campaign_dispatch_plan(
+    tasks,
+    conditions,
+    run_id,
+    output_path,
+    provider_instance_id="agy",
+    model_id="gemini-3.8-flash-high",
+):
+    jobs = [
+        job.to_dict()
+        for task in tasks
+        for condition in conditions
+        for job in create_condition_dispatch_jobs(
+            task, condition, run_id, provider_instance_id, model_id
+        )
+    ]
+    atomic_json(output_path, jobs)
+    return jobs
+
+
+def _unwrap(response):
+    if not isinstance(response, dict):
+        raise T3DelegationError("Transport returned no object")
+    return response.get("structuredContent", response)
+
+
+class T3DelegationAdapter:
+    def __init__(
+        self,
+        provider_instance_id="agy",
+        model_id="gemini-3.8-flash-high",
+        timeout_seconds=180.0,
+        poll_interval_seconds=2.0,
+        in_session_dispatcher=None,
+        public_boundary=None,
+        host_cost_cap_yen=None,
+    ):
+        self.provider_instance_id, self.model_id = provider_instance_id, model_id
+        self.timeout_seconds, self.poll_interval_seconds = (
+            timeout_seconds,
+            poll_interval_seconds,
+        )
+        self.in_session_dispatcher, self.public_boundary = (
+            in_session_dispatcher,
+            public_boundary,
+        )
+        # Per-call cost cap the host dispatcher is configured to enforce. It is not read from the executor.
+        self.host_cost_cap_yen = host_cost_cap_yen
+        self.dispatch_observer = None
+
+    def is_acp_cli_available(self):
+        return bool(os.environ.get("T3_ACP_MCP_NODE"))
+
+    def require_public_boundary(self):
+        if self.in_session_dispatcher is None or self.public_boundary is None:
             raise T3DelegationError(
-                "Neither T3 in-process delegate tool nor T3_ACP_MCP_NODE CLI available."
+                "Verified public-only dispatcher with host-enforced single-call budgets is required; ACP presence alone is insufficient"
             )
 
-
-def create_t3_executor(
-    adapter: Optional[T3DelegationAdapter] = None,
-    fallback_executor: Optional[Callable[[str, Dict[str, Any]], Dict[str, Any]]] = None,
-) -> Callable[[str, Dict[str, Any]], Dict[str, Any]]:
-    """Create an executor function suitable for condition runners."""
-    active_adapter = adapter or T3DelegationAdapter()
-
-    def executor(step_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def delegate_step(
+        self, step_name, payload, client_request_id=None, dispatch_observer=None
+    ):
+        self.require_public_boundary()
+        prompt = render_prompt(payload)
+        if len(prompt) > 48000:
+            raise T3DelegationError("Input character ceiling exceeded")
+        attestation = self.public_boundary(payload)
+        if not isinstance(attestation, dict) or not all(
+            attestation.get(key) is True
+            for key in (
+                "publicOnly",
+                "singleModelInvocation",
+                "enforcesStepBudget",
+                "hostUsageVerified",
+            )
+        ):
+            raise T3DelegationError(
+                "Public workspace and host budget attestation failed"
+            )
+        if (
+            not _is_cap(self.host_cost_cap_yen)
+            or attestation.get("enforcedCostCapYen") != self.host_cost_cap_yen
+        ):
+            raise T3DelegationError(
+                "Host attestation must report the configured per-call cost cap"
+            )
+        args = {
+            "task": prompt,
+            "target": {
+                "providerInstanceId": self.provider_instance_id,
+                "model": self.model_id,
+            },
+            "isolation": "worktree",
+            "mode": "async",
+            "clientRequestId": client_request_id or payload["clientRequestId"],
+        }
         try:
-            return active_adapter.delegate_step(step_name, payload)
+            response = _unwrap(self.in_session_dispatcher("delegate_task", args))
         except Exception as exc:
+            raise CampaignAuditRequired(
+                "Dispatch acknowledgement lost; preserve reservation and audit the stable clientRequestId"
+            ) from exc
+        task_id = response.get("taskId")
+        if (
+            not isinstance(task_id, str)
+            or not task_id.strip()
+            or task_id in ("None", "null")
+        ):
+            raise CampaignAuditRequired(
+                "Missing delegated taskId; dispatch state is unknown"
+            )
+        metadata = {
+            "taskId": task_id,
+            "providerInstanceId": response.get("providerInstanceId"),
+            "model": response.get("model"),
+            "clientRequestId": args["clientRequestId"],
+        }
+        observer = dispatch_observer or self.dispatch_observer
+        limit = min(self.timeout_seconds, payload["stepBudget"]["maxElapsedMs"] / 1000)
+        deadline = time.monotonic() + limit
+        try:
+            if observer:
+                observer(metadata)
+            if (
+                metadata["providerInstanceId"] != self.provider_instance_id
+                or metadata["model"] != self.model_id
+            ):
+                raise T3DelegationError(
+                    "Returned provider/model differs from selected study target"
+                )
+            while time.monotonic() < deadline:
+                status = _unwrap(
+                    self.in_session_dispatcher("task_status", {"taskId": task_id})
+                )
+                if status.get("status") == "completed":
+                    raw = (
+                        status.get("result")
+                        or status.get("summary")
+                        or status.get("latestTerminalSummary")
+                    )
+                    output = ingest_json_response(raw) if isinstance(raw, str) else raw
+                    if not isinstance(output, dict):
+                        raise T3DelegationError(
+                            "Completed child returned no structured result"
+                        )
+                    output = dict(output)
+                    output["_dispatch"] = metadata
+                    host_usage = status.get("hostUsage")
+                    if isinstance(host_usage, dict):
+                        output["_hostUsage"] = host_usage
+                    return output
+                if status.get("status") in ("failed", "cancelled", "interrupted"):
+                    raise T3DelegationError(
+                        f"Delegated task {task_id}: {status.get('status')}"
+                    )
+                if self.poll_interval_seconds:
+                    time.sleep(
+                        min(
+                            self.poll_interval_seconds,
+                            max(0, deadline - time.monotonic()),
+                        )
+                    )
+            raise TimeoutError(f"Delegated task {task_id} exceeded its deadline")
+        except Exception:
+            # Cancellation failure is surfaced; do not retry a child that might still spend.
+            try:
+                cancellation = _unwrap(
+                    self.in_session_dispatcher("task_cancel", {"taskId": task_id})
+                )
+            except Exception as exc:
+                raise CampaignAuditRequired(
+                    "Child cancellation failed; campaign audit required"
+                ) from exc
+            if cancellation.get("status") not in (
+                "cancelled",
+                "failed",
+                "completed",
+                "interrupted",
+            ):
+                raise CampaignAuditRequired(
+                    "Child cancellation unconfirmed; campaign audit required"
+                )
+            raise
+
+
+def create_t3_executor(adapter=None, fallback_executor=None):
+    active = adapter or T3DelegationAdapter()
+
+    def executor(step_name, payload):
+        try:
+            return active.delegate_step(
+                step_name,
+                payload,
+                dispatch_observer=executor.dispatch_observers.get(
+                    payload.get("clientRequestId")
+                ),
+            )
+        except Exception:
             if fallback_executor is not None:
                 return fallback_executor(step_name, payload)
             raise
 
+    executor.provider_instance_id, executor.model_id = (
+        active.provider_instance_id,
+        active.model_id,
+    )
+    executor.dispatch_observers = {}
+    executor.host_metered = True
+    executor.synthetic_fallback = fallback_executor is not None
+    executor.require_public_boundary = active.require_public_boundary
+    # None when the host has not configured a cap, so the harness refuses the executor.
+    executor.enforced_cost_cap_yen = (
+        active.host_cost_cap_yen if _is_cap(active.host_cost_cap_yen) else None
+    )
     return executor
+
+
+def _is_cap(value):
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+        and value >= 0
+    )
+
+
+class T3CampaignController:
+    def __init__(self, dispatcher_func=None, public_boundary=None):
+        self.adapter = T3DelegationAdapter(
+            in_session_dispatcher=dispatcher_func, public_boundary=public_boundary
+        )
+
+    def run_cohort(self, harness, **kwargs):
+        return harness.run_cohort(
+            executor_func=create_t3_executor(self.adapter), executor_name="t3", **kwargs
+        )
+
+    def dispatch_job(self, job):
+        raise T3DelegationError(
+            "Plan jobs are templates; use run_cohort for reservation, dependencies and result ingestion"
+        )

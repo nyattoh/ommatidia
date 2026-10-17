@@ -1,0 +1,68 @@
+[
+  {
+    "costYen": null,
+    "evidence": [
+      {
+        "validity": "current",
+        "scope": "Public audit status and current release gate only.",
+        "kind": "test",
+        "contentHash": "43bfa452cf5da3c433f3130ca037b2c528c29968b5cc61d97aeaa6959b849a21",
+        "id": "r5-gates-readback-evidence",
+        "retrievedAt": "2026-10-15T08:04:12.5106536+00:00",
+        "locator": "report first word and runtime freeze fields",
+        "passage": "Saved report first word is fail; freeze reports blocked_rebuild_required and studyTrialsExecuted zero.",
+        "sourceGroup": "workspace-readback",
+        "version": "2026-10-15T08:04:12.5106536+00:00"
+      }
+    ],
+    "elapsedMs": 236,
+    "executionId": "r5-gates-readback",
+    "probeId": "r5-gate-probe",
+    "outcome": "completed",
+    "toolCalls": 1
+  },
+  {
+    "costYen": null,
+    "evidence": [
+      {
+        "validity": "current",
+        "scope": "One scoped command only.",
+        "kind": "test",
+        "contentHash": "bae2611ab91b1acd98928fc6c6096064a7f60e7b3fbeeb3be2d3e70138dcea97",
+        "id": "helper-scoped-readback-evidence",
+        "retrievedAt": "2026-10-15T08:04:12.5106536+00:00",
+        "locator": "git status --short on two named report/gate files",
+        "passage": "A scoped git status readback returned exit code zero for the review report and task-gate paths.",
+        "sourceGroup": "workspace-exec",
+        "version": "2026-10-15T08:04:12.5106536+00:00"
+      }
+    ],
+    "elapsedMs": 285,
+    "executionId": "helper-scoped-readback",
+    "probeId": "helper-scope-probe",
+    "outcome": "completed",
+    "toolCalls": 1
+  },
+  {
+    "costYen": null,
+    "evidence": [
+      {
+        "validity": "current",
+        "scope": "No held-out data; probes only required field preservation.",
+        "kind": "test",
+        "contentHash": "7e808d36649865d261c2a24b5864bb11e578789fd7dd266fe17b02bf8a301a42",
+        "id": "packet-roundtrip-readback-evidence",
+        "retrievedAt": "2026-10-15T08:04:12.5106536+00:00",
+        "locator": "synthetic in-memory TaskPacket round-trip",
+        "passage": "Synthetic in-memory TaskPacket round-trip returned domain_preserved=false and availableSources_preserved=false.",
+        "sourceGroup": "schema-probe",
+        "version": "2026-10-15T08:04:12.5106536+00:00"
+      }
+    ],
+    "elapsedMs": 346,
+    "executionId": "packet-roundtrip-readback",
+    "probeId": "packet-contract-probe",
+    "outcome": "completed",
+    "toolCalls": 1
+  }
+]

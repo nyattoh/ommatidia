@@ -1,0 +1,66 @@
+{
+  "execution_contract": "pm_tdd_review",
+  "tasks": [
+    {
+      "id": "pm-relative-private-locator",
+      "layer": "goal_pm",
+      "goal_id": "g-relative-private-locator",
+      "kind": "planning",
+      "status": "done",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A385b5b0c-e09a-45b1-a118-b8bafb0cb88e%3Adelegate-task%3Aommatidia-relative-private-locator-goal-pm-r1",
+      "providerInstanceId": "codex",
+      "model": "gpt-6-luna"
+    },
+    {
+      "id": "impl-relative-private-locator",
+      "layer": "main",
+      "parent_id": "task-relative-private-locator",
+      "goal_id": "g-relative-private-locator",
+      "role": "implement",
+      "kind": "implement",
+      "vendor": "openai",
+      "status": "done",
+      "artifact": "src/ommatidia/runtime.py; tests/test_task_packet_fields.py",
+      "tdd": {
+        "red": {
+          "command": "python -B -m pytest tests/test_task_packet_fields.py -k 'private_locator' -q -p no:cacheprovider (pre-fix)",
+          "exit_code": 1
+        },
+        "green": {
+          "command": "python -B -m pytest tests/test_task_packet_fields.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        "regression": {
+          "command": "python -B -m pytest -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      }
+    },
+    {
+      "id": "verify-relative-private-locator",
+      "layer": "main",
+      "parent_id": "task-relative-private-locator",
+      "goal_id": "g-relative-private-locator",
+      "role": "test_integrate",
+      "kind": "verify",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "impl-relative-private-locator",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A385b5b0c-e09a-45b1-a118-b8bafb0cb88e%3Adelegate-task%3Aommatidia-relative-private-locator-review-agy-r1",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-medium"
+    },
+    {
+      "id": "review-relative-private-locator",
+      "kind": "code_review",
+      "vendor": "google",
+      "status": "done",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A385b5b0c-e09a-45b1-a118-b8bafb0cb88e%3Adelegate-task%3Aommatidia-relative-private-locator-review-agy-r1",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-medium",
+      "verdict": "pass",
+      "verifies": "impl-relative-private-locator"
+    }
+  ]
+}

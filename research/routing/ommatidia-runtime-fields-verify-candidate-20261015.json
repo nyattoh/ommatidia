@@ -1,0 +1,16 @@
+{
+  "candidates": [
+    {
+      "providerInstanceId": "antigravity",
+      "provider": "Google",
+      "model": "gemini-3.8-flash-high",
+      "label": "Gemini 3.8 Flash High",
+      "vendor": "google",
+      "efforts": [],
+      "cost": {"input": null, "output": null},
+      "benchmark": null,
+      "evidence": "unknown",
+      "rank": 1
+    }
+  ]
+}

@@ -1,0 +1,691 @@
+{
+  "schemaVersion": "r6-public-0.1",
+  "package": "research/datasets/heldout_r6_candidate",
+  "status": "candidate; requires independent public-only audit and separate freeze/runtime gates",
+  "counts": {
+    "publicPackets": 24,
+    "publicSourceFiles": 144,
+    "sourceGroupsPerPacket": 3,
+    "sourceFilesPerGroup": 2
+  },
+  "conventions": {
+    "keyBase": "package root; keys are relative POSIX paths",
+    "passageRule": "A passage is the complete UTF-8 text of a source file with LF line endings and no trailing newline; its content hash is the SHA-256 of that text.",
+    "provenance": "All source documents are authored synthetic material; no external document is quoted or cited."
+  },
+  "sealedPrivateManifestSha256": "9924a13795a4b8e92bc2c8be68f7ae976572699c116b42bfc97e0b21f53423fa",
+  "files": {
+    "public_packets/hr6_065bb14b.json": {
+      "hash": "b4d9901001ccaa2fcb4bde6528657db7f17c047e41e3ccc515e7bd82e904bdbc",
+      "sizeBytes": 2188
+    },
+    "public_packets/hr6_0ea0249d.json": {
+      "hash": "39a4565a0c880993cfdbbaac3f5ab2b423355f43c990ffd71491dc220929ed66",
+      "sizeBytes": 2137
+    },
+    "public_packets/hr6_18965122.json": {
+      "hash": "4270a3887f7431cb196c5d4110a2a289389a48810eb641f3b1a3f74cff87e8d6",
+      "sizeBytes": 2262
+    },
+    "public_packets/hr6_232beae1.json": {
+      "hash": "bc5125bf408f354bbeb2c5aa37da781ec3dc97d06c36bc15313f8bd1bcf67a54",
+      "sizeBytes": 2231
+    },
+    "public_packets/hr6_254de31d.json": {
+      "hash": "d93d62022f54c93d19bde9a3ea4a15369975f21a7a0b058b1017a24efba0c5cd",
+      "sizeBytes": 2100
+    },
+    "public_packets/hr6_25734332.json": {
+      "hash": "ae435e434740bd9351c18afb8c319611b6236599ea5b868fed7a1291951cc6c1",
+      "sizeBytes": 2272
+    },
+    "public_packets/hr6_2fe41278.json": {
+      "hash": "3cb407b12137205ae4bfed3cb89cd3a56b49f45d7360e592e6c6df6ec4a2b915",
+      "sizeBytes": 2202
+    },
+    "public_packets/hr6_3d999a28.json": {
+      "hash": "fdc07cf261e3e79fd9d29c7823bb5163ea714d74f8d7c9ddc9d19d34aa9fb0cc",
+      "sizeBytes": 2207
+    },
+    "public_packets/hr6_40781304.json": {
+      "hash": "5ce10a68fcb679657add27f2dda6b308b380fa867b87273bce140380023ee79c",
+      "sizeBytes": 2262
+    },
+    "public_packets/hr6_48a8eb43.json": {
+      "hash": "2e99af2042391b7b4f14688670f321e431a91e47405b5f2b8bb9df48a2a67966",
+      "sizeBytes": 2152
+    },
+    "public_packets/hr6_5fff6170.json": {
+      "hash": "58c8df8540d8fdee603504c84a747262cbe4a0363d44d93d3000327939ff1b8f",
+      "sizeBytes": 2182
+    },
+    "public_packets/hr6_6ac44518.json": {
+      "hash": "8ab3b0ceb9dd2767cb0fa8c05ee5724c02ca85bb094787a5de3d2015546c2705",
+      "sizeBytes": 2125
+    },
+    "public_packets/hr6_7ebb41cb.json": {
+      "hash": "3e915235aef33152d230805047ea33392b04196bd1c8323461641db153e316e3",
+      "sizeBytes": 2177
+    },
+    "public_packets/hr6_96a604e4.json": {
+      "hash": "2094178e77148d6fe40af0409e70f14881da6cfa6299f0f0551dcddaea0b32ae",
+      "sizeBytes": 2089
+    },
+    "public_packets/hr6_9756f8c3.json": {
+      "hash": "68c421ad51cf7080564e755ddc82b5223d7a182fe56721167b5c1e455ff150c1",
+      "sizeBytes": 2108
+    },
+    "public_packets/hr6_99898b08.json": {
+      "hash": "9bc8e75612056ef7841595e20544ab87534e10cdbfcd8560628a26b29f82bf5a",
+      "sizeBytes": 2195
+    },
+    "public_packets/hr6_a2fc8f1f.json": {
+      "hash": "c0ecb8e2997d6f383e8a00e6790004a986836c63fa41d7ac5aec1be58604dc7b",
+      "sizeBytes": 2132
+    },
+    "public_packets/hr6_a5a6a4c2.json": {
+      "hash": "3af22936422f6e8254b96017aaeae86ed60e7708c2177d71821dd44ab798a70f",
+      "sizeBytes": 2170
+    },
+    "public_packets/hr6_b17a6e79.json": {
+      "hash": "8b2c7cd93f0da7d31eb3da79c347a4c17f8b18de9b2fffd49f7768c5fa7c71c1",
+      "sizeBytes": 2278
+    },
+    "public_packets/hr6_b897819b.json": {
+      "hash": "27d1e8990af140643cd8075ed8a6eb68c5f3890e33f181b52e249c7483bba5e0",
+      "sizeBytes": 2238
+    },
+    "public_packets/hr6_bd9b6cb3.json": {
+      "hash": "1ac7dcb546f2c5cebbda260170466dba4ce28c15919ad071ce924ce9b478cbc9",
+      "sizeBytes": 2209
+    },
+    "public_packets/hr6_c9a92f92.json": {
+      "hash": "88923a18e4c4c937bd17f17037b73a985c50c637b93a00f8e981d92546c2725b",
+      "sizeBytes": 2159
+    },
+    "public_packets/hr6_cf4863fc.json": {
+      "hash": "dbf26f4b68f306fc9b81873f00c162e1cadd5b912b763b409f1a9b8117113529",
+      "sizeBytes": 2181
+    },
+    "public_packets/hr6_ff13b3e9.json": {
+      "hash": "0d878868510137a2c721fe99360badeff7100dc50ee09afc5f2b75c568bfd9dd",
+      "sizeBytes": 2155
+    },
+    "public_sources/hr6_065bb14b/grp1/doc1.txt": {
+      "hash": "eb466cada3bd4d2b12ac1425d980cf0c1eb6c7a8e6f5f37b2d8a1ac36080bfa3",
+      "sizeBytes": 225
+    },
+    "public_sources/hr6_065bb14b/grp1/doc2.txt": {
+      "hash": "63c1a4310cc13f1e709cc7180b72a34f26f32c8f9354d95d805c4a12043ce1bc",
+      "sizeBytes": 168
+    },
+    "public_sources/hr6_065bb14b/grp2/doc1.txt": {
+      "hash": "022a7e85b00ced80378a102afb73e748de5711a4ff2245c268f0e704db4524cd",
+      "sizeBytes": 141
+    },
+    "public_sources/hr6_065bb14b/grp2/doc2.txt": {
+      "hash": "ba9828bad38bf59cf44ddcee7d733f8739b0d4590bdcbed9011bf16e0271f17e",
+      "sizeBytes": 202
+    },
+    "public_sources/hr6_065bb14b/grp3/doc1.txt": {
+      "hash": "44c2043bd3710718dc7896075c435b14a294e8d15ed0ce74b2f4b27df444b363",
+      "sizeBytes": 258
+    },
+    "public_sources/hr6_065bb14b/grp3/doc2.txt": {
+      "hash": "d73a81ccaa83322a3a0647565a8f319b16c0df9e4cd354f7183e91ad3abcd813",
+      "sizeBytes": 285
+    },
+    "public_sources/hr6_0ea0249d/grp1/doc1.txt": {
+      "hash": "f91e98f2f5fb0ae33a755579c598665a173c9b577d20a3dcbae56623b4133e79",
+      "sizeBytes": 121
+    },
+    "public_sources/hr6_0ea0249d/grp1/doc2.txt": {
+      "hash": "9a2756d04e49a8937f713491efec1ae0a66b0306ef515abff199548304e5f03a",
+      "sizeBytes": 127
+    },
+    "public_sources/hr6_0ea0249d/grp2/doc1.txt": {
+      "hash": "de224c5318e48f4436595992b82fe8d1f09016d28bad39413910de166c0bbe7f",
+      "sizeBytes": 157
+    },
+    "public_sources/hr6_0ea0249d/grp2/doc2.txt": {
+      "hash": "03a07ff882b0e0cfb0ef722c57c13e086332cbd567ddb8ec01219ae785514908",
+      "sizeBytes": 163
+    },
+    "public_sources/hr6_0ea0249d/grp3/doc1.txt": {
+      "hash": "5f5ca4084db088483555c2432fc9ca22235cacf69a73a33437772e1acd02c496",
+      "sizeBytes": 239
+    },
+    "public_sources/hr6_0ea0249d/grp3/doc2.txt": {
+      "hash": "08fecbe6384e74d77572a60abb72afb7941bae1315fc9e9d274487ea5f29ba19",
+      "sizeBytes": 150
+    },
+    "public_sources/hr6_18965122/grp1/doc1.txt": {
+      "hash": "2fa85db95f1761becc11755fd0080b402dfc0296bb8d31f3bcc6d4149e9460c5",
+      "sizeBytes": 267
+    },
+    "public_sources/hr6_18965122/grp1/doc2.txt": {
+      "hash": "082efe0b38b2cdbdc42e1bccae01ae77eb92bad131edef2a37abd6dc0724fd89",
+      "sizeBytes": 286
+    },
+    "public_sources/hr6_18965122/grp2/doc1.txt": {
+      "hash": "9f811fc37ccc27ce73272d4afff5c3121d19e2ed45386af2291a3b634a887fd2",
+      "sizeBytes": 236
+    },
+    "public_sources/hr6_18965122/grp2/doc2.txt": {
+      "hash": "324a4bb9e29ecc9b349a13d7c48f67abaff7fb83e4a35f051bcf13e21f3c0c2f",
+      "sizeBytes": 183
+    },
+    "public_sources/hr6_18965122/grp3/doc1.txt": {
+      "hash": "b776c2d13d9074e85d64545383dc0599065a41b25aa4e27f00fdb7c498875c34",
+      "sizeBytes": 309
+    },
+    "public_sources/hr6_18965122/grp3/doc2.txt": {
+      "hash": "5bbdeaaa4605f5aee7ddab2156cede3b4474e0bdce589a1da187b0c5208eda2c",
+      "sizeBytes": 279
+    },
+    "public_sources/hr6_232beae1/grp1/doc1.txt": {
+      "hash": "953bc33ad6fc2eff7c4ae0dafb4e74536eb9afcc0abb6667145bd5b68cd5b898",
+      "sizeBytes": 228
+    },
+    "public_sources/hr6_232beae1/grp1/doc2.txt": {
+      "hash": "91a44181cba52baf9f38f84150baa413ee6e8171cfade2d4a8aa93797c994dec",
+      "sizeBytes": 180
+    },
+    "public_sources/hr6_232beae1/grp2/doc1.txt": {
+      "hash": "5afd952f1dbe42115a0cba2a79334955cc1a821d25a0b2a0f1df10f40cf986a5",
+      "sizeBytes": 247
+    },
+    "public_sources/hr6_232beae1/grp2/doc2.txt": {
+      "hash": "1cd3475014ad8ff687eee821c5551f3507c2775764c73015c6e2dd99e446289c",
+      "sizeBytes": 248
+    },
+    "public_sources/hr6_232beae1/grp3/doc1.txt": {
+      "hash": "35dc4ebde50fe766c6badfcaea00dfa8814b778795e5ae1c8a30f298badaeecc",
+      "sizeBytes": 243
+    },
+    "public_sources/hr6_232beae1/grp3/doc2.txt": {
+      "hash": "373e75572248a4dea09f9571780cdfb2f9048f79c8c53d349143bafb8980856a",
+      "sizeBytes": 212
+    },
+    "public_sources/hr6_254de31d/grp1/doc1.txt": {
+      "hash": "b208afe0206fbc56b6ef4be85aa6104782b3294945933062f497181c4f58cae3",
+      "sizeBytes": 197
+    },
+    "public_sources/hr6_254de31d/grp1/doc2.txt": {
+      "hash": "c018a77b4b9bd32a404bd9190cc6f8f8b33bdb5c87c46789c0b602efed3a0dc4",
+      "sizeBytes": 196
+    },
+    "public_sources/hr6_254de31d/grp2/doc1.txt": {
+      "hash": "f2fbf81e4d100780d347f16ba0a78ea02a46287d3c0d1ece1c28048a25f95a88",
+      "sizeBytes": 244
+    },
+    "public_sources/hr6_254de31d/grp2/doc2.txt": {
+      "hash": "a1e6e78d89dec2bcd6a497be45cd70d36d54322787c34054c462b228e941b89b",
+      "sizeBytes": 221
+    },
+    "public_sources/hr6_254de31d/grp3/doc1.txt": {
+      "hash": "54fd49b999635d738e392e4e8d8f3fbbd99dccabfac50453f53e10f20442f940",
+      "sizeBytes": 192
+    },
+    "public_sources/hr6_254de31d/grp3/doc2.txt": {
+      "hash": "7c14646114c50be6029435bce3321b0f29522c1c30a69e6a4eea0f999ba13c6c",
+      "sizeBytes": 207
+    },
+    "public_sources/hr6_25734332/grp1/doc1.txt": {
+      "hash": "263d6107db8ca1e5a758cf15f9b6ecaa9dff3b978308e798e63f8b996244859f",
+      "sizeBytes": 268
+    },
+    "public_sources/hr6_25734332/grp1/doc2.txt": {
+      "hash": "374d1baf31bdbbcd21f4e49ee95f37755ccfe33f47a8bc7ebe0b0f194f7c9ce8",
+      "sizeBytes": 371
+    },
+    "public_sources/hr6_25734332/grp2/doc1.txt": {
+      "hash": "9a18949df36bd58744bda37b30970be6c3f918ddb3d8672ee82100364a2de58c",
+      "sizeBytes": 272
+    },
+    "public_sources/hr6_25734332/grp2/doc2.txt": {
+      "hash": "99338e3bb8800ec9bda4aafdb97c107dba706d97ef9538cc8055b882e13d60ce",
+      "sizeBytes": 232
+    },
+    "public_sources/hr6_25734332/grp3/doc1.txt": {
+      "hash": "570978be379a155a68a24ade1459151a5a39aebefe56ef640d9c017137baed38",
+      "sizeBytes": 271
+    },
+    "public_sources/hr6_25734332/grp3/doc2.txt": {
+      "hash": "a2fb3f8cc7b604ecce74bbb2b1fe83ae4acf495fe422a8b3d9b67c6fb61706b1",
+      "sizeBytes": 214
+    },
+    "public_sources/hr6_2fe41278/grp1/doc1.txt": {
+      "hash": "685e45af8eace664882344ecc27386363d0b153ebfa5b052bea367765444344d",
+      "sizeBytes": 236
+    },
+    "public_sources/hr6_2fe41278/grp1/doc2.txt": {
+      "hash": "89d4e6e1176dc9929bbe38d23f32ca5a0a327aaeb981da68552ff3d4ab13dad4",
+      "sizeBytes": 217
+    },
+    "public_sources/hr6_2fe41278/grp2/doc1.txt": {
+      "hash": "bb8bfdcb2492b78281f8381706338baa526d8851a8545ccda112a2eff270a86d",
+      "sizeBytes": 231
+    },
+    "public_sources/hr6_2fe41278/grp2/doc2.txt": {
+      "hash": "2f2088ccf2a4580648352c09d8f963bed42bdf75cef379ea5f07b4d881e126ae",
+      "sizeBytes": 275
+    },
+    "public_sources/hr6_2fe41278/grp3/doc1.txt": {
+      "hash": "6112895c52c8e4ce7a8c7c6f929f966df584e3605ceaa82764076dff5cfecfce",
+      "sizeBytes": 247
+    },
+    "public_sources/hr6_2fe41278/grp3/doc2.txt": {
+      "hash": "35711cd1e538739c6552dfe601310053b03c974e556417c835529baac38aafed",
+      "sizeBytes": 307
+    },
+    "public_sources/hr6_3d999a28/grp1/doc1.txt": {
+      "hash": "d2569f5b8c2eeaf842f5bb7e3d1efcaa3c0dc36be15022d2192dd83043e83070",
+      "sizeBytes": 283
+    },
+    "public_sources/hr6_3d999a28/grp1/doc2.txt": {
+      "hash": "d83228badd8f0af3185f01466bae6b27031c2774bcfaadf94a92b74d01ee21b0",
+      "sizeBytes": 243
+    },
+    "public_sources/hr6_3d999a28/grp2/doc1.txt": {
+      "hash": "793f253894db5d1f32358fe0f8b23a83ac8b7216b3ea6347a0d6b08c06e7eaa9",
+      "sizeBytes": 198
+    },
+    "public_sources/hr6_3d999a28/grp2/doc2.txt": {
+      "hash": "1072c77e4d335adcda11037a8c6dad6826c5014fdef2a201471ec3ecce4fed16",
+      "sizeBytes": 202
+    },
+    "public_sources/hr6_3d999a28/grp3/doc1.txt": {
+      "hash": "7b0999d76c52ab6210e0163755b095cab9aba827e4b13795f497a7e7ca8f8671",
+      "sizeBytes": 266
+    },
+    "public_sources/hr6_3d999a28/grp3/doc2.txt": {
+      "hash": "53939d65c6bece423cca54359dd8da432774eed96694a39c5cc8abfabf41ae81",
+      "sizeBytes": 288
+    },
+    "public_sources/hr6_40781304/grp1/doc1.txt": {
+      "hash": "1a4a1667c9c7d99719063eba1c82719facaccd7fad94ed9b84c5b5be8882f354",
+      "sizeBytes": 221
+    },
+    "public_sources/hr6_40781304/grp1/doc2.txt": {
+      "hash": "4e1c117638fcbb8edc50d4202a2e658c36d4a6ae93ed60afb1a52024ff3de632",
+      "sizeBytes": 171
+    },
+    "public_sources/hr6_40781304/grp2/doc1.txt": {
+      "hash": "8ce6970371d94bad3bb32fd8c3d1a010999e813b2de193e5ff731446f1fd3c4c",
+      "sizeBytes": 192
+    },
+    "public_sources/hr6_40781304/grp2/doc2.txt": {
+      "hash": "f004fa057fbe5292296c59afc119bb4dd5fe77317baba4d69836a279b9b58941",
+      "sizeBytes": 202
+    },
+    "public_sources/hr6_40781304/grp3/doc1.txt": {
+      "hash": "8b87fbc58ceac55865f3af8c88e806bfb8b763cd22632377c7f764793dc21491",
+      "sizeBytes": 248
+    },
+    "public_sources/hr6_40781304/grp3/doc2.txt": {
+      "hash": "4c2b6cfda035e22fda72ea9424a278f866175b42429dc22edb0bab93cb17277f",
+      "sizeBytes": 333
+    },
+    "public_sources/hr6_48a8eb43/grp1/doc1.txt": {
+      "hash": "0077ee9a2f29d8e5f39359d4f92ce6f93cf2c9d28b50d4e559f3c9690fada145",
+      "sizeBytes": 274
+    },
+    "public_sources/hr6_48a8eb43/grp1/doc2.txt": {
+      "hash": "2d41b09e7c3749bf5114cbccffd09cce1ff04c537b78bf1b4bd6eaa23d3c0c58",
+      "sizeBytes": 286
+    },
+    "public_sources/hr6_48a8eb43/grp2/doc1.txt": {
+      "hash": "d683ee2c080e901a3ae2470afa409798e4423c65831fd913e04ccd50de1e3d4e",
+      "sizeBytes": 263
+    },
+    "public_sources/hr6_48a8eb43/grp2/doc2.txt": {
+      "hash": "6f5ca73058ffed049b5de3b5bed4bc136a33e13c1807c3bece8f3dc4c30963bb",
+      "sizeBytes": 212
+    },
+    "public_sources/hr6_48a8eb43/grp3/doc1.txt": {
+      "hash": "bab256acbef6992cc8518bcafddcec517ad7207da8b4ac3d4d29c362ea72585b",
+      "sizeBytes": 251
+    },
+    "public_sources/hr6_48a8eb43/grp3/doc2.txt": {
+      "hash": "762c8b49e2297ec87064a20a0bbdeaef827d6bcf500bdb2e770eadd54f69a20b",
+      "sizeBytes": 221
+    },
+    "public_sources/hr6_5fff6170/grp1/doc1.txt": {
+      "hash": "24af9a1fa131195ecb635d588dfad784ac94a6660d0047b8de7e0c8ff943a3d6",
+      "sizeBytes": 311
+    },
+    "public_sources/hr6_5fff6170/grp1/doc2.txt": {
+      "hash": "1c573ba375c2f24a51395156b516683599e12ac9597064844d0f7c0f97003d2b",
+      "sizeBytes": 209
+    },
+    "public_sources/hr6_5fff6170/grp2/doc1.txt": {
+      "hash": "8e04120b8391ff2c3e0e14a67d69f2eda785a087f685cee7cee16fc702b6251a",
+      "sizeBytes": 250
+    },
+    "public_sources/hr6_5fff6170/grp2/doc2.txt": {
+      "hash": "2b0a012c4f3d8076a3d60f62275d4865a5311c3b015aa135df9eb14666e45d42",
+      "sizeBytes": 180
+    },
+    "public_sources/hr6_5fff6170/grp3/doc1.txt": {
+      "hash": "6dcb8d736b278b2e23681453e96f2a1bc349715d236706b23a2026248e003c94",
+      "sizeBytes": 220
+    },
+    "public_sources/hr6_5fff6170/grp3/doc2.txt": {
+      "hash": "8bde72441434adc86c77c0887fba9c30ed90b7788d2b62d32384aad5089a51c0",
+      "sizeBytes": 252
+    },
+    "public_sources/hr6_6ac44518/grp1/doc1.txt": {
+      "hash": "19ddde3b6de10dcfe15574fe982d1e600caecf73f31313bd26977ec5b970e85c",
+      "sizeBytes": 223
+    },
+    "public_sources/hr6_6ac44518/grp1/doc2.txt": {
+      "hash": "14105a8097d79731dd2d03d89975fef1081d60d045e175b4dd7c970b86b28a8e",
+      "sizeBytes": 146
+    },
+    "public_sources/hr6_6ac44518/grp2/doc1.txt": {
+      "hash": "329a1847e543cd6100bbc10f1a77d8b72317ca0be7102d1f1147f6ec40a934a2",
+      "sizeBytes": 159
+    },
+    "public_sources/hr6_6ac44518/grp2/doc2.txt": {
+      "hash": "d5f7f819c4b883cd0eb6dcc66c674314790cb7511d50a2301a3d6ff076e197ea",
+      "sizeBytes": 321
+    },
+    "public_sources/hr6_6ac44518/grp3/doc1.txt": {
+      "hash": "b4534068315857b8d8de64dbec7dbb30956ad01dc7a75451f7cbccf0d1488383",
+      "sizeBytes": 156
+    },
+    "public_sources/hr6_6ac44518/grp3/doc2.txt": {
+      "hash": "1c96b140dab349807ef12267f2261b5dd70c9b35d40eeda914e685d244952dc6",
+      "sizeBytes": 223
+    },
+    "public_sources/hr6_7ebb41cb/grp1/doc1.txt": {
+      "hash": "75f9f00ed1b7f40a7cd94c8bfc683eea1ab8853b6e3e2c691914a040d766d4ad",
+      "sizeBytes": 168
+    },
+    "public_sources/hr6_7ebb41cb/grp1/doc2.txt": {
+      "hash": "1f28c64832e396af85e3d503d53e218bb5474250f5ac9c71b8e5019f6ea9315b",
+      "sizeBytes": 203
+    },
+    "public_sources/hr6_7ebb41cb/grp2/doc1.txt": {
+      "hash": "e4e88a2ff65259bc1b31cc42aaa42a37890b47dd7705376d1412df822aa6ef22",
+      "sizeBytes": 206
+    },
+    "public_sources/hr6_7ebb41cb/grp2/doc2.txt": {
+      "hash": "ee79c659cb7285a506dc255e801ffcaafd11f1eceeb061c49f5cc369c5ae2b0d",
+      "sizeBytes": 332
+    },
+    "public_sources/hr6_7ebb41cb/grp3/doc1.txt": {
+      "hash": "8e05c217770ac3e7bcfc58971f803810e21c4f62ebe00dc3fcc0ff49d75a60d6",
+      "sizeBytes": 334
+    },
+    "public_sources/hr6_7ebb41cb/grp3/doc2.txt": {
+      "hash": "ee376e727c564ec4fbea78c0d792013944ba27b985afee9d38a700f689ffe073",
+      "sizeBytes": 174
+    },
+    "public_sources/hr6_96a604e4/grp1/doc1.txt": {
+      "hash": "e7b49328df83c7678b5bfdff499cdb618e5f178fff0303b4413175bad499c39a",
+      "sizeBytes": 185
+    },
+    "public_sources/hr6_96a604e4/grp1/doc2.txt": {
+      "hash": "393c5a74837b8446aedd5ac2754bfbb3f03ad652b74dccfd6b843ff721e5d51a",
+      "sizeBytes": 182
+    },
+    "public_sources/hr6_96a604e4/grp2/doc1.txt": {
+      "hash": "1dadffeae7bd69b01e63bd40c345323dcc853c16febaf8dd31467e1571f54bd4",
+      "sizeBytes": 264
+    },
+    "public_sources/hr6_96a604e4/grp2/doc2.txt": {
+      "hash": "ce5bba67bcb3e904f55817c41080ff5c6bdc873d8c740604cc62e3368ee21d14",
+      "sizeBytes": 202
+    },
+    "public_sources/hr6_96a604e4/grp3/doc1.txt": {
+      "hash": "667bf113aa24501d826413da5598582b5f5bbc6b5917dcc37bdf603b40c0d04d",
+      "sizeBytes": 335
+    },
+    "public_sources/hr6_96a604e4/grp3/doc2.txt": {
+      "hash": "e7d871e6e1025f90000908741f2217016f8a32dece302e37899d36030a47f154",
+      "sizeBytes": 189
+    },
+    "public_sources/hr6_9756f8c3/grp1/doc1.txt": {
+      "hash": "75b3815874f67e329a3f52b70136f45dbb3e1184bfd76178833c61c2570d0bec",
+      "sizeBytes": 377
+    },
+    "public_sources/hr6_9756f8c3/grp1/doc2.txt": {
+      "hash": "0580e71c03d2e27e0e27b663ec0729e13ae3272adc45fa5fded90848af7c5c64",
+      "sizeBytes": 144
+    },
+    "public_sources/hr6_9756f8c3/grp2/doc1.txt": {
+      "hash": "d122c7e01a0547a39248468710d77ccf0d3e84e6a6fcd15d8b1750f051361d43",
+      "sizeBytes": 199
+    },
+    "public_sources/hr6_9756f8c3/grp2/doc2.txt": {
+      "hash": "d99c3a988a13a3ae673b9b88a58530f759252144379a11a7ba9a02beee341e46",
+      "sizeBytes": 198
+    },
+    "public_sources/hr6_9756f8c3/grp3/doc1.txt": {
+      "hash": "228dea2e9138719c0dd6eff4ad608732ff59c50e32b994a31024218548f7e235",
+      "sizeBytes": 195
+    },
+    "public_sources/hr6_9756f8c3/grp3/doc2.txt": {
+      "hash": "1dc5fde56a14031079fc1438086259f97348c4cc6e663553c0f445ea7112eeae",
+      "sizeBytes": 295
+    },
+    "public_sources/hr6_99898b08/grp1/doc1.txt": {
+      "hash": "f7b4924e2cb27a4d65fac58ea44df3948ce6c6af937f005e98aed0855f2fcfed",
+      "sizeBytes": 185
+    },
+    "public_sources/hr6_99898b08/grp1/doc2.txt": {
+      "hash": "8c482910895f2e3fcb336259ed107da36c8cf4b3719342df7cad02ab5b2be5f5",
+      "sizeBytes": 237
+    },
+    "public_sources/hr6_99898b08/grp2/doc1.txt": {
+      "hash": "565d84124ceb03092aa0a15bdc2d20ae6dd0cbf6016421945579320454573f41",
+      "sizeBytes": 292
+    },
+    "public_sources/hr6_99898b08/grp2/doc2.txt": {
+      "hash": "b3f78e260478492c0e39522b54a653887fd5bca37700099883cbfe437ba94fa5",
+      "sizeBytes": 322
+    },
+    "public_sources/hr6_99898b08/grp3/doc1.txt": {
+      "hash": "08595c7abd17297d58cd61dc3085988fa73e6e9545e28f4e357d245b7866dd0b",
+      "sizeBytes": 131
+    },
+    "public_sources/hr6_99898b08/grp3/doc2.txt": {
+      "hash": "c1ffed5e1dd1e7b292456e363909bd66232a1a361d31a70990097cbc7f7e1ae2",
+      "sizeBytes": 199
+    },
+    "public_sources/hr6_a2fc8f1f/grp1/doc1.txt": {
+      "hash": "b356a0447fdf83a747749c5ee85e49cf3a403f5709cb571e7afc27b87b9062e7",
+      "sizeBytes": 231
+    },
+    "public_sources/hr6_a2fc8f1f/grp1/doc2.txt": {
+      "hash": "06a3bbf7eb191f6268a0008c6f576cd58f411af54105b622219fc20f7cf7b479",
+      "sizeBytes": 230
+    },
+    "public_sources/hr6_a2fc8f1f/grp2/doc1.txt": {
+      "hash": "356ae06da6faea513c9d2235232a4b45f1a207ff19e4a604b532e83b339601f7",
+      "sizeBytes": 224
+    },
+    "public_sources/hr6_a2fc8f1f/grp2/doc2.txt": {
+      "hash": "13c55ac515f1871fc743e051eb7a608f2753f012cd5b8e38c0c789799edb7593",
+      "sizeBytes": 213
+    },
+    "public_sources/hr6_a2fc8f1f/grp3/doc1.txt": {
+      "hash": "3a8a4fd426add11c897451f8e4011fd92171a2cfa4b49773211eb3b0096628eb",
+      "sizeBytes": 252
+    },
+    "public_sources/hr6_a2fc8f1f/grp3/doc2.txt": {
+      "hash": "8ecff3c98c283c5317b1987779e306885831b9875e399daf1d449926c9680903",
+      "sizeBytes": 123
+    },
+    "public_sources/hr6_a5a6a4c2/grp1/doc1.txt": {
+      "hash": "96e70602d9ae24f07b09a0c6f1cd8efbffa004020a711f4b9a31a3f03326a624",
+      "sizeBytes": 241
+    },
+    "public_sources/hr6_a5a6a4c2/grp1/doc2.txt": {
+      "hash": "226501ad97ac2565ae348451b6c43e8ebd358730151af87ee5879bf8d25c8d92",
+      "sizeBytes": 343
+    },
+    "public_sources/hr6_a5a6a4c2/grp2/doc1.txt": {
+      "hash": "891b548f6400823836b095308e42cc5d0bf612d112c2508c0576febaaa09929a",
+      "sizeBytes": 201
+    },
+    "public_sources/hr6_a5a6a4c2/grp2/doc2.txt": {
+      "hash": "ce2de8741f1c25bd517aa1747957ac49fc0e04abb4f52eacf36d47e87bcb8ee1",
+      "sizeBytes": 190
+    },
+    "public_sources/hr6_a5a6a4c2/grp3/doc1.txt": {
+      "hash": "eeb5cf5c35d6f567263f2913055b069bc3427b6478b17c4be663652a0aba3931",
+      "sizeBytes": 276
+    },
+    "public_sources/hr6_a5a6a4c2/grp3/doc2.txt": {
+      "hash": "f9b4e67795d57517319020293856781cfb09b7ee72c203c64081f5f206b0946a",
+      "sizeBytes": 183
+    },
+    "public_sources/hr6_b17a6e79/grp1/doc1.txt": {
+      "hash": "ce6e615e89067e7997406060dedc0ff3c24f18f3785c87f769055b0e96dce517",
+      "sizeBytes": 199
+    },
+    "public_sources/hr6_b17a6e79/grp1/doc2.txt": {
+      "hash": "56474ffd76173953bd72acf05a9ca9741f7186ddc970bd82e9696278fdbe1418",
+      "sizeBytes": 227
+    },
+    "public_sources/hr6_b17a6e79/grp2/doc1.txt": {
+      "hash": "2d23bd28ea10a1a98dfbf91289c6da0a616d5747e93c1951f02ab88692eef411",
+      "sizeBytes": 194
+    },
+    "public_sources/hr6_b17a6e79/grp2/doc2.txt": {
+      "hash": "d5c0243d2b3c55cf47a7948906ca4d4f74b8830279439312c0de2cd8f8e3b8e9",
+      "sizeBytes": 318
+    },
+    "public_sources/hr6_b17a6e79/grp3/doc1.txt": {
+      "hash": "622871fc4a1fcd4918451fbfe040695e0b45a4d99b0688a36f773a9c2fee8325",
+      "sizeBytes": 365
+    },
+    "public_sources/hr6_b17a6e79/grp3/doc2.txt": {
+      "hash": "1444d3c175bf4bcaf59a1fc23154dc06358d2ce54c7b75c4dc0a30e0cf6d3a1d",
+      "sizeBytes": 230
+    },
+    "public_sources/hr6_b897819b/grp1/doc1.txt": {
+      "hash": "ab82c2f64d848b83e4d9d803a8e4e6f51c09a83d417a1fd87d2b56f794bcf4be",
+      "sizeBytes": 167
+    },
+    "public_sources/hr6_b897819b/grp1/doc2.txt": {
+      "hash": "304b1ceb046bb7eed9ee851907ec121a52bc829a9a5ea5fd3b124011193b72dc",
+      "sizeBytes": 213
+    },
+    "public_sources/hr6_b897819b/grp2/doc1.txt": {
+      "hash": "a7ebe65e0a51c1e39e54fec61537fb2041bb7e6a3567bdd6d5bdf03d4a7a57e9",
+      "sizeBytes": 203
+    },
+    "public_sources/hr6_b897819b/grp2/doc2.txt": {
+      "hash": "443d53e607be044c676bae0ea8c36c33a69daf6fc8fd6619dcb72fcdfabf829d",
+      "sizeBytes": 293
+    },
+    "public_sources/hr6_b897819b/grp3/doc1.txt": {
+      "hash": "1f264935bc48645af58be3837b4d2e36502c80e78247ff30a3b477fc34151dac",
+      "sizeBytes": 211
+    },
+    "public_sources/hr6_b897819b/grp3/doc2.txt": {
+      "hash": "efe719a78c11d6f32c806b636389447f4039d442335f80de7ce8d3208b57924d",
+      "sizeBytes": 215
+    },
+    "public_sources/hr6_bd9b6cb3/grp1/doc1.txt": {
+      "hash": "502298ad262a92bbbc2fbf76dd4e12bae5d754ac966d1b889fc9c43dfb538c88",
+      "sizeBytes": 360
+    },
+    "public_sources/hr6_bd9b6cb3/grp1/doc2.txt": {
+      "hash": "fe9a127f2f14140fe203549be6c051062d6a75a16c80ae9ced6aefa6126699de",
+      "sizeBytes": 371
+    },
+    "public_sources/hr6_bd9b6cb3/grp2/doc1.txt": {
+      "hash": "646ccf6be91494123d411aadef144da07311bb3530f8ad6113af6b24eece6e99",
+      "sizeBytes": 209
+    },
+    "public_sources/hr6_bd9b6cb3/grp2/doc2.txt": {
+      "hash": "e4376512c24f296b98881cf78ddb93604303d6ee59248f0dc218fa08cd10bf43",
+      "sizeBytes": 175
+    },
+    "public_sources/hr6_bd9b6cb3/grp3/doc1.txt": {
+      "hash": "fb5d687f7092dbc45adecd94ca50e5de78572f16e768364bc03071c4a12c1cca",
+      "sizeBytes": 304
+    },
+    "public_sources/hr6_bd9b6cb3/grp3/doc2.txt": {
+      "hash": "b036a01c1ca9c0a049e496ee0521503150330b76afd9adde50b6d14fe10887fc",
+      "sizeBytes": 211
+    },
+    "public_sources/hr6_c9a92f92/grp1/doc1.txt": {
+      "hash": "a734e1a99a886211bf23cc60179173275aa8c3d96e83ba4effa76285d40e5334",
+      "sizeBytes": 194
+    },
+    "public_sources/hr6_c9a92f92/grp1/doc2.txt": {
+      "hash": "ee9617324559f639ca2dc8713453b2cab0e1ac0fda8653f236499045b6a583dc",
+      "sizeBytes": 393
+    },
+    "public_sources/hr6_c9a92f92/grp2/doc1.txt": {
+      "hash": "236b121e8acdc657af30efd4fa498b6c4969650ed071cb778700d9930057bc32",
+      "sizeBytes": 141
+    },
+    "public_sources/hr6_c9a92f92/grp2/doc2.txt": {
+      "hash": "4faf54f6b90c3ade4bb24c8cc584054adecd3c59457adf8339b7bbd9c8042bea",
+      "sizeBytes": 294
+    },
+    "public_sources/hr6_c9a92f92/grp3/doc1.txt": {
+      "hash": "dde44eff83a17facf18f70b25ca94abc77d6e46dd239b6606b6efeab72508539",
+      "sizeBytes": 223
+    },
+    "public_sources/hr6_c9a92f92/grp3/doc2.txt": {
+      "hash": "e919a72b125f2a15d378f17d4e1b91c86cfc740f970ad148bd420cee6963288b",
+      "sizeBytes": 270
+    },
+    "public_sources/hr6_cf4863fc/grp1/doc1.txt": {
+      "hash": "7b57f4fcfd9846295d4afe2647a23cf97c6b492640143ef2ced8a64423c3159e",
+      "sizeBytes": 190
+    },
+    "public_sources/hr6_cf4863fc/grp1/doc2.txt": {
+      "hash": "4c936e82cfa8cdf83ae26e214b798999c2e324227028f79dcdf3a86fddd73733",
+      "sizeBytes": 183
+    },
+    "public_sources/hr6_cf4863fc/grp2/doc1.txt": {
+      "hash": "8e6227f70644b003ab1f42da69f4d31bc7c725dd3d1403a388c8aa5f4bc60275",
+      "sizeBytes": 247
+    },
+    "public_sources/hr6_cf4863fc/grp2/doc2.txt": {
+      "hash": "c471c4ff12dac280dac878b2061906d70e45b3f066a03b4caa513a1e8e2c76f5",
+      "sizeBytes": 223
+    },
+    "public_sources/hr6_cf4863fc/grp3/doc1.txt": {
+      "hash": "edd66f8c5be86c70c5b2a088d25abb890ee36dbee94fe5c238e23752317c12fa",
+      "sizeBytes": 299
+    },
+    "public_sources/hr6_cf4863fc/grp3/doc2.txt": {
+      "hash": "5609fc9e8e5631ea865ed84d2ead1435813a584bcacaa9afc2de1d43735a679f",
+      "sizeBytes": 148
+    },
+    "public_sources/hr6_ff13b3e9/grp1/doc1.txt": {
+      "hash": "6a8344081b9463ba513d4bf6b7750f8af992cb5d4d1a4b50b95b471c968914a3",
+      "sizeBytes": 282
+    },
+    "public_sources/hr6_ff13b3e9/grp1/doc2.txt": {
+      "hash": "09359e0876b0d42267c40a62b24643065ff03bc9393316df678d1c7c0dc96bb3",
+      "sizeBytes": 152
+    },
+    "public_sources/hr6_ff13b3e9/grp2/doc1.txt": {
+      "hash": "7506a9837294e6645506e55c66710b052b69b56426c40075614228c18b69edf2",
+      "sizeBytes": 311
+    },
+    "public_sources/hr6_ff13b3e9/grp2/doc2.txt": {
+      "hash": "0883451591b29908ce0f99b015cbf87d04c0c22b11caa2ab936c45ccc1260100",
+      "sizeBytes": 179
+    },
+    "public_sources/hr6_ff13b3e9/grp3/doc1.txt": {
+      "hash": "769c235215a6753d6cbdd371e3a47f2a783c8982d0e02c59f8a1ef525824abfa",
+      "sizeBytes": 152
+    },
+    "public_sources/hr6_ff13b3e9/grp3/doc2.txt": {
+      "hash": "b0e61aab37cdab63d99e796173d725bd5461cf86b6c43a1f7c066ccb6c432c69",
+      "sizeBytes": 239
+    }
+  }
+}

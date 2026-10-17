@@ -8,3 +8,4 @@ __pycache__/
 outputs/private/
 .DS_Store
 Thumbs.db
+research/datasets/heldout/manifest.json

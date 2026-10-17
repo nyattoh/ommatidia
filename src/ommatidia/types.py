@@ -194,7 +194,9 @@ class CitedEvidenceItem:
             id=validate_id(data["id"], "cited_evidence.id"),
             source_group=str(data["sourceGroup"]),
             locator=str(data["locator"]),
-            content_hash=validate_sha256(data["contentHash"], "cited_evidence.contentHash"),
+            content_hash=validate_sha256(
+                data["contentHash"], "cited_evidence.contentHash"
+            ),
             passage=str(data.get("passage", "")),
             verdict_relation=str(data["verdictRelation"]),
         )
@@ -221,7 +223,9 @@ class FinalJudgementResourceUsage:
             model_calls=int(data.get("modelCalls", data.get("model_calls", 0))),
             tool_calls=int(data.get("toolCalls", data.get("tool_calls", 0))),
             elapsed_ms=float(data.get("elapsedMs", data.get("elapsed_ms", 0.0))),
-            input_chars_estimated=int(data.get("inputCharsEstimated", data.get("input_chars_estimated", 0))),
+            input_chars_estimated=int(
+                data.get("inputCharsEstimated", data.get("input_chars_estimated", 0))
+            ),
         )
 
 
@@ -237,10 +241,17 @@ class FinalJudgement:
 
     def __post_init__(self) -> None:
         validate_id(self.task_id, "final_judgement.task_id")
-        if self.verdict not in ("supported", "contradicted", "disputed", "inconclusive"):
+        if self.verdict not in (
+            "supported",
+            "contradicted",
+            "disputed",
+            "inconclusive",
+        ):
             raise ValueError(f"Invalid verdict: '{self.verdict}'")
         if not (0.0 <= self.confidence_score <= 1.0):
-            raise ValueError(f"Confidence score must be in [0.0, 1.0], got {self.confidence_score}")
+            raise ValueError(
+                f"Confidence score must be in [0.0, 1.0], got {self.confidence_score}"
+            )
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -260,7 +271,9 @@ class FinalJudgement:
             verdict=str(data["verdict"]),
             confidence_score=float(data["confidenceScore"]),
             justification=str(data["justification"]),
-            cited_evidence=[CitedEvidenceItem.from_dict(e) for e in data.get("citedEvidence", [])],
+            cited_evidence=[
+                CitedEvidenceItem.from_dict(e) for e in data.get("citedEvidence", [])
+            ],
             unresolved_gaps=[str(x) for x in data.get("unresolvedGaps", [])],
             resource_usage=FinalJudgementResourceUsage.from_dict(data["resourceUsage"]),
         )
@@ -279,7 +292,11 @@ class Budget:
     def __post_init__(self) -> None:
         if self.max_rounds < 0 or self.max_model_calls < 0 or self.max_tool_calls < 0:
             raise ValueError("Budget limits cannot be negative")
-        if self.max_elapsed_ms < 0 or self.max_input_chars < 0 or self.max_output_tokens_per_call < 0:
+        if (
+            self.max_elapsed_ms < 0
+            or self.max_input_chars < 0
+            or self.max_output_tokens_per_call < 0
+        ):
             raise ValueError("Budget limits cannot be negative")
         if self.max_cost_yen is not None and self.max_cost_yen < 0:
             raise ValueError("Budget cost cannot be negative")
@@ -304,7 +321,9 @@ class Budget:
             max_elapsed_ms=int(data["maxElapsedMs"]),
             max_input_chars=int(data["maxInputChars"]),
             max_output_tokens_per_call=int(data["maxOutputTokensPerCall"]),
-            max_cost_yen=float(data["maxCostYen"]) if data.get("maxCostYen") is not None else None,
+            max_cost_yen=float(data["maxCostYen"])
+            if data.get("maxCostYen") is not None
+            else None,
         )
 
 
@@ -315,7 +334,7 @@ class Usage:
     tool_calls: int = 0
     elapsed_ms: float = 0.0
     total_tokens: Optional[int] = None  # None indicates unknown; unknown is not 0
-    cost_yen: Optional[float] = None    # None indicates unknown; unknown is not 0
+    cost_yen: Optional[float] = None  # None indicates unknown; unknown is not 0
     input_chars: int = 0
 
     def add(self, other: Usage) -> None:
@@ -347,8 +366,8 @@ class Usage:
             return True
         if budget.max_input_chars > 0 and self.input_chars > budget.max_input_chars:
             return True
-        if budget.max_cost_yen is not None and self.cost_yen is not None:
-            if self.cost_yen > budget.max_cost_yen:
+        if budget.max_cost_yen is not None:
+            if self.cost_yen is None or self.cost_yen > budget.max_cost_yen:
                 return True
         return False
 
@@ -370,8 +389,12 @@ class Usage:
             model_calls=int(data.get("modelCalls", data.get("model_calls", 0))),
             tool_calls=int(data.get("toolCalls", data.get("tool_calls", 0))),
             elapsed_ms=float(data.get("elapsedMs", data.get("elapsed_ms", 0.0))),
-            total_tokens=int(data["totalTokens"]) if data.get("totalTokens") is not None else None,
-            cost_yen=float(data["costYen"]) if data.get("costYen") is not None else None,
+            total_tokens=int(data["totalTokens"])
+            if data.get("totalTokens") is not None
+            else None,
+            cost_yen=float(data["costYen"])
+            if data.get("costYen") is not None
+            else None,
             input_chars=int(data.get("inputChars", data.get("input_chars", 0))),
         )
 
@@ -425,7 +448,9 @@ class Evidence:
             scope=str(data["scope"]),
             passage=str(data.get("passage", "")),
             content_hash=validate_sha256(data["contentHash"], "evidence.content_hash"),
-            validity=EvidenceValidity(data.get("validity", EvidenceValidity.CURRENT.value)),
+            validity=EvidenceValidity(
+                data.get("validity", EvidenceValidity.CURRENT.value)
+            ),
             passage_unavailable=bool(data.get("passageUnavailable", False)),
         )
 
@@ -460,7 +485,9 @@ class Assessment:
     def from_dict(cls, data: Dict[str, Any]) -> Assessment:
         return cls(
             claim_id=validate_id(data["claimId"], "assessment.claimId"),
-            evidence_ids=[validate_id(x, "assessment.evidenceIds") for x in data["evidenceIds"]],
+            evidence_ids=[
+                validate_id(x, "assessment.evidenceIds") for x in data["evidenceIds"]
+            ],
             verdict=AssessmentVerdict(data["verdict"]),
             scope_matched=bool(data["scopeMatched"]),
             reason=str(data["reason"]),
@@ -555,7 +582,9 @@ class Resolution:
     def from_dict(cls, data: Dict[str, Any]) -> Resolution:
         return cls(
             reason=ResolutionReason(data["reason"]),
-            evidence_ids=[validate_id(x, "resolution.evidenceIds") for x in data["evidenceIds"]],
+            evidence_ids=[
+                validate_id(x, "resolution.evidenceIds") for x in data["evidenceIds"]
+            ],
             explanation=str(data["explanation"]),
         )
 
@@ -601,7 +630,11 @@ class Gap:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> Gap:
-        res = Resolution.from_dict(data["resolution"]) if data.get("resolution") is not None else None
+        res = (
+            Resolution.from_dict(data["resolution"])
+            if data.get("resolution") is not None
+            else None
+        )
         return cls(
             id=validate_id(data["id"], "gap.id"),
             kind=GapKind(data["kind"]),
@@ -610,8 +643,12 @@ class Gap:
             trigger_refs=[str(x) for x in data["triggerRefs"]],
             why_it_matters=str(data["whyItMatters"]),
             importance=GapImportance(data["importance"]),
-            claim_ids=[validate_id(x, "gap.claimIds") for x in data.get("claimIds", [])],
-            probe_ids=[validate_id(x, "gap.probeIds") for x in data.get("probeIds", [])],
+            claim_ids=[
+                validate_id(x, "gap.claimIds") for x in data.get("claimIds", [])
+            ],
+            probe_ids=[
+                validate_id(x, "gap.probeIds") for x in data.get("probeIds", [])
+            ],
             status=GapStatus(data.get("status", GapStatus.OPEN.value)),
             resolution=res,
         )
@@ -667,6 +704,37 @@ class Probe:
         )
 
 
+TASK_DOMAINS = ("software_engineering", "workflow_automation", "document_research")
+
+
+@dataclass(frozen=True)
+class AvailableSource:
+    source_group: str
+    description: str
+    entry_locator: str
+
+    def __post_init__(self) -> None:
+        for name in ("source_group", "description", "entry_locator"):
+            if not isinstance(getattr(self, name), str):
+                raise ValueError(f"availableSources.{name} must be a string")
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "sourceGroup": self.source_group,
+            "description": self.description,
+            "entryLocator": self.entry_locator,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Any) -> AvailableSource:
+        if not isinstance(data, dict):
+            raise ValueError("availableSources items must be objects")
+        for key in ("sourceGroup", "description", "entryLocator"):
+            if key not in data:
+                raise ValueError(f"availableSources item missing {key}")
+        return cls(data["sourceGroup"], data["description"], data["entryLocator"])
+
+
 @dataclass(frozen=True)
 class TaskPacket:
     schema_version: str
@@ -679,11 +747,32 @@ class TaskPacket:
     budget: Budget
     proposed_answer: Optional[str] = None
     proposed_actions: Optional[List[str]] = None
+    # None = absent (legacy/dev packets); spec-conformant packets always set both.
+    domain: Optional[str] = None
+    available_sources: Optional[List[AvailableSource]] = None
 
     def __post_init__(self) -> None:
         validate_id(self.task_id, "task_packet.task_id")
         if not self.success_criteria:
             raise ValueError("TaskPacket must specify at least one success criterion")
+        if (self.domain is None) != (self.available_sources is None):
+            raise ValueError(
+                "TaskPacket.domain and availableSources must be set together"
+            )
+        if self.domain is not None and self.domain not in TASK_DOMAINS:
+            raise ValueError(f"TaskPacket.domain must be one of {TASK_DOMAINS}")
+        if self.available_sources is not None and (
+            not isinstance(self.available_sources, list)
+            or not all(isinstance(s, AvailableSource) for s in self.available_sources)
+        ):
+            raise ValueError("TaskPacket.availableSources must be a list of sources")
+
+    def sources_dict(self) -> Optional[List[Dict[str, Any]]]:
+        return (
+            None
+            if self.available_sources is None
+            else [s.to_dict() for s in self.available_sources]
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         result: Dict[str, Any] = {
@@ -700,10 +789,27 @@ class TaskPacket:
             result["proposedAnswer"] = self.proposed_answer
         if self.proposed_actions is not None:
             result["proposedActions"] = list(self.proposed_actions)
+        if self.domain is not None:
+            result["domain"] = self.domain
+        if self.available_sources is not None:
+            result["availableSources"] = self.sources_dict()
         return result
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> TaskPacket:
+        has_domain, has_sources = "domain" in data, "availableSources" in data
+        if has_domain != has_sources:
+            raise ValueError(
+                "TaskPacket domain and availableSources must both be present or both absent"
+            )
+        sources = data.get("availableSources")
+        if has_sources:
+            if data["domain"] is None or sources is None:
+                raise ValueError(
+                    "TaskPacket domain and availableSources must not be null"
+                )
+            if not isinstance(sources, list):
+                raise ValueError("TaskPacket.availableSources must be an array")
         return cls(
             schema_version=str(data.get("schemaVersion", "0.1")),
             task_id=validate_id(data["taskId"], "task_packet.taskId"),
@@ -715,6 +821,10 @@ class TaskPacket:
             budget=Budget.from_dict(data["budget"]),
             proposed_answer=data.get("proposedAnswer"),
             proposed_actions=data.get("proposedActions"),
+            domain=data.get("domain"),
+            available_sources=None
+            if sources is None
+            else [AvailableSource.from_dict(s) for s in sources],
         )
 
 
@@ -756,8 +866,12 @@ class Observation:
             evidence=[Evidence.from_dict(e) for e in data.get("evidence", [])],
             tool_calls=int(data.get("toolCalls", 0)),
             elapsed_ms=float(data.get("elapsedMs", 0.0)),
-            cost_yen=float(data["costYen"]) if data.get("costYen") is not None else None,
-            total_tokens=int(data["totalTokens"]) if data.get("totalTokens") is not None else None,
+            cost_yen=float(data["costYen"])
+            if data.get("costYen") is not None
+            else None,
+            total_tokens=int(data["totalTokens"])
+            if data.get("totalTokens") is not None
+            else None,
             raw_output=data.get("rawOutput"),
         )
 
@@ -785,8 +899,12 @@ class AppliedExecution:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> AppliedExecution:
         return cls(
-            execution_id=validate_id(data["executionId"], "applied_execution.executionId"),
-            payload_hash=validate_sha256(data["payloadHash"], "applied_execution.payloadHash"),
+            execution_id=validate_id(
+                data["executionId"], "applied_execution.executionId"
+            ),
+            payload_hash=validate_sha256(
+                data["payloadHash"], "applied_execution.payloadHash"
+            ),
             probe_id=validate_id(data["probeId"], "applied_execution.probeId"),
             outcome=ObservationOutcome(data["outcome"]),
         )
@@ -817,21 +935,31 @@ class UnderstandingState:
             return self.final_judgement
 
         answer_claims = [c for c in self.claims if c.role == ClaimRole.ANSWER_CLAIM]
-        primary_claim = answer_claims[0] if answer_claims else (self.claims[0] if self.claims else None)
+        primary_claim = (
+            answer_claims[0]
+            if answer_claims
+            else (self.claims[0] if self.claims else None)
+        )
 
         if self.decision == Decision.BLOCKED and self.stop_reason == "budget_exhausted":
             verdict = "inconclusive"
             confidence = 0.0
-            justification = "Budget exhausted before resolving all required investigative gaps."
+            justification = (
+                "Budget exhausted before resolving all required investigative gaps."
+            )
         elif primary_claim:
             if primary_claim.status == ClaimStatus.SUPPORTED:
                 verdict = "supported"
                 confidence = 1.0
-                justification = f"Claim supported by verified evidence: {primary_claim.text}"
+                justification = (
+                    f"Claim supported by verified evidence: {primary_claim.text}"
+                )
             elif primary_claim.status == ClaimStatus.CONTRADICTED:
                 verdict = "contradicted"
                 confidence = 1.0
-                justification = f"Claim refuted by contradictory evidence: {primary_claim.text}"
+                justification = (
+                    f"Claim refuted by contradictory evidence: {primary_claim.text}"
+                )
             elif primary_claim.status == ClaimStatus.DISPUTED:
                 verdict = "disputed"
                 confidence = 0.5
@@ -897,13 +1025,21 @@ class UnderstandingState:
             "decision": self.decision.value,
             "stopReason": self.stop_reason,
             "appliedExecutions": [a.to_dict() for a in self.applied_executions],
-            "pendingAssessmentExecutionIds": list(self.pending_assessment_execution_ids),
-            "finalJudgement": self.final_judgement.to_dict() if self.final_judgement else None,
+            "pendingAssessmentExecutionIds": list(
+                self.pending_assessment_execution_ids
+            ),
+            "finalJudgement": self.final_judgement.to_dict()
+            if self.final_judgement
+            else None,
         }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> UnderstandingState:
-        fj = FinalJudgement.from_dict(data["finalJudgement"]) if data.get("finalJudgement") else None
+        fj = (
+            FinalJudgement.from_dict(data["finalJudgement"])
+            if data.get("finalJudgement")
+            else None
+        )
         return cls(
             schema_version=str(data.get("schemaVersion", "0.1")),
             task_id=validate_id(data["taskId"], "state.taskId"),
@@ -918,8 +1054,12 @@ class UnderstandingState:
             usage=Usage.from_dict(data.get("usage", {})),
             decision=Decision(data.get("decision", Decision.NEEDS_CHECK.value)),
             stop_reason=data.get("stopReason"),
-            applied_executions=[AppliedExecution.from_dict(a) for a in data.get("appliedExecutions", [])],
-            pending_assessment_execution_ids=data.get("pendingAssessmentExecutionIds", []),
+            applied_executions=[
+                AppliedExecution.from_dict(a) for a in data.get("appliedExecutions", [])
+            ],
+            pending_assessment_execution_ids=data.get(
+                "pendingAssessmentExecutionIds", []
+            ),
             final_judgement=fj,
         )
 
@@ -987,8 +1127,12 @@ class LedgerEntry:
             execution_id=validate_id(data["executionId"], "ledger.executionId"),
             task_id=validate_id(data["taskId"], "ledger.taskId"),
             condition=ConditionType(data["condition"]),
-            input_payload_hash=validate_sha256(data["inputPayloadHash"], "ledger.inputPayloadHash"),
-            output_payload_hash=validate_sha256(data["outputPayloadHash"], "ledger.outputPayloadHash"),
+            input_payload_hash=validate_sha256(
+                data["inputPayloadHash"], "ledger.inputPayloadHash"
+            ),
+            output_payload_hash=validate_sha256(
+                data["outputPayloadHash"], "ledger.outputPayloadHash"
+            ),
             model=data.get("model"),
             usage=Usage.from_dict(data.get("usage", {})),
             status=str(data["status"]),
@@ -999,12 +1143,15 @@ class LedgerEntry:
 @dataclass(frozen=True)
 class GoldStandard:
     """Separate objective evaluation rubric not visible to agents during execution."""
+
     task_id: str
     domain: str
     required_gap_questions: List[str]
     critical_evidence_hashes: List[str]
     expected_answer_keywords: List[str]
-    ground_truth_verdicts: Dict[str, str]  # claim_id -> 'supported' | 'contradicted' | 'disputed' | 'inconclusive'
+    ground_truth_verdicts: Dict[
+        str, str
+    ]  # claim_id -> 'supported' | 'contradicted' | 'disputed' | 'inconclusive'
     target_decision: Decision
 
     def to_dict(self) -> Dict[str, Any]:
@@ -1024,9 +1171,14 @@ class GoldStandard:
             task_id=validate_id(data["taskId"], "gold.taskId"),
             domain=str(data["domain"]),
             required_gap_questions=[str(x) for x in data["requiredGapQuestions"]],
-            critical_evidence_hashes=[validate_sha256(x, "gold.criticalEvidenceHashes") for x in data["criticalEvidenceHashes"]],
+            critical_evidence_hashes=[
+                validate_sha256(x, "gold.criticalEvidenceHashes")
+                for x in data["criticalEvidenceHashes"]
+            ],
             expected_answer_keywords=[str(x) for x in data["expectedAnswerKeywords"]],
-            ground_truth_verdicts={str(k): str(v) for k, v in data.get("groundTruthVerdicts", {}).items()},
+            ground_truth_verdicts={
+                str(k): str(v) for k, v in data.get("groundTruthVerdicts", {}).items()
+            },
             target_decision=Decision(data["targetDecision"]),
         )
 
@@ -1037,7 +1189,7 @@ class EvaluationMetricRecord:
     condition: ConditionType
     run_id: str
     final_decision_success: int  # 0 or 1 (FDA)
-    required_gap_recall: float   # 0.0 to 1.0 (Recall_crit)
+    required_gap_recall: float  # 0.0 to 1.0 (Recall_crit)
     unnecessary_check_rate: float  # 0.0 to 1.0 (FAR)
     valid_evidence_count: int
     contradiction_detection_rate: float
@@ -1091,13 +1243,21 @@ class EvaluationMetricRecord:
             "unwarrantedAbstention": self.unwarranted_abstention,
             "efficiencyTool": self.efficiency_tool,
             "efficiencyTime": self.efficiency_time,
-            "finalJudgement": self.final_judgement.to_dict() if self.final_judgement else None,
+            "finalJudgement": self.final_judgement.to_dict()
+            if self.final_judgement
+            else None,
         }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> EvaluationMetricRecord:
-        fj = FinalJudgement.from_dict(data["finalJudgement"]) if data.get("finalJudgement") else None
-        stages = {k: Usage.from_dict(v) for k, v in data.get("stageBreakdown", {}).items()}
+        fj = (
+            FinalJudgement.from_dict(data["finalJudgement"])
+            if data.get("finalJudgement")
+            else None
+        )
+        stages = {
+            k: Usage.from_dict(v) for k, v in data.get("stageBreakdown", {}).items()
+        }
         fda_val = int(data.get("fda", data.get("finalDecisionSuccess", 0)))
         rc_val = float(data.get("recallCrit", data.get("requiredGapRecall", 0.0)))
         far_val = float(data.get("far", data.get("unnecessaryCheckRate", 0.0)))
@@ -1109,7 +1269,9 @@ class EvaluationMetricRecord:
             required_gap_recall=float(data.get("requiredGapRecall", rc_val)),
             unnecessary_check_rate=float(data.get("unnecessaryCheckRate", far_val)),
             valid_evidence_count=int(data.get("validEvidenceCount", 0)),
-            contradiction_detection_rate=float(data.get("contradictionDetectionRate", 0.0)),
+            contradiction_detection_rate=float(
+                data.get("contradictionDetectionRate", 0.0)
+            ),
             usage=Usage.from_dict(data.get("usage", {})),
             stage_breakdown=stages,
             notes=data.get("notes"),
