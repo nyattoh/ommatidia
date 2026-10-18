@@ -415,15 +415,16 @@ def load_gold_standards(
     json_files = sorted(list(gold_dir.glob("*.json")))
 
     for fpath in json_files:
-        if verify_hashes and manifest_files:
+        if verify_hashes:
             rel_key = f"gold/{fpath.name}"
-            if rel_key in manifest_files:
-                expected_hash = manifest_files[rel_key].get("hash")
-                actual_hash = hash_file(fpath)
-                if expected_hash and actual_hash != expected_hash:
-                    raise ValueError(
-                        f"Hash mismatch for gold {fpath.name}: expected {expected_hash}, got {actual_hash}"
-                    )
+            expected_hash = manifest_files.get(rel_key, {}).get("hash")
+            if not expected_hash:
+                raise ValueError(f"Missing manifest hash for gold {fpath.name}")
+            actual_hash = hash_file(fpath)
+            if actual_hash != expected_hash:
+                raise ValueError(
+                    f"Hash mismatch for gold {fpath.name}: expected {expected_hash}, got {actual_hash}"
+                )
 
         content = json.loads(fpath.read_text(encoding="utf-8"))
         gold = GoldStandard.from_dict(content)
