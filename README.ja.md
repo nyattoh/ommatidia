@@ -2,7 +2,7 @@
 
 AIが自分の理解を確かめ、見えていない観点の候補に気づき、次に必要な探索を組み立てる仕組みを研究する。
 
-**現在は研究計画と論文下書きの段階。実装、実験結果、学術的な新規性は未確定。**
+**現在は研究計画と論文下書きの段階。研究用ハーネスとランタイムはPythonで実装済みで自動テストがあるが、本試験は未実施。実験結果、学術的な新規性は未確定。**
 
 中心となる問いは「既知の道を繰り返し通るだけでなく、現在の理解を変え得る方向へ探索を向けることで、同じ予算でも調査の結果を改善できるか」である。
 
@@ -12,11 +12,29 @@ TOMBOは、AIの主張と根拠を点検し、未確認事項と検査方法を�
 
 探索役を増やすだけでは効果と見なさない。同じ情報源の転載を複数の役が見つけても、独立した証拠として数えない。過去の成功回数だけで探索経路を優先し続ける設計は採用しない。
 
+## 現在の状態
+
+- `src/ommatidia/` に研究用ハーネスとランタイムがある。理解状態、条件AからEの実行グラフ、証拠の出所管理と無効化、実行記録、試行と費用の予約、データセットとプロトコルの封印、ランタイム凍結の検査、保存済み記録の採点、T3への受け渡しを含む。
+- `scripts/run_harness.py` は実行用CLI、`scripts/verify_seals.py` は封印マニフェストの作成と検証を行う。
+- `research/datasets/dev/` に開発用の24事例がある。評価用（held-out）の操作は、新しい評価パッケージが承認されるまで実行用CLIで無効になっている。
+- ランタイム凍結 `research/runtime_freeze_r4.json` では、評価パッケージは `blocked_rebuild_required`、本試験の実施数は0。費用とトークン使用量は未測定。
+
+## テストの実行
+
+Python 3.10以上が必要。実行時の依存パッケージはなく、テストにはpytestを使う。
+
+```
+pip install -e ".[dev]"
+python -m pytest
+```
+
 ## 作業ファイル
 
 | ファイル | 内容 |
 | --- | --- |
 | [research/PROTOCOL.md](research/PROTOCOL.md) | 研究問い、比較条件、実験の予算、評価と停止条件 |
+| [research/EVALUATION_SPEC.md](research/EVALUATION_SPEC.md) | 評価指標と採点の仕様 |
+| [research/runtime-design.md](research/runtime-design.md) | ランタイムとハーネスの構成 |
 | [docs/DESIGN.md](docs/DESIGN.md) | 理解状態、探索役、証拠、未知の扱い |
 | [paper/manuscript-ja.md](paper/manuscript-ja.md) | 日本語論文の題案、導入、方法と結果の記入方針 |
 | [references/RELATED_WORK.md](references/RELATED_WORK.md) | 一次資料へのURLと、今後確かめる比較点 |
