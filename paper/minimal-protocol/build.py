@@ -15,6 +15,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 HERE = Path(__file__).resolve().parent
@@ -27,8 +28,6 @@ epoch = int(epoch)
 if epoch < 0:
     raise ValueError('SOURCE_DATE_EPOCH must be a non-negative integer')
 datetime.fromtimestamp(epoch, timezone.utc)
-# This affects only this build process, never the user's persistent environment.
-os.environ['SOURCE_DATE_EPOCH'] = str(epoch)
 rl_config.invariant = 1
 text = SOURCE.read_text(encoding='utf-8')
 title = text.splitlines()[0].removeprefix('# ')
@@ -70,9 +69,18 @@ def page_number(canvas, doc):
     canvas.drawCentredString(A4[0]/2, 25, str(doc.page))
     canvas.restoreState()
 
+def timestamped_canvas(*args, **kwargs):
+    canvas = Canvas(*args, **kwargs)
+    build_time = datetime.fromtimestamp(epoch, timezone.utc)
+    canvas.setDateFormatter(lambda *_: "D:%04d%02d%02d%02d%02d%02d+00'00'" % (
+        build_time.year, build_time.month, build_time.day,
+        build_time.hour, build_time.minute, build_time.second))
+    return canvas
+
 SimpleDocTemplate(str(HERE/'manuscript.pdf'), pagesize=A4, leftMargin=48, rightMargin=48,
     topMargin=45, bottomMargin=42, title=title, author='Ryoko Sakakibara', invariant=1,
-    subject='Research plan and system design; zero comparative study trials').build(story, onFirstPage=page_number, onLaterPages=page_number)
+    subject='Research plan and system design; zero comparative study trials').build(
+        story, onFirstPage=page_number, onLaterPages=page_number, canvasmaker=timestamped_canvas)
 
 metadata = f'''# Zenodo入力案 — 未投稿・著者確認用
 

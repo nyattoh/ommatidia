@@ -1,15 +1,19 @@
 import os
 import hashlib
 import json
+import contextlib
+import io
 from pathlib import Path
+import runpy
 import shutil
 import subprocess
 import sys
 import time
 
-import fitz
 import pytest
 
+for optional_dependency in ('fitz', 'markdown_it', 'reportlab', 'matplotlib', 'PIL'):
+    pytest.importorskip(optional_dependency)
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER = ROOT / 'paper/minimal-protocol'
@@ -34,6 +38,7 @@ def copy_paper(tmp_path):
 
 @pytest.mark.parametrize('epoch,expected_date', [(None, 'D:20261021000000'), ('1700000000', 'D:20231114221320')])
 def test_pdf_and_checksums_are_reproducible(tmp_path, epoch, expected_date):
+    fitz = pytest.importorskip('fitz')
     paper = copy_paper(tmp_path)
     first = run('build.py', paper, epoch)
     assert first.returncode == 0, first.stdout+first.stderr
@@ -45,6 +50,28 @@ def test_pdf_and_checksums_are_reproducible(tmp_path, epoch, expected_date):
     with fitz.open(paper/'manuscript.pdf') as doc:
         assert doc.metadata['creationDate'].startswith(expected_date)
         assert doc.metadata['modDate'].startswith(expected_date)
+
+
+@pytest.mark.parametrize('epoch', [None, '01700000000'])
+def test_build_preserves_process_source_date_epoch_and_is_reproducible(tmp_path, monkeypatch, epoch):
+    paper = copy_paper(tmp_path)
+    monkeypatch.chdir(paper)
+    expected_env = epoch
+    if epoch is None:
+        monkeypatch.delenv('SOURCE_DATE_EPOCH', raising=False)
+    else:
+        monkeypatch.setenv('SOURCE_DATE_EPOCH', epoch)
+
+    with contextlib.redirect_stdout(io.StringIO()):
+        runpy.run_path(str(paper/'build.py'), run_name='__main__')
+    first = {name: (paper/name).read_bytes() for name in ('manuscript.pdf', 'SHA256SUMS.txt')}
+    assert os.environ.get('SOURCE_DATE_EPOCH') == expected_env
+
+    with contextlib.redirect_stdout(io.StringIO()):
+        runpy.run_path(str(paper/'build.py'), run_name='__main__')
+    second = {name: (paper/name).read_bytes() for name in first}
+    assert os.environ.get('SOURCE_DATE_EPOCH') == expected_env
+    assert first == second, 'Consecutive PDF/checksum bytes differ in a long-lived process'
 
 
 @pytest.fixture
@@ -132,6 +159,7 @@ def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
         source = built_paper/'manuscript.md'
         source.write_text(source.read_text(encoding='utf-8')+'\nUnrendered tampered paragraph.\n', encoding='utf-8', newline='\n')
     elif case == 'pdf':
+        fitz = pytest.importorskip('fitz')
         pdf = built_paper/'manuscript.pdf'
         with fitz.open(pdf) as doc:
             doc.delete_page(len(doc)-1)
