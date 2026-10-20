@@ -6,8 +6,8 @@
       {
         "run": 1,
         "hashes": {
-          "manuscript.pdf": "5411ce4622fcfc28c8bda8ca1d5005bad56a2df21be93edc2b1ff4d113f4c220",
-          "SHA256SUMS.txt": "5aa797750bde6c98d8936908408c8c0cc0b798289bb155be5b4cea4ba565e64b"
+          "manuscript.pdf": "fd3219b2220a6043b08b15d81c2e745711a0bdbceb0c91feb0dfae6142b04a54",
+          "SHA256SUMS.txt": "d6ba0b7e76050959a66a73db9186c4f9f8f625812041ed95759434857e051998"
         },
         "dates": {
           "creationDate": "D:20261021000000+00'00'",
@@ -18,8 +18,8 @@
       {
         "run": 2,
         "hashes": {
-          "manuscript.pdf": "5411ce4622fcfc28c8bda8ca1d5005bad56a2df21be93edc2b1ff4d113f4c220",
-          "SHA256SUMS.txt": "5aa797750bde6c98d8936908408c8c0cc0b798289bb155be5b4cea4ba565e64b"
+          "manuscript.pdf": "fd3219b2220a6043b08b15d81c2e745711a0bdbceb0c91feb0dfae6142b04a54",
+          "SHA256SUMS.txt": "d6ba0b7e76050959a66a73db9186c4f9f8f625812041ed95759434857e051998"
         },
         "dates": {
           "creationDate": "D:20261021000000+00'00'",
@@ -36,8 +36,8 @@
       {
         "run": 1,
         "hashes": {
-          "manuscript.pdf": "67be0ec03ab1fe3484539d912c3a98cee6aea63f7eca9161b8bd5ce73e212b46",
-          "SHA256SUMS.txt": "f5e04d008f4395b23a7a4fa023eb52f882af556c7d1483d95bfb8d4931872fe9"
+          "manuscript.pdf": "4c29a18313e723c747ae4c0bcef1ff6e4eef1fb9e8f4a62374f5bacd9a1af08d",
+          "SHA256SUMS.txt": "b05a4464fd25e0abba786a4144605bc2dd9105ca6fb014d1d901ab91b872a82e"
         },
         "dates": {
           "creationDate": "D:20231114221320+00'00'",
@@ -48,8 +48,8 @@
       {
         "run": 2,
         "hashes": {
-          "manuscript.pdf": "67be0ec03ab1fe3484539d912c3a98cee6aea63f7eca9161b8bd5ce73e212b46",
-          "SHA256SUMS.txt": "f5e04d008f4395b23a7a4fa023eb52f882af556c7d1483d95bfb8d4931872fe9"
+          "manuscript.pdf": "4c29a18313e723c747ae4c0bcef1ff6e4eef1fb9e8f4a62374f5bacd9a1af08d",
+          "SHA256SUMS.txt": "b05a4464fd25e0abba786a4144605bc2dd9105ca6fb014d1d901ab91b872a82e"
         },
         "dates": {
           "creationDate": "D:20231114221320+00'00'",

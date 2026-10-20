@@ -1,5 +1,7 @@
 # Fixed-LF checksum follow-up
 
+Historical LF-repair receipt: the author later authorised minimal manuscript audit corrections. The source/PDF digests below describe the pre-correction manuscript; current regenerated digests are in SHA256SUMS.txt and reproducibility.json. LF generation and committed-byte checks remain applicable.
+
 Target: PR3, devin/20261021-minimal-protocol-preprint, starting at 5bcff29f54082ab4752935b042be9567cca74cd7. Manuscript content, PDF bytes and research protocol are unchanged by this follow-up.
 
 ## Correction
