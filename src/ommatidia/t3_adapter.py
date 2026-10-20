@@ -346,9 +346,13 @@ def _is_cap(value):
 
 
 class T3CampaignController:
-    def __init__(self, dispatcher_func=None, public_boundary=None):
+    def __init__(
+        self, dispatcher_func=None, public_boundary=None, host_cost_cap_yen=None
+    ):
         self.adapter = T3DelegationAdapter(
-            in_session_dispatcher=dispatcher_func, public_boundary=public_boundary
+            in_session_dispatcher=dispatcher_func,
+            public_boundary=public_boundary,
+            host_cost_cap_yen=host_cost_cap_yen,
         )
 
     def run_cohort(self, harness, **kwargs):
