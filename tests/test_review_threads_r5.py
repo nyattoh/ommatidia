@@ -181,3 +181,26 @@ def test_paired_analysis_rejects_records_from_different_runs():
     records[0] = replace(records[0], run_id="synthetic_other_run")
     with pytest.raises(ValueError, match="Mixed or missing runtime provenance"):
         analyse_saved_trials(records, TASK_IDS, TASK_IDS[:12])
+
+
+def probe(index):
+    return {**PROBE, "id": f"probe_{index}", "question": f"Synthetic probe question {index}"}
+
+
+@pytest.mark.parametrize("condition", ADAPTIVE)
+@pytest.mark.parametrize("left_pending", [False, True])
+def test_call_cap_after_last_investigators_still_evaluates_stop(condition, left_pending):
+    # Bugbot r4324234423: the last batch fills the call cap, so no planning pass follows it.
+    slots = 1 if condition == ConditionType.D else 3
+    per_pass = slots + 1 if left_pending else 1
+    plans = [
+        {"gaps": [GAP], "probes": [probe(per_pass * n + i) for i in range(per_pass)]}
+        for n in range(4)
+    ]
+    state, calls = run(condition, plans)
+    # Synthesis directly follows the last investigator: no planning pass fits under the cap.
+    assert "synthesis" in calls[-1][0] and "probe" in calls[-2][1]["context"]
+    pending = [p for p in state.probes if p.status.value == "pending"]
+    assert bool(pending) == left_pending
+    expected = "budget_exhausted" if left_pending else "probes_exhausted_unresolved_gaps"
+    assert (state.stop_reason, state.decision) == (expected, Decision.BLOCKED)

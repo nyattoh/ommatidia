@@ -397,6 +397,12 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
             if state.usage.exceeds(task.budget):
                 state.stop_reason, state.decision = "budget_exhausted", Decision.BLOCKED
                 break
+        else:
+            # The call cap leaves no room for another planning pass: evaluate the stop here.
+            stop, reason, decision = evaluate_stopping_conditions(state, task.budget)
+            state.stop_reason, state.decision = (
+                (reason, decision) if stop else ("budget_exhausted", Decision.BLOCKED)
+            )
         output = execute(graph[-1], {"state": state.to_dict()})
         try:
             state.final_judgement = final_response(output, task.task_id)
