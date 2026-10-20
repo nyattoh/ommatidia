@@ -80,9 +80,10 @@ def resource_matrix():
         record.usage = Usage(
             model_calls=6 if primary else 2,
             tool_calls=9 if primary else 3,
-            elapsed_ms=3000.0 if primary else 1000.0,
+            elapsed_ms=9999.0,  # summed step time; concurrent E roles overlap
             input_chars=4000 if primary else 1000,
         )
+        record.wall_elapsed_ms = 3000.0 if primary else 1000.0
         records.append(record)
     return records
 
@@ -117,3 +118,18 @@ def test_unknown_usage_marks_resource_units_unavailable_without_failing():
     assert all("usage_known" in unit["reason"] for unit in comparisons["D"]["units"].values())
     assert all(unit["available"] for unit in comparisons["C"]["units"].values())
     assert len(report["hypotheses"]) == 4
+
+
+def test_resource_time_uses_wall_clock_and_marks_missing_wall_time_unavailable():
+    # Bugbot r4324341611: protocol section 6.2 elapsed time is wall-clock, not summed step time.
+    from tests.test_scoring_task_hash_provenance import TASK_IDS
+
+    records = resource_matrix()
+    index = next(i for i, r in enumerate(records) if r.condition == ConditionType.C)
+    records[index] = replace(records[index], wall_elapsed_ms=None)
+    report = analyse_saved_trials(records, TASK_IDS, TASK_IDS[:12])
+    comparisons = {item["baseline"]: item for item in report["resourceComparisons"]}
+    assert comparisons["D"]["units"]["elapsedMs"]["meanDifference"] == 2000.0
+    assert comparisons["C"]["units"]["elapsedMs"]["available"] is False
+    assert "wall" in comparisons["C"]["units"]["elapsedMs"]["reason"]
+    assert comparisons["C"]["units"]["modelCalls"]["available"] is True

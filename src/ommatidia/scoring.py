@@ -167,8 +167,13 @@ def bca_interval(values, resamples=10000, seed=1701):
 
 
 # Protocol section 6.2 host-measured units; monetary cost is deliberately excluded.
-RESOURCE_UNITS = {"elapsedMs": "elapsed_ms", "modelCalls": "model_calls",
-                  "toolCalls": "tool_calls", "inputChars": "input_chars"}
+# Elapsed time is the trial's wall clock: summed step time double-counts concurrent E roles.
+RESOURCE_UNITS = {
+    "elapsedMs": lambda record: record.wall_elapsed_ms,
+    "modelCalls": lambda record: record.usage.model_calls,
+    "toolCalls": lambda record: record.usage.tool_calls,
+    "inputChars": lambda record: record.usage.input_chars,
+}
 
 
 def paired_resource_summary(matrix, baseline, task_ids):
@@ -176,13 +181,18 @@ def paired_resource_summary(matrix, baseline, task_ids):
     pairs = [(matrix["E"][tid], matrix[baseline][tid]) for tid in task_ids]
     unknown = sum(not record.usage_known for pair in pairs for record in pair)
     units = {}
-    for unit, attr in RESOURCE_UNITS.items():
+    for unit, measure in RESOURCE_UNITS.items():
         if unknown:
             units[unit] = {"available": False,
                            "reason": f"{unknown} paired trial(s) have usage_known=false"}
             continue
-        primary = sum(getattr(e.usage, attr) for e, _ in pairs) / len(pairs)
-        control = sum(getattr(b.usage, attr) for _, b in pairs) / len(pairs)
+        values = [(measure(e), measure(b)) for e, b in pairs]
+        if any(value is None for pair in values for value in pair):
+            units[unit] = {"available": False,
+                           "reason": "A paired trial has no measured wall-clock time"}
+            continue
+        primary = sum(e for e, _ in values) / len(values)
+        control = sum(b for _, b in values) / len(values)
         units[unit] = {"available": True, "primaryMean": float(primary),
                        "baselineMean": float(control), "meanDifference": float(primary - control)}
     return {"primary": "E", "baseline": baseline, "sampleSize": len(pairs),
