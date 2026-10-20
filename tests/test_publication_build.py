@@ -1,4 +1,6 @@
 import os
+import hashlib
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -84,3 +86,29 @@ def test_verify_rejects_wrong_digest(built_paper):
     lines[0] = '0'*64+'  manuscript.md'
     file.write_text('\n'.join(lines)+'\n', encoding='utf-8')
     assert run('verify.py', built_paper).returncode != 0
+
+
+def test_generated_publication_text_uses_lf_bytes(built_paper):
+    result = run('verify.py', built_paper)
+    assert result.returncode == 0, result.stdout+result.stderr
+    for name in ('SHA256SUMS.txt', 'zenodo-metadata.md', 'validation.json'):
+        data = (built_paper/name).read_bytes()
+        assert b'\r' not in data, name+' contains CR bytes that Git would normalise'
+        assert data.endswith(b'\n'), name+' must end with LF'
+
+
+def test_reproducibility_receipts_match_canonical_checkout_bytes(tmp_path):
+    paper = copy_paper(tmp_path)
+    result = run('check_reproducibility.py', paper)
+    assert result.returncode == 0, result.stdout+result.stderr
+    receipt_bytes = (paper/'reproducibility.json').read_bytes()
+    assert b'\r' not in receipt_bytes
+    records = json.loads(receipt_bytes)
+    for mode in ('default', 'explicit'):
+        assert records[mode]['byteIdentical'] is True
+        assert records[mode]['runs'][0]['hashes'] == records[mode]['runs'][1]['hashes']
+    for name, digest in records['default']['runs'][0]['hashes'].items():
+        data = (paper/name).read_bytes()
+        if name.endswith('.txt'):
+            assert data == data.replace(b'\r\n', b'\n')
+        assert hashlib.sha256(data).hexdigest() == digest

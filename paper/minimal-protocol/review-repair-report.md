@@ -1,5 +1,7 @@
 # PR3 review repair — 21 October 2026
 
+Historical first-round record: its SHA256SUMS.txt file digests below describe Windows CRLF output and are superseded by the fixed-LF receipts in reproducibility.json and the LF follow-up report. The PDF digests remain unchanged. The follow-up fixes the mismatch between those old receipts and Git's committed LF manifest; do not use the historical checksum-file digests as current artefact digests.
+
 Base: 00cc1b91ade4194b5a45aa4d82cb1dae801a1b03, branch devin/20261021-minimal-protocol-preprint. Scope is publication tools and approved publication licence, not experimental results or runtime repairs.
 
 ## Changes

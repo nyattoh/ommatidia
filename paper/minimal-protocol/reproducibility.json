@@ -7,7 +7,7 @@
         "run": 1,
         "hashes": {
           "manuscript.pdf": "5411ce4622fcfc28c8bda8ca1d5005bad56a2df21be93edc2b1ff4d113f4c220",
-          "SHA256SUMS.txt": "f2e9716b43f3f23ec2180e5ea71a0ff4bcfa66edbb40c6a4af52b6bc8025e643"
+          "SHA256SUMS.txt": "5aa797750bde6c98d8936908408c8c0cc0b798289bb155be5b4cea4ba565e64b"
         },
         "dates": {
           "creationDate": "D:20261021000000+00'00'",
@@ -19,7 +19,7 @@
         "run": 2,
         "hashes": {
           "manuscript.pdf": "5411ce4622fcfc28c8bda8ca1d5005bad56a2df21be93edc2b1ff4d113f4c220",
-          "SHA256SUMS.txt": "f2e9716b43f3f23ec2180e5ea71a0ff4bcfa66edbb40c6a4af52b6bc8025e643"
+          "SHA256SUMS.txt": "5aa797750bde6c98d8936908408c8c0cc0b798289bb155be5b4cea4ba565e64b"
         },
         "dates": {
           "creationDate": "D:20261021000000+00'00'",
@@ -37,7 +37,7 @@
         "run": 1,
         "hashes": {
           "manuscript.pdf": "67be0ec03ab1fe3484539d912c3a98cee6aea63f7eca9161b8bd5ce73e212b46",
-          "SHA256SUMS.txt": "1277c78b3b8fa8ccd076126be1860c73f637f981b21715c886e93b8abb460180"
+          "SHA256SUMS.txt": "f5e04d008f4395b23a7a4fa023eb52f882af556c7d1483d95bfb8d4931872fe9"
         },
         "dates": {
           "creationDate": "D:20231114221320+00'00'",
@@ -49,7 +49,7 @@
         "run": 2,
         "hashes": {
           "manuscript.pdf": "67be0ec03ab1fe3484539d912c3a98cee6aea63f7eca9161b8bd5ce73e212b46",
-          "SHA256SUMS.txt": "1277c78b3b8fa8ccd076126be1860c73f637f981b21715c886e93b8abb460180"
+          "SHA256SUMS.txt": "f5e04d008f4395b23a7a4fa023eb52f882af556c7d1483d95bfb8d4931872fe9"
         },
         "dates": {
           "creationDate": "D:20231114221320+00'00'",

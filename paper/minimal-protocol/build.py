@@ -141,7 +141,7 @@ manuscript.pdf, manuscript.md, SHA256SUMS.txt。必要に応じてpilot-estimate
 - PRレビュー後の公開可否とアップロードするファイル。
 - Zenn記事の掲載可否。published: falseを維持中。
 '''
-(HERE/'zenodo-metadata.md').write_text(metadata, encoding='utf-8')
+(HERE/'zenodo-metadata.md').write_text(metadata, encoding='utf-8', newline='\n')
 paths = [SOURCE, HERE/'manuscript.pdf']
-(HERE/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths), encoding='utf-8')
+(HERE/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths), encoding='utf-8', newline='\n')
 print(json.dumps({'sourceSha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(), 'blocks':len(blocks), 'pdf':str(HERE/'manuscript.pdf'), 'licence':'CC-BY-4.0', 'sourceDateEpoch':epoch, 'studyTrialsRun':0}))

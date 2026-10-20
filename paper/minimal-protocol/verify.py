@@ -67,5 +67,5 @@ result = dict(pages=len(doc), sourceBlocksChecked=len(blocks), missingBlocks=mis
     sourceSha256=hashlib.sha256((here/'manuscript.md').read_bytes()).hexdigest(),
     pdfSha256=hashlib.sha256((here/'manuscript.pdf').read_bytes()).hexdigest(),
     sourceBaseline='b8cc565ef016f531fdef7325801e3468db82135f')
-(here/'validation.json').write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8')
+(here/'validation.json').write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8', newline='\n')
 print(json.dumps(result))
