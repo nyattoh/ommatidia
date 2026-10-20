@@ -1,0 +1,90 @@
+{
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "update",
+    "taskId": "ommatidia-r5-readiness-recheck-20261015",
+    "expectedRevision": 2,
+    "requestHash": "2d59d496d7f705bb72f11d200ca450f1ef3c5c28f99376e39c92780a2ac81315"
+  },
+  "proposal": {
+    "assessments": [
+      {
+        "reason": "The saved review fails and the current freeze blocks evaluation.",
+        "evidenceIds": [
+          "r5-review-result",
+          "release-freeze",
+          "r5-gates-readback-evidence"
+        ],
+        "verdict": "refutes",
+        "scopeMatched": true,
+        "claimId": "r5-release-claim"
+      },
+      {
+        "reason": "This claim is limited to what the saved review says.",
+        "evidenceIds": [
+          "r5-review-result"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "claimId": "r5-review-observation"
+      },
+      {
+        "reason": "The cited freeze fields state the block and zero trials.",
+        "evidenceIds": [
+          "release-freeze"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "claimId": "freeze-observation"
+      },
+      {
+        "reason": "The command outputs support the exact scoped operations only.",
+        "evidenceIds": [
+          "helper-probe",
+          "helper-scoped-readback-evidence"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "claimId": "helper-probe-observation"
+      },
+      {
+        "reason": "The observed operations cannot establish recovery for every helper operation.",
+        "evidenceIds": [
+          "helper-probe",
+          "helper-scoped-readback-evidence"
+        ],
+        "verdict": "inconclusive",
+        "scopeMatched": false,
+        "claimId": "helper-restored-claim"
+      },
+      {
+        "reason": "The schema requires both fields and the synthetic round trip drops them.",
+        "evidenceIds": [
+          "packet-schema-spec",
+          "packet-roundtrip-readback-evidence"
+        ],
+        "verdict": "refutes",
+        "scopeMatched": true,
+        "claimId": "packet-contract-claim"
+      },
+      {
+        "reason": "This claim is limited to the schema wording.",
+        "evidenceIds": [
+          "packet-schema-spec"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "claimId": "spec-requirement-observation"
+      },
+      {
+        "reason": "The observed synthetic round trip returned both preservation flags false.",
+        "evidenceIds": [
+          "packet-roundtrip-readback-evidence"
+        ],
+        "verdict": "supports",
+        "scopeMatched": true,
+        "claimId": "roundtrip-observation"
+      }
+    ]
+  }
+}

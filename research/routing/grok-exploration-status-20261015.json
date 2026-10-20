@@ -1,0 +1,43 @@
+{
+  "catalogue": "research/routing/catalogue-20261015T135255Z.json",
+  "workspace": {
+    "root": "D:\\develop\\works\\ommatidia",
+    "branch": "main",
+    "attachedWorktree": false
+  },
+  "selection": {
+    "providerInstanceId": "grok",
+    "model": "grok-4.7-build-fast",
+    "option": {
+      "id": "reasoningEffort",
+      "value": "xhigh"
+    },
+    "routerEvidence": {
+      "rank": 27,
+      "bestScore": null,
+      "bestSource": null,
+      "costOutput": null,
+      "evidence": "unknown"
+    },
+    "selectionBasis": "Poteto How explorer default; no pstack-models.md override was present"
+  },
+  "tasks": [
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3Aad624d37-be45-4e13-9b20-5c15103e63f7%3Adelegate-task%3Ab81d14c8-a7c3-4bca-b0d9-8a600694e25a",
+      "scope": "Read-only campaign cost and trial reservation trace",
+      "status": "running",
+      "lastObservedAt": "2026-10-15T14:59:49Z",
+      "lastActivity": "Grok startup inbox wrapper command remains pending; no source findings received"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3Aad624d37-be45-4e13-9b20-5c15103e63f7%3Adelegate-task%3Ab05c0204-6e05-4ee5-9240-8e9c50688853",
+      "scope": "Read-only public dispatcher and release-gate trace",
+      "status": "running",
+      "lastObservedAt": "2026-10-15T14:59:49Z",
+      "lastActivity": "Grok startup inbox wrapper command remains pending; no source findings received"
+    }
+  ],
+  "studyConditionCalls": 0,
+  "reportedTokenUsage": null,
+  "reportedCostYen": null
+}

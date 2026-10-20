@@ -4,7 +4,7 @@
   "verification_run": {
     "role": "Manuscript recovery sub-agent (claudeAgent / claude-opus-5-5)",
     "method": "Official venue PDFs and BibTeX records were downloaded with curl into a local directory outside the repository. Text was extracted with pdftotext and passages were located with grep. No summarising model or web-fetch summariser was used.",
-    "local_copies": "D:/inbox/ommatidia-recovery-20261014/sources (not part of the repository)",
+    "local_copies": "Held by the author outside the repository (not included)",
     "fetch_window_utc": [
       "2026-10-14T11:01:56Z",
       "2026-10-14T11:03:04Z"
@@ -371,7 +371,7 @@
         "selection_basis": "user-directed functioning gemini-3.8-flash-high"
       },
       "bench_ledger_evidence": {
-        "database": "D:/develop/works/bench-ledger-engine/bench_ledger.db",
+        "database": "bench-ledger-engine local database (not included)",
         "rank": 13,
         "best_score": 100.0,
         "best_source": "measured",

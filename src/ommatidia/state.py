@@ -71,6 +71,7 @@ def apply_observations(
     state: UnderstandingState,
     observations: List[Observation],
     raw_payload_hash: Optional[str] = None,
+    track_tool_calls: bool = False,
 ) -> Dict[str, Any]:
     """Ingest observation results from probe investigations into UnderstandingState.
 
@@ -82,7 +83,8 @@ def apply_observations(
         - no_result -> ProbeStatus.COMPLETE (records no evidence, does NOT refute)
         - unavailable -> ProbeStatus.UNAVAILABLE
         - error -> ProbeStatus.ERROR
-    - Usage accumulation (tool calls, elapsed time, tokens, cost).
+    - Usage accumulation (tool calls, elapsed time, tokens, cost) without double-counting
+      step-level counters and without promoting unknown (None) costs/tokens to known.
     """
     existing_execution_ids: Set[str] = {
         a.execution_id for a in state.applied_executions
@@ -94,6 +96,16 @@ def apply_observations(
     new_applied: List[AppliedExecution] = []
 
     for obs in observations:
+        # Reject negative usage in observations
+        if obs.tool_calls < 0 or obs.elapsed_ms < 0:
+            raise ValueError(
+                f"Negative usage in observation {obs.execution_id}: tool_calls={obs.tool_calls}, elapsed_ms={obs.elapsed_ms}"
+            )
+        if obs.cost_yen is not None and obs.cost_yen < 0:
+            raise ValueError(f"Negative cost_yen in observation {obs.execution_id}: {obs.cost_yen}")
+        if obs.total_tokens is not None and obs.total_tokens < 0:
+            raise ValueError(f"Negative total_tokens in observation {obs.execution_id}: {obs.total_tokens}")
+
         if obs.execution_id in existing_execution_ids:
             # Check existing record
             existing_rec = next(
@@ -111,21 +123,21 @@ def apply_observations(
 
         p_hash = raw_payload_hash or compute_payload_hash(obs.to_dict())
         probe = probe_map.get(obs.probe_id)
-        if probe is None:
-            raise ValueError(
-                f"Observation references unknown probe ID: '{obs.probe_id}'"
-            )
 
-        # Update probe status
-        if obs.outcome == ObservationOutcome.COMPLETED:
-            probe.status = ProbeStatus.COMPLETE
-        elif obs.outcome == ObservationOutcome.NO_RESULT:
-            # Note: No result does not refute the claim or resolve the gap
-            probe.status = ProbeStatus.COMPLETE
-        elif obs.outcome == ObservationOutcome.UNAVAILABLE:
-            probe.status = ProbeStatus.UNAVAILABLE
-        elif obs.outcome == ObservationOutcome.ERROR:
-            probe.status = ProbeStatus.ERROR
+        # Update probe status if probe is known
+        if probe is not None:
+            if obs.outcome == ObservationOutcome.COMPLETED:
+                probe.status = ProbeStatus.COMPLETE
+            elif obs.outcome == ObservationOutcome.NO_RESULT:
+                # Note: No result does not refute the claim or resolve the gap
+                probe.status = ProbeStatus.COMPLETE
+            elif obs.outcome == ObservationOutcome.UNAVAILABLE:
+                probe.status = ProbeStatus.UNAVAILABLE
+            elif obs.outcome == ObservationOutcome.ERROR:
+                probe.status = ProbeStatus.ERROR
+        else:
+            # Tolerant for observations without pre-declared probe (e.g. fixed-lens queries in Condition C)
+            pass
 
         # Deduplicate and register incoming evidence
         accepted, rejected = deduplicate_evidence(
@@ -134,19 +146,25 @@ def apply_observations(
         new_evidence.extend(accepted)
         rejected_evidence.extend(rejected)
 
-        # Update usage
-        state.usage.tool_calls += obs.tool_calls
-        state.usage.elapsed_ms += obs.elapsed_ms
-        if obs.cost_yen is not None:
-            if state.usage.cost_yen is None:
-                state.usage.cost_yen = obs.cost_yen
-            else:
-                state.usage.cost_yen += obs.cost_yen
-        if obs.total_tokens is not None:
-            if state.usage.total_tokens is None:
-                state.usage.total_tokens = obs.total_tokens
-            else:
-                state.usage.total_tokens += obs.total_tokens
+        # Update usage:
+        # In Condition D and E runners, step-level tool calls and elapsed time are already
+        # tracked and accumulated via _accumulate_step_usage(state.usage, exec_out).
+        # Adding obs.tool_calls and obs.elapsed_ms unconditionally here causes double-counting.
+        # Only add if track_tool_calls is explicitly enabled.
+        if track_tool_calls:
+            state.usage.tool_calls += obs.tool_calls
+            state.usage.elapsed_ms += obs.elapsed_ms
+
+        # Cost and token accounting:
+        # Unknown cost or tokens (None) remain unknown (None).
+        # Never promote unknown (None) to known by adding an observation's known value.
+        # When an observation omits cost or tokens (None), existing known step host usage
+        # is preserved rather than invalidated to None.
+        if obs.cost_yen is not None and state.usage.cost_yen is not None:
+            state.usage.cost_yen += obs.cost_yen
+
+        if obs.total_tokens is not None and state.usage.total_tokens is not None:
+            state.usage.total_tokens += obs.total_tokens
 
         applied = AppliedExecution(
             execution_id=obs.execution_id,

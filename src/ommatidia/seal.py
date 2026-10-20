@@ -8,16 +8,23 @@ from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, Set
 
-from ommatidia.types import validate_sha256
-
-
 class SealMismatchError(ValueError):
     """Raised when a sealed dataset or protocol hash fails verification."""
     pass
 
 
+def ensure_non_private_asset_path(file_path: Path) -> Path:
+    """Resolve a path and reject evaluator-only answer assets for this caller."""
+    resolved = Path(file_path).resolve()
+    if resolved.name == "unblinding_key.json" or any(
+        part.lower() in ("gold", "cases") for part in resolved.parts
+    ):
+        raise ValueError("Private evaluation asset path is not accepted by this caller")
+    return resolved
+
+
 def hash_file(file_path: Path) -> str:
-    """Compute the SHA-256 hash of a file."""
+    """Compute the SHA-256 hash of a file without applying caller path policy."""
     if not file_path.exists():
         raise FileNotFoundError(f"Cannot hash non-existent file: {file_path}")
     hasher = hashlib.sha256()
@@ -42,15 +49,16 @@ def create_seal_manifest(
         "schemaVersion": "0.1",
         "protocol": {
             "path": str(protocol_path.as_posix()),
-            "hash": hash_file(protocol_path),
+            "hash": hash_file(ensure_non_private_asset_path(protocol_path)),
         },
         "datasets": {},
     }
 
     for path in dataset_paths:
+        safe_path = ensure_non_private_asset_path(path)
         manifest["datasets"][str(path.as_posix())] = {
-            "hash": hash_file(path),
-            "sizeBytes": path.stat().st_size,
+            "hash": hash_file(safe_path),
+            "sizeBytes": safe_path.stat().st_size,
         }
 
     if manifest_output_path is not None:
@@ -75,7 +83,9 @@ def verify_seal_manifest(
     # 1. Verify protocol
     prot_info = manifest_data.get("protocol", {})
     prot_rel = Path(prot_info.get("path", ""))
-    prot_path = prot_rel if prot_rel.is_absolute() else base / prot_rel
+    prot_path = ensure_non_private_asset_path(
+        prot_rel if prot_rel.is_absolute() else base / prot_rel
+    )
     expected_prot_hash = prot_info.get("hash", "")
 
     if not prot_path.exists():
@@ -94,7 +104,9 @@ def verify_seal_manifest(
 
     for rel_path_str, meta in datasets.items():
         rel_path = Path(rel_path_str)
-        file_path = rel_path if rel_path.is_absolute() else base / rel_path
+        file_path = ensure_non_private_asset_path(
+            rel_path if rel_path.is_absolute() else base / rel_path
+        )
         expected_hash = meta.get("hash", "")
 
         if not file_path.exists():

@@ -1,0 +1,188 @@
+{
+  "proposal": {
+    "claims": [
+      {
+        "scope": "Current local R5 candidate and r3 freeze.",
+        "id": "r5-release-claim",
+        "text": "The R5 candidate may enter live held-out evaluation under current release gates.",
+        "role": "answer_claim"
+      },
+      {
+        "scope": "The saved report content.",
+        "id": "r5-review-observation",
+        "text": "The saved round-2 public-only audit report records fail and reports no experiment or scoring.",
+        "role": "observation"
+      },
+      {
+        "scope": "Current local freeze file.",
+        "id": "freeze-observation",
+        "text": "The current r3 freeze reports blocked_rebuild_required and zero study trials.",
+        "role": "observation"
+      },
+      {
+        "scope": "Those observed workspace command operations only.",
+        "id": "helper-probe-observation",
+        "text": "One scoped git status operation completed with exit code zero; a broader status emitted a cache permission warning.",
+        "role": "observation"
+      },
+      {
+        "scope": "All helper-backed operations in this environment.",
+        "id": "helper-restored-claim",
+        "text": "All execution-helper operations have recovered.",
+        "role": "answer_claim"
+      },
+      {
+        "scope": "Current TaskPacket parser, serializer, and model payload path.",
+        "id": "packet-contract-claim",
+        "text": "The runtime preserves and forwards the TaskPacket domain and availableSources required by the evaluation specification.",
+        "role": "answer_claim"
+      },
+      {
+        "scope": "The local TaskPacket schema excerpt.",
+        "id": "spec-requirement-observation",
+        "text": "The evaluation specification requires domain and availableSources in TaskPacket.",
+        "role": "observation"
+      },
+      {
+        "scope": "The described synthetic schema probe only.",
+        "id": "roundtrip-observation",
+        "text": "A synthetic in-memory round-trip did not preserve domain or availableSources.",
+        "role": "observation"
+      }
+    ],
+    "lenses": [
+      {
+        "rationale": "Check the written audit verdict and frozen runtime state separately.",
+        "origin": "initial",
+        "status": "candidate",
+        "id": "release-gates-lens",
+        "label": "Release gate evidence"
+      },
+      {
+        "rationale": "Limit conclusions to operations actually executed.",
+        "origin": "initial",
+        "status": "candidate",
+        "id": "helper-scope-lens",
+        "label": "Observed helper scope"
+      },
+      {
+        "rationale": "Compare required fields with parsed, serialized and dispatched fields.",
+        "origin": "initial",
+        "status": "candidate",
+        "id": "runtime-contract-lens",
+        "label": "Packet contract"
+      }
+    ],
+    "probes": [
+      {
+        "gapIds": [
+          "r5-live-gate-gap"
+        ],
+        "successCondition": "Both artifacts are current and unambiguous.",
+        "requiredCapability": "Read supplied report and freeze evidence.",
+        "method": "corroboration",
+        "refutationCondition": "A verified current state permits execution contrary to the proposed conclusion.",
+        "sourceGroups": [
+          "review-report",
+          "release-freeze"
+        ],
+        "id": "r5-gate-probe",
+        "inconclusiveCondition": "An artifact is missing, stale or inconsistent.",
+        "question": "Read back the saved audit verdict and freeze state."
+      },
+      {
+        "gapIds": [
+          "full-helper-health-gap"
+        ],
+        "successCondition": "The conclusion explicitly scopes recovery to observed operations.",
+        "requiredCapability": "No supplied capability establishes all helper operations.",
+        "method": "boundary",
+        "refutationCondition": "A relevant operation shows setup still failing.",
+        "sourceGroups": [
+          "workspace-exec"
+        ],
+        "id": "helper-scope-probe",
+        "inconclusiveCondition": "General helper status cannot be established from these observations.",
+        "question": "Limit the recovery conclusion to observed operations."
+      },
+      {
+        "gapIds": [
+          "packet-fields-gap"
+        ],
+        "successCondition": "Both fields are preserved and forwarded.",
+        "requiredCapability": "Read supplied spec and synthetic test evidence.",
+        "method": "reconstruction",
+        "refutationCondition": "Either field is dropped before dispatch.",
+        "sourceGroups": [
+          "evaluation-spec",
+          "schema-probe"
+        ],
+        "id": "packet-contract-probe",
+        "inconclusiveCondition": "Evidence does not cover the actual runtime path.",
+        "question": "Compare schema-required fields with parser, serializer and model-payload construction."
+      }
+    ],
+    "gaps": [
+      {
+        "question": "Do the current audit report and runtime freeze permit live held-out evaluation?",
+        "claimIds": [
+          "r5-release-claim"
+        ],
+        "triggerRefs": [
+          "r5-review-observation",
+          "freeze-observation"
+        ],
+        "whyItMatters": "A live study must not proceed while a required gate blocks.",
+        "probeIds": [
+          "r5-gate-probe"
+        ],
+        "id": "r5-live-gate-gap",
+        "importance": "required",
+        "lensId": "release-gates-lens",
+        "kind": "unsupported_claim"
+      },
+      {
+        "question": "Do the observed operations establish recovery of every helper-backed operation?",
+        "claimIds": [
+          "helper-restored-claim"
+        ],
+        "triggerRefs": [
+          "helper-probe-observation"
+        ],
+        "whyItMatters": "One successful command may not prove general helper recovery.",
+        "probeIds": [
+          "helper-scope-probe"
+        ],
+        "id": "full-helper-health-gap",
+        "importance": "required",
+        "lensId": "helper-scope-lens",
+        "kind": "capability_limit"
+      },
+      {
+        "question": "Does the runtime preserve and pass through both fields required by the public schema?",
+        "claimIds": [
+          "packet-contract-claim"
+        ],
+        "triggerRefs": [
+          "spec-requirement-observation",
+          "roundtrip-observation"
+        ],
+        "whyItMatters": "Missing required task context may invalidate condition comparability.",
+        "probeIds": [
+          "packet-contract-probe"
+        ],
+        "id": "packet-fields-gap",
+        "importance": "required",
+        "lensId": "runtime-contract-lens",
+        "kind": "unsupported_claim"
+      }
+    ]
+  },
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "inspect",
+    "taskId": "ommatidia-r5-readiness-recheck-20261015",
+    "expectedRevision": -1,
+    "requestHash": "926129cd4a306ae5c8749f895e091a24f72cd3dcef54cc280c562cbd9bbfe8fd"
+  }
+}

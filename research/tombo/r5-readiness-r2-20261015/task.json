@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "0.1",
+  "successCriteria": [
+    "Separate current local state from attributed reviewer findings.",
+    "Do not recommend held-out execution while a blocking finding or freeze remains.",
+    "State what the synthetic schema probe does and does not establish.",
+    "State helper status only for operations actually observed.",
+    "Keep case-specific, answer-bearing, or mapping details out of the output."
+  ],
+  "taskId": "ommatidia-r5-readiness-recheck-20261015",
+  "reflectionRequired": true,
+  "capabilities": [
+    "Use only the supplied evidence packet. No filesystem, browser, model provider, private-case, or gold access."
+  ],
+  "evidence": [
+    {
+      "scope": "Public-only R5 readiness review; findings remain attributed reviewer findings.",
+      "version": "round2",
+      "id": "r5-review-result",
+      "locator": "research/review-holdout-r5-round2.md:verdict",
+      "validity": "current",
+      "contentHash": "8ddf5776c70e5a72ea14f953bb93031f810bd47ceefe953b94b452ee3709a704",
+      "passage": "The saved independent public-only audit reports fail. It records expectation-signalling text in model inputs and multiple inaccurate or unsupported source extracts. It reports no experiment or scoring.",
+      "retrievedAt": "2026-10-15T08:02:44.1502241+00:00",
+      "sourceGroup": "review-report",
+      "kind": "document"
+    },
+    {
+      "scope": "Current local freeze gate.",
+      "version": "r3",
+      "id": "release-freeze",
+      "locator": "research/runtime_freeze_r3.json:evaluationPackageStatus and studyTrialsExecuted",
+      "validity": "current",
+      "contentHash": "9d165fc9a4d6a51f8986ddd663edcc03b5acb337b0ef45f43f4966e45c4e2b03",
+      "passage": "evaluationPackageStatus is blocked_rebuild_required; studyTrialsExecuted is 0.",
+      "retrievedAt": "2026-10-15T08:02:44.1502241+00:00",
+      "sourceGroup": "release-freeze",
+      "kind": "code"
+    },
+    {
+      "scope": "Specific observed workspace operations only.",
+      "version": "2026-10-15T08:02:44.1502241+00:00",
+      "id": "helper-probe",
+      "locator": "workspace command result: git status --short",
+      "validity": "current",
+      "contentHash": "9acd766c905babd6b4b90f942d4d5ab582a3205a401ad9739bdd474964967122",
+      "passage": "The scoped git status command returned exit code 0. The broader status command emitted a permission warning for .pytest_cache.",
+      "retrievedAt": "2026-10-15T08:02:44.1502241+00:00",
+      "sourceGroup": "workspace-exec",
+      "kind": "test"
+    },
+    {
+      "scope": "Public packet contract.",
+      "version": "current local file",
+      "id": "packet-schema-spec",
+      "locator": "research/EVALUATION_SPEC.md:TaskPacket required fields",
+      "validity": "current",
+      "contentHash": "2e78c25f002a20abd413093737237c446ae493fd7e749ce53eb8a5e9206296ee",
+      "passage": "The TaskPacket schema requires domain and availableSources in addition to taskId, goal, proposedAnswer, and budget.",
+      "retrievedAt": "2026-10-15T08:02:44.1502241+00:00",
+      "sourceGroup": "evaluation-spec",
+      "kind": "document"
+    },
+    {
+      "scope": "No held-out data used; checks whether two required fields survive the current code round trip.",
+      "version": "2026-10-15T08:02:44.1502241+00:00",
+      "id": "packet-roundtrip",
+      "locator": "synthetic in-memory TaskPacket.from_dict to to_dict probe",
+      "validity": "current",
+      "contentHash": "0f7a5ef464e59ae77fd7ccaceb40f9217dc63c752e3372f0d063f7df865ea0f1",
+      "passage": "A synthetic in-memory packet supplied domain and availableSources. The round-trip output flags were domain_preserved=false and availableSources_preserved=false.",
+      "retrievedAt": "2026-10-15T08:02:44.1502241+00:00",
+      "sourceGroup": "schema-probe",
+      "kind": "test"
+    }
+  ],
+  "mode": "explain",
+  "goal": "Determine current R5 release readiness and the precise scope of helper recovery, distinguishing file observations from delegated reviewer findings.",
+  "budget": {
+    "maxOutputTokensPerCall": 4000,
+    "maxToolCalls": 6,
+    "maxRounds": 2,
+    "maxInputChars": 48000,
+    "maxElapsedMs": 300000,
+    "maxModelCalls": 6
+  }
+}

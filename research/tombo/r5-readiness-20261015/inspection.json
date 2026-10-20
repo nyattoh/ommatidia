@@ -1,0 +1,133 @@
+{
+  "state": {
+    "schemaVersion": "0.1",
+    "taskId": "ommatidia-r5-readiness-20261015",
+    "revision": 0,
+    "startedAt": "2026-10-15T07:59:34.249Z",
+    "task": {
+      "schemaVersion": "0.1",
+      "taskId": "ommatidia-r5-readiness-20261015",
+      "goal": "Determine whether R5 may be used for held-out evaluation and what the helper probe establishes, using only the saved public audit report, freeze gate, and scoped command observation.",
+      "mode": "explain",
+      "successCriteria": [
+        "Distinguish verified file state from the delegated reviewer reported findings.",
+        "Do not claim R5 is releasable while the audit is fail or the freeze is blocked.",
+        "State the exact scope and limitation of the helper probe.",
+        "Keep all case-specific or answer-bearing material out of the packet and output."
+      ],
+      "evidence": [
+        {
+          "id": "r5-review-result",
+          "kind": "document",
+          "locator": "research/review-holdout-r5-round2.md:first-line and verdict",
+          "sourceGroup": "review-report",
+          "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+          "version": "round2",
+          "scope": "Public-only R5 readiness review; findings are attributed reviewer findings, not independently rederived citations.",
+          "passage": "The saved independent public-only audit reports fail. It says the R5 public materials contain expectation-signalling language passed into model prompts and multiple source excerpts are inaccurate or unsupported. No experiment or scoring was run.",
+          "contentHash": "5d5bfee492089e4d65e66f20b3c65757efd02fd263dc7c8a732d864e9357f77e",
+          "validity": "current"
+        },
+        {
+          "id": "release-freeze",
+          "kind": "code",
+          "locator": "research/runtime_freeze_r3.json:evaluationPackageStatus and studyTrialsExecuted",
+          "sourceGroup": "release-freeze",
+          "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+          "version": "r3",
+          "scope": "Current local freeze gate.",
+          "passage": "evaluationPackageStatus is blocked_rebuild_required; studyTrialsExecuted is 0.",
+          "contentHash": "9d165fc9a4d6a51f8986ddd663edcc03b5acb337b0ef45f43f4966e45c4e2b03",
+          "validity": "current"
+        },
+        {
+          "id": "helper-probe",
+          "kind": "test",
+          "locator": "workspace command result: git status --short",
+          "sourceGroup": "workspace-exec",
+          "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+          "version": "2026-10-15T07:58:51.8696827+00:00",
+          "scope": "One scoped helper execution only.",
+          "passage": "The scoped git status command returned exit code 0. A broader status command also emitted a permission warning for .pytest_cache. This confirms that this command path ran; it does not prove every helper operation is healthy.",
+          "contentHash": "bb1469027f6279f579abcdcfeda12cfd7d18e176a6d76209f22bd808a4712651",
+          "validity": "current"
+        }
+      ],
+      "reflectionRequired": true,
+      "capabilities": [
+        "Read only the supplied bounded evidence packet. No filesystem, browser, model-provider, private-case, or gold access."
+      ],
+      "budget": {
+        "maxRounds": 2,
+        "maxModelCalls": 0,
+        "maxToolCalls": 0,
+        "maxElapsedMs": 30000,
+        "maxInputChars": 12000,
+        "maxOutputTokensPerCall": 4000
+      }
+    },
+    "evidence": [
+      {
+        "id": "r5-review-result",
+        "kind": "document",
+        "locator": "research/review-holdout-r5-round2.md:first-line and verdict",
+        "sourceGroup": "review-report",
+        "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+        "version": "round2",
+        "scope": "Public-only R5 readiness review; findings are attributed reviewer findings, not independently rederived citations.",
+        "passage": "The saved independent public-only audit reports fail. It says the R5 public materials contain expectation-signalling language passed into model prompts and multiple source excerpts are inaccurate or unsupported. No experiment or scoring was run.",
+        "contentHash": "5d5bfee492089e4d65e66f20b3c65757efd02fd263dc7c8a732d864e9357f77e",
+        "validity": "current"
+      },
+      {
+        "id": "release-freeze",
+        "kind": "code",
+        "locator": "research/runtime_freeze_r3.json:evaluationPackageStatus and studyTrialsExecuted",
+        "sourceGroup": "release-freeze",
+        "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+        "version": "r3",
+        "scope": "Current local freeze gate.",
+        "passage": "evaluationPackageStatus is blocked_rebuild_required; studyTrialsExecuted is 0.",
+        "contentHash": "9d165fc9a4d6a51f8986ddd663edcc03b5acb337b0ef45f43f4966e45c4e2b03",
+        "validity": "current"
+      },
+      {
+        "id": "helper-probe",
+        "kind": "test",
+        "locator": "workspace command result: git status --short",
+        "sourceGroup": "workspace-exec",
+        "retrievedAt": "2026-10-15T07:58:51.8696827+00:00",
+        "version": "2026-10-15T07:58:51.8696827+00:00",
+        "scope": "One scoped helper execution only.",
+        "passage": "The scoped git status command returned exit code 0. A broader status command also emitted a permission warning for .pytest_cache. This confirms that this command path ran; it does not prove every helper operation is healthy.",
+        "contentHash": "bb1469027f6279f579abcdcfeda12cfd7d18e176a6d76209f22bd808a4712651",
+        "validity": "current"
+      }
+    ],
+    "claims": [],
+    "lenses": [],
+    "gaps": [],
+    "probes": [],
+    "usage": {
+      "rounds": 0,
+      "modelCalls": 0,
+      "toolCalls": 0,
+      "elapsedMs": 0,
+      "totalTokens": 0,
+      "costYen": 0
+    },
+    "decision": "blocked",
+    "stopReason": "budget_exhausted",
+    "appliedExecutions": [],
+    "excludedCandidates": []
+  },
+  "changes": [],
+  "nextProbeIds": [],
+  "userQuestions": [],
+  "mode": "host-assisted",
+  "apiCallsMade": 0,
+  "hostUsage": {
+    "totalTokens": null,
+    "costYen": null
+  }
+}

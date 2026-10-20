@@ -1,0 +1,76 @@
+{
+  "baseCommit": "56ef2f1871286af0111884de5f3a094b88fa26a0",
+  "candidateStatus": "candidate_rebuild",
+  "conditionImplementationFreeze": {
+    "hash": "cf0310e4f55197b0858f543acfe6cbf354b1f77de7369f22cd79fb8f2c45e703",
+    "path": "src/ommatidia/conditions.py",
+    "prompts": {
+      "PROMPT_CONDITION_A": "8d80fa8d728519c4706f7b345f9f0c0bc2c6abebdb462cb8c24f2d0e5f51e23a",
+      "PROMPT_CONDITION_B_PHASE1": "8d80fa8d728519c4706f7b345f9f0c0bc2c6abebdb462cb8c24f2d0e5f51e23a",
+      "PROMPT_CONDITION_B_PHASE2": "394c34c15b12540227a6b70277c77ba790b3546c975beb61ad0ad45ec00dc69d",
+      "PROMPT_CONDITION_C": "fd0a08e0a4b95c7666187759f44e59c58f4d020d02cdf9f7b2bba3fdf1843fd3",
+      "PROMPT_CONDITION_D": "b27268ab46c41b5e5d9b50920f395fec4ba9d25f7214d753c3a24d58506f3ef6",
+      "PROMPT_CONDITION_E_COORDINATOR": "49acdbb2b5ad250302370c6ff046c5b5c7a6940c5ceb2b8072a91faf142cd899",
+      "PROMPT_CONDITION_E_INVESTIGATOR": "a51ad4afb3afed2eb7bd2fed38cb750f87b461f00150b005019ec3ad199f1df8",
+      "PROMPT_CONDITION_E_SYNTHESIS": "7e9a3caf46a11274bf1c04ba5c1b7d4802112767e83bfe017d114bcf7606fadc"
+    },
+    "sizeBytes": 19120
+  },
+  "coreTypesFreeze": {
+    "hash": "1052b5e6e415e5c1d2d6bb0ab6bde8378e6e2bb3d18638381edebdaad0c22571",
+    "path": "src/ommatidia/types.py",
+    "sizeBytes": 41743
+  },
+  "createdAt": "2026-10-15T05:47:00Z",
+  "dataset": "ommatidia_heldout_r4_candidate_24",
+  "evaluationSpecFreeze": {
+    "hash": "61734daec67d4b3a66f40ddf490bdc338498f6c37de99732a26fb9394e314865",
+    "path": "research/EVALUATION_SPEC.md",
+    "sizeBytes": 17754
+  },
+  "evaluatorFreeze": {
+    "hash": "d29efee0aa7897e8f7264beae13da60fe678cc05a9a289ab094bd449dd2fb3c8",
+    "path": "src/ommatidia/evaluator.py",
+    "sizeBytes": 12142
+  },
+  "heldoutCandidateManifest": {
+    "fileCount": 102,
+    "hash": "fa5b60526ec72d6af74f45e1197a3f61cb0e08a058524176e5283733f7718df9",
+    "path": "research/datasets/heldout_r4_candidate/manifest.json",
+    "sizeBytes": 16802
+  },
+  "protocolFreeze": {
+    "hash": "a8e928a19d2a390ef017da638bad87682c8e81f01f0081ec3f1c488915d7fefe",
+    "path": "research/PROTOCOL.md",
+    "sizeBytes": 17738
+  },
+  "schemaVersion": "0.1",
+  "stratification": {
+    "categories": {
+      "contradicted": 6,
+      "disputed": 6,
+      "inconclusive": 6,
+      "supported": 6
+    },
+    "domains": {
+      "document_research": 8,
+      "software_engineering": 8,
+      "workflow_automation": 8
+    },
+    "h4CounterexampleCases": [
+      "heldout_r4_se_03",
+      "heldout_r4_se_04",
+      "heldout_r4_se_05",
+      "heldout_r4_se_06",
+      "heldout_r4_wa_03",
+      "heldout_r4_wa_04",
+      "heldout_r4_wa_05",
+      "heldout_r4_wa_06",
+      "heldout_r4_dr_03",
+      "heldout_r4_dr_04",
+      "heldout_r4_dr_05",
+      "heldout_r4_dr_06"
+    ],
+    "totalCases": 24
+  }
+}

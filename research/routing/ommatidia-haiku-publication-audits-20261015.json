@@ -1,0 +1,47 @@
+{
+  "workstream": "Ommatidia publication-preparation document audits",
+  "catalogue": "research/routing/catalogue-20261015T135255Z.json",
+  "candidates": "research/routing/candidates-20261015T135255Z.json",
+  "workspace": {
+    "root": "D:\\develop\\works\\ommatidia",
+    "branch": "main",
+    "dirtyAtDispatch": true
+  },
+  "selection": {
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-haiku-5-5",
+    "effortOption": {
+      "id": "effort",
+      "value": "low"
+    },
+    "selectionBasis": "User-directed for bounded simple read-only checks",
+    "benchmarkRank": 21,
+    "benchmarkEvidence": "unknown",
+    "ledgerOutputCost": null,
+    "actualTaskCostYen": null,
+    "actualTokenUsage": null
+  },
+  "dispatches": [
+    {
+      "clientRequestId": "ommatidia-haiku-abstract-claims-audit-20261015-r1",
+      "task": "Read-only audit of empirical-results and novelty claim wording in the abstract and conclusion",
+      "status": "completed",
+      "verdict": "pass"
+    },
+    {
+      "clientRequestId": "ommatidia-haiku-citation-key-audit-20261015-r1",
+      "task": "Read-only mechanical comparison of manuscript citation keys with verification-ledger identifiers",
+      "status": "completed",
+      "verdict": "pass"
+    }
+  ],
+  "parentVerification": {
+    "citationKeysUsed": 28,
+    "citationKeysDefined": 28,
+    "missingCitationKeys": [],
+    "unusedLedgerKeys": [],
+    "abstractAndConclusionBoundary": "Manuscript continues to state that empirical results are pending and does not claim efficacy or novelty."
+  },
+  "studyConditionModelCalls": 0,
+  "notes": "These were publication-preparation document audits, not study trials. Delegated task count is recorded; exact provider API-call, token and monetary usage were not exposed by the host."
+}

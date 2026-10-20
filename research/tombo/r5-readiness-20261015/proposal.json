@@ -1,0 +1,168 @@
+{
+  "binding": {
+    "schemaVersion": "0.1",
+    "operation": "inspect",
+    "taskId": "ommatidia-r5-readiness-20261015",
+    "expectedRevision": -1,
+    "requestHash": "02d9ca58782c4b7d00ee9f864491ff88806b29f58810111161f03521202862a5"
+  },
+  "proposal": {
+    "lenses": [
+      {
+        "status": "candidate",
+        "rationale": "Check the written audit verdict and frozen runtime state separately.",
+        "label": "Release gate evidence",
+        "id": "release-gates-lens",
+        "origin": "initial"
+      },
+      {
+        "status": "candidate",
+        "rationale": "Limit conclusions to operations that were actually executed.",
+        "label": "Observed helper scope",
+        "id": "helper-scope-lens",
+        "origin": "initial"
+      }
+    ],
+    "gaps": [
+      {
+        "kind": "unsupported_claim",
+        "importance": "required",
+        "lensId": "release-gates-lens",
+        "claimIds": [
+          "r5-release-claim"
+        ],
+        "triggerRefs": [
+          "r5-review-observation",
+          "freeze-observation"
+        ],
+        "id": "r5-live-gate-gap",
+        "question": "Do the current audit report and runtime freeze permit live held-out evaluation?",
+        "probeIds": [
+          "r5-gate-probe"
+        ],
+        "whyItMatters": "A live study must not proceed while a required release gate blocks."
+      },
+      {
+        "kind": "capability_limit",
+        "importance": "required",
+        "lensId": "helper-scope-lens",
+        "claimIds": [
+          "helper-restored-claim"
+        ],
+        "triggerRefs": [
+          "helper-probe-observation"
+        ],
+        "id": "full-helper-health-gap",
+        "question": "Do the successful scoped command and preparation step establish recovery of every helper-backed operation?",
+        "probeIds": [
+          "helper-scope-probe"
+        ],
+        "whyItMatters": "A single successful operation may not establish general helper recovery."
+      }
+    ],
+    "assessments": [
+      {
+        "verdict": "refutes",
+        "evidenceIds": [
+          "r5-review-result",
+          "release-freeze"
+        ],
+        "claimId": "r5-release-claim",
+        "reason": "The saved audit verdict is fail and the current freeze blocks evaluation.",
+        "scopeMatched": true
+      },
+      {
+        "verdict": "supports",
+        "evidenceIds": [
+          "r5-review-result"
+        ],
+        "claimId": "r5-review-observation",
+        "reason": "The claim is explicitly limited to what the saved report records.",
+        "scopeMatched": true
+      },
+      {
+        "verdict": "supports",
+        "evidenceIds": [
+          "release-freeze"
+        ],
+        "claimId": "freeze-observation",
+        "reason": "The cited freeze fields state the current package block and trial count.",
+        "scopeMatched": true
+      },
+      {
+        "verdict": "supports",
+        "evidenceIds": [
+          "helper-probe"
+        ],
+        "claimId": "helper-probe-observation",
+        "reason": "The command result supports only these observed operations.",
+        "scopeMatched": true
+      }
+    ],
+    "probes": [
+      {
+        "inconclusiveCondition": "Either artifact is missing, stale, or internally inconsistent.",
+        "method": "corroboration",
+        "refutationCondition": "A verified current report or freeze permits execution contrary to the proposed conclusion.",
+        "id": "r5-gate-probe",
+        "question": "Read back the saved audit verdict and runtime freeze fields.",
+        "successCondition": "Both artifacts are readable and their current status is unambiguous.",
+        "gapIds": [
+          "r5-live-gate-gap"
+        ],
+        "sourceGroups": [
+          "review-report",
+          "release-freeze"
+        ],
+        "requiredCapability": "Read supplied local report and freeze files."
+      },
+      {
+        "inconclusiveCondition": "The full helper state cannot be established from the bounded observations.",
+        "method": "boundary",
+        "refutationCondition": "A relevant executed operation shows helper setup still failing.",
+        "id": "helper-scope-probe",
+        "question": "Limit the conclusion to the helper-backed operations already observed.",
+        "successCondition": "The conclusion explicitly scopes recovery to observed operations.",
+        "gapIds": [
+          "full-helper-health-gap"
+        ],
+        "sourceGroups": [
+          "workspace-exec"
+        ],
+        "requiredCapability": "No additional capability available that proves all helper operations."
+      }
+    ],
+    "claims": [
+      {
+        "scope": "Current local R5 candidate and r3 freeze.",
+        "id": "r5-release-claim",
+        "text": "The R5 candidate may enter live held-out evaluation under the current release gates.",
+        "role": "answer_claim"
+      },
+      {
+        "scope": "The saved report content only.",
+        "id": "r5-review-observation",
+        "text": "The saved round-2 public-only audit report records a fail verdict and says no experiment or scoring was performed.",
+        "role": "observation"
+      },
+      {
+        "scope": "Current local freeze file.",
+        "id": "freeze-observation",
+        "text": "The current r3 freeze reports blocked_rebuild_required and zero study trials.",
+        "role": "observation"
+      },
+      {
+        "scope": "Those specific workspace command operations only.",
+        "id": "helper-probe-observation",
+        "text": "One scoped git status operation returned exit code zero, while a broader status command emitted a permission warning for .pytest_cache.",
+        "role": "observation"
+      },
+      {
+        "scope": "All helper-backed operations in this environment.",
+        "id": "helper-restored-claim",
+        "text": "All execution-helper operations have recovered.",
+        "role": "answer_claim"
+      }
+    ]
+  }
+}

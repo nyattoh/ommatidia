@@ -1,0 +1,65 @@
+{
+  "execution_contract": "pm_tdd_review",
+  "tasks": [
+    {
+      "id": "pm-gold-hash-boundary-p2",
+      "layer": "goal_pm",
+      "goal_id": "g-gold-hash-boundary-p2-20261017",
+      "kind": "planning",
+      "status": "done",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A06daff1d-8f00-49a4-b31c-a181e2935890%3Adelegate-task%3Aommatidia-gold-hash-boundary-goal-pm-20261017-r1",
+      "providerInstanceId": "codex",
+      "model": "gpt-6.1-sol"
+    },
+    {
+      "id": "impl-gold-hash-boundary-p2",
+      "goal_id": "g-gold-hash-boundary-p2-20261017",
+      "kind": "implement",
+      "vendor": "openai",
+      "providerInstanceId": "codex",
+      "model": "gpt-6-luna",
+      "status": "done",
+      "artifact": "src/ommatidia/seal.py; src/ommatidia/integrity.py; scripts/run_harness.py; tests/conftest.py; tests/test_seal.py",
+      "tdd": {
+        "red": {
+          "command": "python -B -m pytest -q -p no:cacheprovider tests/test_seal.py tests/test_synthetic_path_guard.py tests/test_run_harness_cost_cap.py --tb=short (pre-fix)",
+          "exit_code": 1,
+          "result": "7 failed, 41 passed; synthetic IO spy blocked private-path reads before file access"
+        },
+        "green": {
+          "command": "python -B -m pytest -q -p no:cacheprovider tests/test_seal.py tests/test_synthetic_path_guard.py tests/test_run_harness_cost_cap.py --tb=short",
+          "exit_code": 0,
+          "result": "48 passed"
+        },
+        "regression": {
+          "command": "python -B -m pytest -q -p no:cacheprovider",
+          "exit_code": 0,
+          "result": "286 passed"
+        }
+      }
+    },
+    {
+      "id": "verify-gold-hash-boundary-p2",
+      "kind": "verify",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "impl-gold-hash-boundary-p2",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A6d4f03de-08e5-4f04-8554-404f1a489a14%3Adelegate-task%3Aommatidia-gold-hash-boundary-review-agy-20261017-r2",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-4-argon-high"
+    },
+    {
+      "id": "review-gold-hash-boundary-p2",
+      "kind": "code_review",
+      "vendor": "google",
+      "status": "done",
+      "verdict": "pass",
+      "verifies": "impl-gold-hash-boundary-p2",
+      "dispatch_handle": "node:delegated-task:command%3Amcp%3A6d4f03de-08e5-4f04-8554-404f1a489a14%3Adelegate-task%3Aommatidia-gold-hash-boundary-review-agy-20261017-r2",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-4-argon-high",
+      "notes": "Read-only review of the five approved files; no blocking or non-blocking defects found. Reviewer reports 39 parametrized tests in tests/test_seal.py pass."
+    }
+  ]
+}
