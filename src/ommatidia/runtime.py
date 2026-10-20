@@ -112,6 +112,31 @@ def check_public_payload(value):
             raise ValueError("Private locator in public payload")
 
 
+def validate_proposal_shape(output):
+    """Require the fields marked required by PROPOSAL_SCHEMA before ingestion."""
+    if not isinstance(output, dict):
+        raise ValueError("Invalid proposal response object")
+
+    for field in PROPOSAL_SCHEMA.get("required", []):
+        if field not in output:
+            raise ValueError("Missing proposal")
+
+    proposal = output.get("proposal")
+    if not isinstance(proposal, dict):
+        raise ValueError("Invalid proposal object")
+
+    proposal_schema = PROPOSAL_SCHEMA["properties"]["proposal"]
+    properties = proposal_schema.get("properties", {})
+    for field in proposal_schema.get("required", []):
+        field_schema = properties.get(field, {})
+        if field not in proposal:
+            raise ValueError(f"Missing required proposal field: {field}")
+        if field_schema.get("type") == "array" and not isinstance(
+            proposal[field], list
+        ):
+            raise ValueError(f"Required proposal field must be an array: {field}")
+
+
 def step_payload(task, condition, step, sequence, run_id, context=None):
     payload = {
         "taskId": task.task_id,
@@ -288,8 +313,7 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
                     "maxRoles": 1 if condition == ConditionType.D else 3,
                 },
             )
-            if "proposal" not in output:
-                raise ValueError("Missing proposal")
+            validate_proposal_shape(output)
             proposal, _ = ingest_proposal(output)
             known_probes = {probe.id: probe for probe in state.probes}
             if proposal.probes:

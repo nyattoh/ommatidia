@@ -21,7 +21,8 @@ from ommatidia.harness import (
     sanitize_ledger_file,
 )
 from ommatidia.integrity import ROOT, fingerprints, verify_runtime_freeze
-from ommatidia.runtime import condition_graph
+from ommatidia.contracts import PROPOSAL_SCHEMA
+from ommatidia.runtime import condition_graph, validate_proposal_shape
 from ommatidia.scoring import MetricUnavailable, analyse_saved_trials, score_saved_trial
 from ommatidia.seal import SealMismatchError, create_seal_manifest
 from ommatidia.t3_adapter import (
@@ -493,6 +494,57 @@ def test_adaptive_graph_ingests_each_selected_probe_and_synthesises(setup, condi
     ]
     assert sorted(investigated) == ["probe_0", "probe_1"]
     assert record.usage.model_calls <= 8
+
+
+@pytest.mark.parametrize("condition", [ConditionType.D, ConditionType.E])
+def test_adaptive_graph_rejects_incomplete_proposal_before_synthesis(setup, condition):
+    _, _, task = setup
+    calls = []
+
+    def executor(step, payload):
+        if payload["responseSchema"]["required"][0] == "proposal":
+            calls.append(step)
+            return {"proposal": {}}
+        calls.append(step)
+        return dummy_synthetic_executor(step, payload)
+
+    executor.synthetic_only = True
+    record = make_harness(setup).run_cohort(
+        [task], [condition], "invalid-proposal", executor
+    )[0]
+
+    assert record.status == "failed"
+    assert record.error_message
+    assert calls == [condition_graph(condition)[0].name]
+    assert record.final_state["probes"] == []
+
+
+@pytest.mark.parametrize("field", ["claims", "lenses", "gaps", "probes"])
+def test_proposal_shape_requires_each_schema_array(field):
+    required = PROPOSAL_SCHEMA["properties"]["proposal"]["required"]
+    proposal = {name: [] for name in required}
+    proposal.pop(field)
+
+    with pytest.raises(ValueError, match=f"Missing required proposal field: {field}"):
+        validate_proposal_shape({"proposal": proposal})
+
+
+@pytest.mark.parametrize("field", ["claims", "lenses", "gaps", "probes"])
+def test_proposal_shape_requires_arrays_for_required_fields(field):
+    required = PROPOSAL_SCHEMA["properties"]["proposal"]["required"]
+    proposal = {name: [] for name in required}
+    proposal[field] = None
+
+    with pytest.raises(
+        ValueError, match=f"Required proposal field must be an array: {field}"
+    ):
+        validate_proposal_shape({"proposal": proposal})
+
+
+def test_proposal_shape_keeps_optional_arrays_optional():
+    required = PROPOSAL_SCHEMA["properties"]["proposal"]["required"]
+
+    validate_proposal_shape({"proposal": {name: [] for name in required}})
 
 
 def saved_matrix(setup):
