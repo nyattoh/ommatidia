@@ -15,12 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PAPER = ROOT / 'paper/minimal-protocol'
 
 
-def run(script, paper, epoch=None):
+def run(script, paper, epoch=None, optimised=False):
     env = os.environ.copy()
     env.pop('SOURCE_DATE_EPOCH', None)
     if epoch is not None:
         env['SOURCE_DATE_EPOCH'] = epoch
-    return subprocess.run([sys.executable, '-B', str(paper/script)], env=env,
+    return subprocess.run([sys.executable, *(['-O'] if optimised else []), '-B', str(paper/script)], env=env,
                           capture_output=True, text=True, encoding='utf-8')
 
 
@@ -112,3 +112,54 @@ def test_reproducibility_receipts_match_canonical_checkout_bytes(tmp_path):
         if name.endswith('.txt'):
             assert data == data.replace(b'\r\n', b'\n')
         assert hashlib.sha256(data).hexdigest() == digest
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+def test_verify_accepts_valid_inputs_in_both_modes(built_paper, optimised):
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode == 0, result.stdout+result.stderr
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('case', [
+    'source', 'pdf', 'licence', 'licence_link', 'abstract', 'published',
+    'missing_manifest', 'empty_manifest', 'partial_manifest', 'digest',
+])
+def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
+    manifest = built_paper/'SHA256SUMS.txt'
+    metadata = built_paper/'zenodo-metadata.md'
+    if case == 'source':
+        source = built_paper/'manuscript.md'
+        source.write_text(source.read_text(encoding='utf-8')+'\nUnrendered tampered paragraph.\n', encoding='utf-8', newline='\n')
+    elif case == 'pdf':
+        pdf = built_paper/'manuscript.pdf'
+        with fitz.open(pdf) as doc:
+            doc.delete_page(len(doc)-1)
+            data = doc.tobytes()
+        pdf.write_bytes(data)
+    elif case in ('licence', 'licence_link', 'abstract'):
+        text = metadata.read_text(encoding='utf-8')
+        old = {'licence': 'Creative Commons Attribution 4.0 International (CC-BY-4.0)',
+               'licence_link': 'https://creativecommons.org/licenses/by/4.0/',
+               'abstract': 'An investigation can end with a fluent answer'}[case]
+        assert old in text
+        metadata.write_text(text.replace(old, 'Tampered metadata'), encoding='utf-8', newline='\n')
+    elif case == 'published':
+        article = built_paper.parents[1]/'articles/ommatidia-design-plan.md'
+        article.write_text(article.read_text(encoding='utf-8').replace('published: false', 'published: true'), encoding='utf-8', newline='\n')
+    elif case == 'missing_manifest':
+        manifest.unlink()
+    elif case == 'empty_manifest':
+        manifest.write_bytes(b'')
+    elif case == 'partial_manifest':
+        manifest.write_text(manifest.read_text(encoding='utf-8').splitlines()[0]+'\n', encoding='utf-8', newline='\n')
+    elif case == 'digest':
+        rows = manifest.read_text(encoding='utf-8').splitlines()
+        rows[0] = '0'*64+'  manuscript.md'
+        manifest.write_text('\n'.join(rows)+'\n', encoding='utf-8', newline='\n')
+    if case in ('source', 'pdf'):
+        # Keep hashes valid so this tests the semantic checks, not checksum failure.
+        manifest.write_text(''.join(hashlib.sha256((built_paper/name).read_bytes()).hexdigest()+'  '+name+'\n'
+                                    for name in ('manuscript.md', 'manuscript.pdf')), encoding='utf-8', newline='\n')
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, case+' was accepted: '+result.stdout+result.stderr

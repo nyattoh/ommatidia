@@ -22,9 +22,12 @@ for i, page in enumerate(doc):
     for b in page.get_text('blocks'):
         if b[0]<0 or b[1]<0 or b[2]>page.rect.width+1 or b[3]>page.rect.height+1:
             outside.append(i+1)
-assert not missing, missing
-assert not outside, outside
-assert '\ufffd' not in alltext and '\x00' not in alltext
+if missing:
+    raise ValueError('PDF is missing manuscript text blocks: '+repr(missing))
+if outside:
+    raise ValueError('PDF text extends outside page bounds: '+repr(outside))
+if '\ufffd' in alltext or '\x00' in alltext:
+    raise ValueError('PDF contains replacement or null characters')
 expected = {'manuscript.md', 'manuscript.pdf'}
 entries = {}
 for line in (here/'SHA256SUMS.txt').read_text(encoding='utf-8').splitlines():
@@ -41,10 +44,14 @@ for name, digest in entries.items():
     if hashlib.sha256((here/name).read_bytes()).hexdigest() != digest:
         raise ValueError('SHA256 mismatch: '+name)
 metadata = (here/'zenodo-metadata.md').read_text(encoding='utf-8')
-assert 'Creative Commons Attribution 4.0 International (CC-BY-4.0)' in metadata
-assert 'https://creativecommons.org/licenses/by/4.0/' in metadata
-assert source.split('## Abstract\n\n')[1].split('\n\n## ')[0] in metadata
-assert '\npublished: false\n' in (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8')
+if 'Creative Commons Attribution 4.0 International (CC-BY-4.0)' not in metadata:
+    raise ValueError('Zenodo metadata is missing the approved licence')
+if 'https://creativecommons.org/licenses/by/4.0/' not in metadata:
+    raise ValueError('Zenodo metadata is missing the licence URL')
+if source.split('## Abstract\n\n')[1].split('\n\n## ')[0] not in metadata:
+    raise ValueError('Zenodo metadata does not contain the manuscript abstract')
+if '\npublished: false\n' not in (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8'):
+    raise ValueError('The Zenn article must remain unpublished')
 render = here/'rendered'
 render.mkdir(exist_ok=True)
 thumbs = []
