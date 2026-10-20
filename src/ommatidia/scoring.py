@@ -166,6 +166,29 @@ def bca_interval(values, resamples=10000, seed=1701):
     return {"ci95": bounds, "resamples": resamples, "seed": seed, "method": "BCa paired case bootstrap"}
 
 
+# Protocol section 6.2 host-measured units; monetary cost is deliberately excluded.
+RESOURCE_UNITS = {"elapsedMs": "elapsed_ms", "modelCalls": "model_calls",
+                  "toolCalls": "tool_calls", "inputChars": "input_chars"}
+
+
+def paired_resource_summary(matrix, baseline, task_ids):
+    """Descriptive E-minus-baseline means of the whole-trial usage; no hypothesis test."""
+    pairs = [(matrix["E"][tid], matrix[baseline][tid]) for tid in task_ids]
+    unknown = sum(not record.usage_known for pair in pairs for record in pair)
+    units = {}
+    for unit, attr in RESOURCE_UNITS.items():
+        if unknown:
+            units[unit] = {"available": False,
+                           "reason": f"{unknown} paired trial(s) have usage_known=false"}
+            continue
+        primary = sum(getattr(e.usage, attr) for e, _ in pairs) / len(pairs)
+        control = sum(getattr(b.usage, attr) for _, b in pairs) / len(pairs)
+        units[unit] = {"available": True, "primaryMean": float(primary),
+                       "baselineMean": float(control), "meanDifference": float(primary - control)}
+    return {"primary": "E", "baseline": baseline, "sampleSize": len(pairs),
+            "descriptiveOnly": True, "units": units}
+
+
 def analyse_saved_trials(records, task_ids, counterexample_ids):
     from ommatidia.harness import compute_exact_mcnemar, compute_holm_bonferroni
     matrix = validate_matrix(records, ["B", "C", "D", "E"], task_ids)
@@ -224,4 +247,6 @@ def analyse_saved_trials(records, task_ids, counterexample_ids):
         report["significant"] = (
             p is not None and adj < 0.05 and direction_matches
         )
-    return {"sampleSize": 24, "familySize": 4, "multiplicity": "Holm-Bonferroni", "hypotheses": reports}
+    return {"sampleSize": 24, "familySize": 4, "multiplicity": "Holm-Bonferroni", "hypotheses": reports,
+            "resourceComparisons": [paired_resource_summary(matrix, baseline, sorted(task_ids))
+                                    for baseline in ("B", "C", "D")]}
