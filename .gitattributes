@@ -1,3 +1,5 @@
-# The sealed dev manifest (and research/seal_manifest.json) hash the CRLF bytes of these
+# research/seal_manifest.json and the sealed dev manifest hash the CRLF bytes of these
 # files. Pin CRLF on checkout so every platform and core.autocrlf setting reproduces them.
+research/PROTOCOL.md text eol=crlf
+research/EVALUATION_SPEC.md text eol=crlf
 research/datasets/dev/** text eol=crlf

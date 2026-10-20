@@ -41,3 +41,31 @@ def test_fresh_checkout_without_autocrlf_matches_sealed_dev_manifest(tmp_path):
         cwd=clone, check=True, capture_output=True, text=True,
     ).stdout.splitlines()
     assert len(attrs) == len(private) and all(line.endswith(": eol: crlf") for line in attrs)
+
+
+@pytest.mark.skipif(
+    shutil.which("git") is None or not (ROOT / ".git").exists(),
+    reason="Requires a git checkout of the repository",
+)
+def test_fresh_checkout_without_autocrlf_verifies_tracked_seal_entries(tmp_path):
+    # research/seal_manifest.json hashes the CRLF bytes of PROTOCOL.md and EVALUATION_SPEC.md.
+    from ommatidia.seal import verify_seal_manifest
+
+    clone = tmp_path / "clone"
+    subprocess.run(
+        ["git", "clone", "--quiet", "-c", "core.autocrlf=false", "-c", "core.eol=lf",
+         str(ROOT), str(clone)],
+        check=True,
+    )
+    seal = json.loads((clone / "research" / "seal_manifest.json").read_text(encoding="utf-8"))
+    tracked = set(
+        subprocess.run(
+            ["git", "ls-files", "--", *seal["datasets"]],
+            cwd=clone, check=True, capture_output=True, text=True,
+        ).stdout.split()
+    )
+    # The held-out manifest is deliberately untracked; a fresh clone cannot contain it.
+    assert set(seal["datasets"]) - tracked == {"research/datasets/heldout/manifest.json"}
+    seal["datasets"] = {name: entry for name, entry in seal["datasets"].items() if name in tracked}
+    results = verify_seal_manifest(seal, base_dir=clone)
+    assert results and all(results.values())
