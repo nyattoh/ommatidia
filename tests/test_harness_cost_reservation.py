@@ -211,5 +211,6 @@ def test_parallel_roles_each_hold_a_reservation_until_settled(setup):
     )[0]
     assert record.status == "completed", record.error_message
     assert committed_at_barrier == [101.5, 101.5]
-    assert len(executor.calls) == 4
-    assert registry(output)["committedCostYen"] == 6.0
+    # plan, two concurrent investigators, the update planning pass, synthesis
+    assert len(executor.calls) == 5
+    assert registry(output)["committedCostYen"] == 7.5

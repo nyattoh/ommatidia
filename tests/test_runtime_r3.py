@@ -930,8 +930,9 @@ def test_e_roles_overlap_and_reservations_remain_consistent(setup):
     harness = make_harness(setup)
     record = harness.run_cohort([task], [ConditionType.E], "parallel", executor)[0]
     assert record.status == "completed", record.error_message
-    assert record.usage.model_calls == harness.resource_registry.total_model_calls == 4
-    assert len({step["stepId"] for step in record.steps}) == 4
+    # plan, two concurrent investigators, the update planning pass, synthesis
+    assert record.usage.model_calls == harness.resource_registry.total_model_calls == 5
+    assert len({step["stepId"] for step in record.steps}) == 5
     assert record.wall_elapsed_ms > 0
 
 

@@ -334,6 +334,11 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
                     ],
                 )
             apply_proposal(state, proposal)
+            # Stop only after a planning pass has seen the latest observations.
+            stop, reason, decision = evaluate_stopping_conditions(state, task.budget)
+            if stop:
+                state.stop_reason, state.decision = reason, decision
+                break
             pending = [
                 probe for probe in state.probes if probe.status == ProbeStatus.PENDING
             ]
@@ -387,9 +392,8 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
                         },
                     )
                     observations(output, {probe.id})
-            stop, reason, decision = evaluate_stopping_conditions(state, task.budget)
-            if stop:
-                state.stop_reason, state.decision = reason, decision
+            if state.usage.exceeds(task.budget):
+                state.stop_reason, state.decision = "budget_exhausted", Decision.BLOCKED
                 break
         output = execute(graph[-1], {"state": state.to_dict()})
         try:
@@ -408,7 +412,10 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
         state.usage.elapsed_ms,
         state.usage.input_chars,
     )
-    state.decision = Decision.BLOCKED if invalid else Decision.READY_FOR_REQUESTED_STEP
+    if invalid:
+        state.decision = Decision.BLOCKED
+    elif state.stop_reason is None:
+        state.decision = Decision.READY_FOR_REQUESTED_STEP
     state.stop_reason = (
         "invalid_response" if invalid else (state.stop_reason or "graph_complete")
     )
