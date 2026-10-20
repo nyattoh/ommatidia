@@ -73,7 +73,8 @@ def saved_trial():
     )
     record = TrialRecord(
         task_id=task.task_id,
-        condition=ConditionType.A,
+        # An observing condition; A/B retrieval metrics are null by design.
+        condition=ConditionType.C,
         run_id="synthetic_passage_integrity",
         final_state=state.to_dict(),
         final_judgement=judgement,

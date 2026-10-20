@@ -13,6 +13,12 @@ class MetricUnavailable(ValueError):
     pass
 
 
+# A and B return only a final answer: no observation records their retrieval, so
+# metrics built on verified retrieved evidence are unavailable rather than zero.
+FINAL_ONLY_CONDITIONS = ("A", "B")
+RETRIEVAL_METRICS = ("recallCrit", "dsc", "efficiencyTool", "efficiencyTime")
+
+
 def score_saved_trial(record, rubric, metrics=("fda", "recallCrit", "dsc", "warrantedAbstention", "unwarrantedAbstention")):
     if isinstance(rubric, GoldStandard):
         rubric = rubric.to_dict()
@@ -48,8 +54,12 @@ def score_saved_trial(record, rubric, metrics=("fda", "recallCrit", "dsc", "warr
         retrieved = set()
     critical = set(rubric.get("criticalEvidenceHashes", []))
     result = {}
+    unavailable = {}
     for metric in metrics:
-        if metric == "fda":
+        if metric in RETRIEVAL_METRICS and record.condition.value in FINAL_ONLY_CONDITIONS:
+            result[metric] = None
+            unavailable[metric] = "Final-only condition has no verified retrieval record"
+        elif metric == "fda":
             result[metric] = int(not failed and fj.verdict == target)
         elif metric == "recallCrit":
             if not critical:
@@ -93,6 +103,8 @@ def score_saved_trial(record, rubric, metrics=("fda", "recallCrit", "dsc", "warr
             result[metric] = sum(labels[gid] == "genuine" for gid in ids) / len(ids)
         else:
             raise MetricUnavailable(f"Metric is not specified or supported: {metric}")
+    if unavailable:
+        result["unavailableMetrics"] = unavailable
     return result
 
 

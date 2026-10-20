@@ -579,8 +579,9 @@ def saved_matrix(setup):
 
 def test_saved_scoring_uses_observations_and_refuses_unavailable_metrics(setup):
     _, _, task = setup
+    # Condition C: an observing condition whose retrieval is scored (A/B are null).
     record = make_harness(setup).run_cohort(
-        [task], [ConditionType.A], "score", dummy_synthetic_executor
+        [task], [ConditionType.C], "score", dummy_synthetic_executor
     )[0]
     new_evidence = copy.deepcopy(record.final_state["evidence"][0])
     new_evidence.update(

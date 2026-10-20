@@ -277,6 +277,11 @@ def main(argv=None, dispatcher=None, public_boundary=None):
                     scored.append(record.to_dict())
             atomic_json(args.output_dir / args.partition / "scored_trials.json", scored)
             print(f"Scored {len(scored)} saved trials; original records preserved")
+            unavailable = sorted(
+                {name for record in scored for name in record["metrics"].get("unavailableMetrics", {})}
+            )
+            if unavailable:
+                print(f"Unavailable for final-only conditions A/B (null, not zero): {', '.join(unavailable)}")
             return 1 if any(record["status"] != "completed" for record in scored) else 0
         if args.mode == "paired_compare":
             if args.analysis_design is None:
