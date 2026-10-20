@@ -4,7 +4,7 @@ Ryoko Sakakibara — Independent Researcher
 
 ORCID: https://orcid.org/0009-0009-9544-6315
 
-Draft dated 21 October 2026. Research plan and system design; no comparative study results. Manuscript licence: pending author decision.
+Draft dated 21 October 2026. Research plan and system design; no comparative study results. Manuscript licence: Creative Commons Attribution 4.0 International (CC-BY-4.0), https://creativecommons.org/licenses/by/4.0/.
 
 ## Abstract
 
@@ -91,7 +91,7 @@ The planned 24-case evaluation offers limited precision and generalisability. So
 
 ## 7. Data and code availability
 
-The public code, historical protocol, evaluation specification and verification ledger are in https://github.com/nyattoh/ommatidia. This draft uses the public main baseline b8cc565ef016f531fdef7325801e3468db82135f as its repository anchor; the accompanying PR adds only this publication candidate and drafting material. Relevant paths are research/PROTOCOL.md, research/EVALUATION_SPEC.md, research/PROTOCOL_AMENDMENT_COST_CAP_20261015.md, research/runtime-design.md, research/runtime-driver-r3.md, research/runtime_freeze_r4.json and references/verification-ledger.json. No held-out answer key, private evaluator data or empirical result dataset accompanies this manuscript. No DOI or GitHub release is assigned by this work. Archival publication, author confirmation and the manuscript licence decision remain with the author.
+The public code, historical protocol, evaluation specification and verification ledger are in https://github.com/nyattoh/ommatidia. This draft uses the public main baseline b8cc565ef016f531fdef7325801e3468db82135f as its repository anchor; the accompanying PR adds only this publication candidate and drafting material. Relevant paths are research/PROTOCOL.md, research/EVALUATION_SPEC.md, research/PROTOCOL_AMENDMENT_COST_CAP_20261015.md, research/runtime-design.md, research/runtime-driver-r3.md, research/runtime_freeze_r4.json and references/verification-ledger.json. No held-out answer key, private evaluator data or empirical result dataset accompanies this manuscript. No DOI or GitHub release is assigned by this work. The manuscript is licensed under CC-BY-4.0; this does not change the code's licensing. Archival publication remains with the author.
 
 ## References
 

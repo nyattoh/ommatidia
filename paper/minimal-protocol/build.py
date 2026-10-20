@@ -2,20 +2,34 @@
 import hashlib
 import html
 import json
+import os
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 from markdown_it import MarkdownIt
 from matplotlib import get_data_path
 from reportlab.lib import colors
+from reportlab import rl_config
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / 'manuscript.md'
+document_metadata = json.loads((HERE/'document-metadata.json').read_text(encoding='utf-8'))
+epoch = os.environ.get('SOURCE_DATE_EPOCH')
+if epoch is None:
+    epoch = str(int(datetime.fromisoformat(document_metadata['createdUtc'].replace('Z', '+00:00')).timestamp()))
+epoch = int(epoch)
+if epoch < 0:
+    raise ValueError('SOURCE_DATE_EPOCH must be a non-negative integer')
+datetime.fromtimestamp(epoch, timezone.utc)
+# This affects only this build process, never the user's persistent environment.
+os.environ['SOURCE_DATE_EPOCH'] = str(epoch)
+rl_config.invariant = 1
 text = SOURCE.read_text(encoding='utf-8')
 title = text.splitlines()[0].removeprefix('# ')
 abstract = text.split('## Abstract\n\n', 1)[1].split('\n\n## ', 1)[0].strip()
@@ -23,7 +37,7 @@ fonts = Path(get_data_path()) / 'fonts/ttf'
 for name, file in [('Body', 'DejaVuSerif.ttf'), ('Bold', 'DejaVuSerif-Bold.ttf'), ('Italic', 'DejaVuSerif-Italic.ttf')]:
     pdfmetrics.registerFont(TTFont(name, str(fonts / file)))
 pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic', boldItalic='Bold')
-body = ParagraphStyle('Body', fontName='Body', fontSize=9.2, leading=13.0, spaceAfter=7, splitLongWords=True)
+body = ParagraphStyle('Body', fontName='Body', fontSize=9.2, leading=13.0, spaceAfter=6, splitLongWords=True)
 styles = {1: ParagraphStyle('Title', parent=body, fontName='Bold', fontSize=16, leading=20, spaceAfter=12),
           2: ParagraphStyle('Section', parent=body, fontName='Bold', fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
           3: ParagraphStyle('Subsection', parent=body, fontName='Bold', fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
@@ -57,7 +71,7 @@ def page_number(canvas, doc):
     canvas.restoreState()
 
 SimpleDocTemplate(str(HERE/'manuscript.pdf'), pagesize=A4, leftMargin=48, rightMargin=48,
-    topMargin=45, bottomMargin=42, title=title, author='Ryoko Sakakibara',
+    topMargin=45, bottomMargin=42, title=title, author='Ryoko Sakakibara', invariant=1,
     subject='Research plan and system design; zero comparative study trials').build(story, onFirstPage=page_number, onLaterPages=page_number)
 
 metadata = f'''# Zenodo入力案 — 未投稿・著者確認用
@@ -79,7 +93,7 @@ Given name: Ryoko
 Affiliation: Independent Researcher
 ORCID: 0009-0009-9544-6315
 
-既存の著者提供情報を転記。投稿前にKotaが確認する。
+既存の著者提供情報を転記。実名・ORCIDの公開はKota承認済み。
 
 ## Description
 
@@ -87,6 +101,9 @@ ORCID: 0009-0009-9544-6315
 
 ## Licenses → License
 
+Creative Commons Attribution 4.0 International (CC-BY-4.0)
+https://creativecommons.org/licenses/by/4.0/
+論文・記事本文に適用。コードのライセンスは変更しない。
 
 ## Publication date
 
@@ -119,8 +136,7 @@ manuscript.pdf, manuscript.md, SHA256SUMS.txt。必要に応じてpilot-estimate
 
 ## Kotaが決めること
 
-- 著者名・所属・ORCIDの最終確認。
-- ライセンス（上の入力欄は意図的に空欄）。
+- 著者情報とCC-BY-4.0は承認済み。コードのライセンスは変更しない。
 - 新規レコードか既存レコードの新バージョンか、予約DOI・版・公開日。
 - PRレビュー後の公開可否とアップロードするファイル。
 - Zenn記事の掲載可否。published: falseを維持中。
@@ -128,4 +144,4 @@ manuscript.pdf, manuscript.md, SHA256SUMS.txt。必要に応じてpilot-estimate
 (HERE/'zenodo-metadata.md').write_text(metadata, encoding='utf-8')
 paths = [SOURCE, HERE/'manuscript.pdf']
 (HERE/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths), encoding='utf-8')
-print(json.dumps({'sourceSha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(), 'blocks':len(blocks), 'pdf':str(HERE/'manuscript.pdf'), 'licence':'not selected', 'studyTrialsRun':0}))
+print(json.dumps({'sourceSha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(), 'blocks':len(blocks), 'pdf':str(HERE/'manuscript.pdf'), 'licence':'CC-BY-4.0', 'sourceDateEpoch':epoch, 'studyTrialsRun':0}))

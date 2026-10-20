@@ -1,4 +1,4 @@
-"""Check source/PDF correspondence, hashes, blank licence and unpublished article."""
+"""Check source/PDF correspondence, required hashes, licence and unpublished article."""
 import hashlib
 import json
 import re
@@ -25,11 +25,24 @@ for i, page in enumerate(doc):
 assert not missing, missing
 assert not outside, outside
 assert '\ufffd' not in alltext and '\x00' not in alltext
-for line in (here/'SHA256SUMS.txt').read_text().splitlines():
-    digest, name = line.split('  ')
-    assert hashlib.sha256((here/name).read_bytes()).hexdigest() == digest
+expected = {'manuscript.md', 'manuscript.pdf'}
+entries = {}
+for line in (here/'SHA256SUMS.txt').read_text(encoding='utf-8').splitlines():
+    match = re.fullmatch(r'([0-9a-f]{64})  (manuscript\.md|manuscript\.pdf)', line)
+    if match is None:
+        raise ValueError('Malformed or unexpected SHA256SUMS.txt entry')
+    digest, name = match.groups()
+    if name in entries:
+        raise ValueError('Duplicate SHA256SUMS.txt entry: '+name)
+    entries[name] = digest
+if set(entries) != expected:
+    raise ValueError('SHA256SUMS.txt must contain manuscript.md and manuscript.pdf exactly once')
+for name, digest in entries.items():
+    if hashlib.sha256((here/name).read_bytes()).hexdigest() != digest:
+        raise ValueError('SHA256 mismatch: '+name)
 metadata = (here/'zenodo-metadata.md').read_text(encoding='utf-8')
-assert '## Licenses → License\n\n\n## Publication date' in metadata
+assert 'Creative Commons Attribution 4.0 International (CC-BY-4.0)' in metadata
+assert 'https://creativecommons.org/licenses/by/4.0/' in metadata
 assert source.split('## Abstract\n\n')[1].split('\n\n## ')[0] in metadata
 assert '\npublished: false\n' in (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8')
 render = here/'rendered'
@@ -49,7 +62,7 @@ for i, img in enumerate(thumbs):
     canvas.paste(img, ((i%2)*440, (i//2)*625))
 canvas.save(render/'contact.png')
 result = dict(pages=len(doc), sourceBlocksChecked=len(blocks), missingBlocks=missing,
-    outsidePageBlocks=outside, replacementGlyphs=0, checksums='pass', licenceField='blank',
+    outsidePageBlocks=outside, replacementGlyphs=0, checksums='pass', licenceField='CC-BY-4.0',
     zennPublished=False, comparativeTrialsRun=0, wordCount=len(source.split()),
     sourceSha256=hashlib.sha256((here/'manuscript.md').read_bytes()).hexdigest(),
     pdfSha256=hashlib.sha256((here/'manuscript.pdf').read_bytes()).hexdigest(),
