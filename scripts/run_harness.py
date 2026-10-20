@@ -159,7 +159,13 @@ def main(argv=None, dispatcher=None, public_boundary=None):
                 "Held-out actions are disabled pending a new approved evaluation package; no dataset was read"
             )
         args.dataset_dir = reject_private_path(args.dataset_dir)
-        for attr in ("rubric_file", "analysis_design", "records_file", "manifest"):
+        for attr in (
+            "rubric_file",
+            "analysis_design",
+            "records_file",
+            "manifest",
+            "runtime_freeze",
+        ):
             path = getattr(args, attr)
             if path is not None:
                 setattr(args, attr, reject_private_path(path))
@@ -187,7 +193,9 @@ def main(argv=None, dispatcher=None, public_boundary=None):
         executor = dummy_synthetic_executor
         if args.mode in execution_modes and args.executor == "t3":
             if not is_bounded_cost(args.host_cost_cap_yen):
-                raise ValueError("T3 execution requires a finite, non-negative host cost cap (yen)")
+                raise ValueError(
+                    "T3 execution requires a finite, non-negative host cost cap (yen)"
+                )
             adapter = T3DelegationAdapter(
                 in_session_dispatcher=dispatcher,
                 public_boundary=public_boundary,

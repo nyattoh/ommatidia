@@ -31,7 +31,12 @@ from ommatidia.conditions import (
 from ommatidia.evaluator import compute_paired_differences, score_run_objectively
 from ommatidia.ingestion import ingest_final_judgement
 from ommatidia.ledger import RunLedger
-from ommatidia.seal import SealMismatchError, hash_file, verify_seal_manifest
+from ommatidia.seal import (
+    SealMismatchError,
+    ensure_non_private_asset_path,
+    hash_file,
+    verify_seal_manifest,
+)
 from ommatidia.state import compute_payload_hash
 from ommatidia.campaign import atomic_json, is_bounded_cost, validate_usage
 from ommatidia.integrity import fingerprints, verify_runtime_freeze
@@ -573,12 +578,13 @@ class ResearchHarness:
         self._locked = False
 
     def verify_environment(self, require_release=False):
-        if not self.seal_manifest_path.exists():
+        # Reject evaluator-only paths before anything is opened or parsed.
+        seal_manifest_path = ensure_non_private_asset_path(self.seal_manifest_path)
+        runtime_freeze_path = ensure_non_private_asset_path(self.runtime_freeze_path)
+        if not seal_manifest_path.exists():
             raise FileNotFoundError(f"Seal manifest missing: {self.seal_manifest_path}")
-        verify_seal_manifest(
-            json.loads(self.seal_manifest_path.read_text(encoding="utf-8"))
-        )
-        freeze = json.loads(self.runtime_freeze_path.read_text(encoding="utf-8"))
+        verify_seal_manifest(json.loads(seal_manifest_path.read_text(encoding="utf-8")))
+        freeze = json.loads(runtime_freeze_path.read_text(encoding="utf-8"))
         if (
             require_release
             and freeze.get("evaluationPackageStatus") != "rebuilt_and_approved"
@@ -931,9 +937,7 @@ class ResearchHarness:
         replication=1,
         executor_name="synthetic",
     ):
-        self.verify_environment(
-            require_release=executor_name != "synthetic"
-        )
+        self.verify_environment(require_release=executor_name != "synthetic")
         self._check_synthetic_executor(executor_name, executor_func)
         if len({task.task_id for task in tasks}) != len(tasks) or len(
             set(conditions)
