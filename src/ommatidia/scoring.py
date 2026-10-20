@@ -119,7 +119,7 @@ def validate_matrix(records, conditions, task_ids, run_id=None):
             raise ValueError("Mismatched task packet provenance across paired conditions")
         task_hashes[record.task_id] = record.task_hash
         matrix[record.condition.value][record.task_id] = record
-        identities.add((record.code_hash, record.prompt_hash, record.spec_hash, record.executor))
+        identities.add((record.run_id, record.code_hash, record.prompt_hash, record.spec_hash, record.executor))
     if len(identities) != 1 or any(part is None for identity in identities for part in identity):
         raise ValueError("Mixed or missing runtime provenance")
     for condition, trials in matrix.items():

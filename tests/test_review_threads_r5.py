@@ -6,8 +6,10 @@ import hashlib
 import pytest
 
 from ommatidia.runtime import execute_graph
+from ommatidia.scoring import analyse_saved_trials
 from ommatidia.types import ConditionType, Decision, Usage
 from tests.fixtures.synthetic_dev_cases import get_mechanism_check_fixtures
+from tests.test_scoring_task_hash_provenance import TASK_IDS, synthetic_matrix
 
 GAP = {
     "id": "gap_required",
@@ -169,3 +171,13 @@ def test_observation_cost_is_not_added_to_host_metered_usage(condition):
     ]
     assert seen == [4.0 * index for index in range(len(calls))]
     assert state.usage.cost_yen == 4.0 * len(calls)
+
+
+def test_paired_analysis_rejects_records_from_different_runs():
+    # r4293701762: a complete matrix assembled from two campaign runs is not paired data.
+    metrics = {"fda": 1, "dsc": 1, "far": 0.0, "recallCrit": 1.0}
+    records = [replace(record, metrics=dict(metrics)) for record in synthetic_matrix()]
+    analyse_saved_trials(records, TASK_IDS, TASK_IDS[:12])
+    records[0] = replace(records[0], run_id="synthetic_other_run")
+    with pytest.raises(ValueError, match="Mixed or missing runtime provenance"):
+        analyse_saved_trials(records, TASK_IDS, TASK_IDS[:12])
