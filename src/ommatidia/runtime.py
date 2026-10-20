@@ -277,6 +277,8 @@ def execute_graph(task, condition, run_id, executor, usage_getter, state=None):
                         "Observation passage does not match its content hash"
                     )
         apply_observations(state, items)
+        # The host meter already includes the investigator call; keep it authoritative.
+        state.usage = usage_getter()
 
     if condition in (ConditionType.A, ConditionType.B):
         prior = None

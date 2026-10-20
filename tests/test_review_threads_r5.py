@@ -150,3 +150,22 @@ def test_budget_exhaustion_stays_blocked_after_synthesis(condition):
     )
     assert "synthesis" in calls[-1][0]
     assert (state.stop_reason, state.decision) == ("budget_exhausted", Decision.BLOCKED)
+
+
+@pytest.mark.parametrize("condition", ADAPTIVE)
+def test_observation_cost_is_not_added_to_host_metered_usage(condition):
+    # r4296529364: the host meter already includes the investigator call's cost.
+    state, calls = run(
+        condition,
+        [{"gaps": [GAP], "probes": [PROBE]}, {"resolutions": [RESOLUTION]}],
+        yen_per_call=4.0,
+        observation_cost=4.0,
+    )
+    # Every later step, and the stopping check before it, sees exactly the host-metered spend.
+    seen = [
+        payload["context"]["state"]["usage"]["costYen"]
+        for _, payload in calls
+        if "state" in payload["context"]
+    ]
+    assert seen == [4.0 * index for index in range(len(calls))]
+    assert state.usage.cost_yen == 4.0 * len(calls)
