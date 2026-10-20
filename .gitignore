@@ -9,3 +9,5 @@ outputs/private/
 .DS_Store
 Thumbs.db
 research/datasets/heldout/manifest.json
+paper/ommatidia-bilingual-manuscripts-v0.1.1-draft.zip
+paper/zenodo-metadata-v0.1.1-draft.md
