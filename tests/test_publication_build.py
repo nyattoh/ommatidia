@@ -107,6 +107,70 @@ def test_valid_checksums_and_licence_are_accepted(built_paper):
     assert 'CC-BY-4.0' in article and '\npublished: false\n' in article
 
 
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('field', [
+    'title', 'creator_family_name', 'creator_given_name', 'creator_orcid', 'language',
+])
+def test_verify_rejects_missing_approved_zenodo_metadata_without_writing_validation(
+        built_paper, optimised, field):
+    metadata = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    title = (built_paper/'manuscript.md').read_text(encoding='utf-8').splitlines()[0].removeprefix('# ')
+    approved, diagnostic = {
+        'title': (title, 'Zenodo metadata is missing the approved title'),
+        'creator_family_name': ('Family name: Sakakibara', 'Zenodo metadata is missing the approved creator family name'),
+        'creator_given_name': ('Given name: Ryoko', 'Zenodo metadata is missing the approved creator given name'),
+        'creator_orcid': ('ORCID: 0009-0009-9544-6315', 'Zenodo metadata is missing the approved creator ORCID'),
+        'language': ('English (eng)', 'Zenodo metadata is missing the approved language'),
+    }[field]
+    text = metadata.read_text(encoding='utf-8')
+    assert approved in text
+    metadata.write_text(text.replace(approved, 'Removed approved metadata field', 1), encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert diagnostic in result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize(('surface', 'omission'), [
+    ('article', 'name'), ('article', 'identifier'), ('article', 'url'),
+    ('manuscript', 'name'), ('manuscript', 'identifier'), ('manuscript', 'url'),
+])
+def test_verify_rejects_missing_publication_licence_fields_without_writing_validation(
+        built_paper, optimised, surface, omission):
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    if surface == 'article':
+        file = built_paper.parents[1]/'articles/ommatidia-design-plan.md'
+        assert '\npublished: false\n' in file.read_text(encoding='utf-8')
+        approved = {
+            'name': 'Creative Commons Attribution 4.0 International',
+            'identifier': 'CC-BY-4.0',
+            'url': 'https://creativecommons.org/licenses/by/4.0/',
+        }[omission]
+    else:
+        file = built_paper/'manuscript.md'
+        approved = {
+            'name': 'Creative Commons Attribution 4.0 International',
+            'identifier': 'CC-BY-4.0',
+            'url': 'https://creativecommons.org/licenses/by/4.0/',
+        }[omission]
+    text = file.read_text(encoding='utf-8')
+    assert approved in text
+    file.write_text(text.replace(approved, 'Removed approved licence field', 1), encoding='utf-8', newline='\n')
+    if surface == 'manuscript':
+        build_result = run('build.py', built_paper)
+        assert build_result.returncode == 0, build_result.stdout+build_result.stderr
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert f'The {surface} is missing the approved licence {omission}' in result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected licence changed validation.json'
+
+
 def test_verify_rejects_wrong_digest(built_paper):
     file = built_paper/'SHA256SUMS.txt'
     lines = file.read_text(encoding='utf-8').splitlines()

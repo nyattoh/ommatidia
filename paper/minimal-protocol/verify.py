@@ -102,14 +102,50 @@ for name, digest in entries.items():
     if hashlib.sha256((here/name).read_bytes()).hexdigest() != digest:
         raise ValueError('SHA256 mismatch: '+name)
 metadata = (here/'zenodo-metadata.md').read_text(encoding='utf-8')
+def metadata_section(title):
+    marker = '## '+title+'\n\n'
+    if marker not in metadata:
+        return ''
+    return metadata.split(marker, 1)[1].split('\n\n## ', 1)[0]
+
+expected_title = source.splitlines()[0].removeprefix('# ')
+if metadata_section('Title') != expected_title:
+    raise ValueError('Zenodo metadata is missing the approved title')
+creator_section = metadata_section('Creators')
+for field, approved in (
+    ('creator family name', 'Family name: Sakakibara'),
+    ('creator given name', 'Given name: Ryoko'),
+    ('creator ORCID', 'ORCID: 0009-0009-9544-6315'),
+):
+    if approved not in creator_section:
+        raise ValueError('Zenodo metadata is missing the approved '+field)
+if 'English (eng)' not in metadata_section('Languages'):
+    raise ValueError('Zenodo metadata is missing the approved language')
 if 'Creative Commons Attribution 4.0 International (CC-BY-4.0)' not in metadata:
     raise ValueError('Zenodo metadata is missing the approved licence')
 if 'https://creativecommons.org/licenses/by/4.0/' not in metadata:
     raise ValueError('Zenodo metadata is missing the licence URL')
 if source.split('## Abstract\n\n')[1].split('\n\n## ')[0] not in metadata:
     raise ValueError('Zenodo metadata does not contain the manuscript abstract')
-if '\npublished: false\n' not in (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8'):
+article = (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8')
+article_declaration = next((line for line in article.splitlines() if '論文とこの記事の本文は' in line), '')
+for field, approved in (
+    ('identifier', 'CC-BY-4.0'),
+    ('name', 'Creative Commons Attribution 4.0 International（CC-BY-4.0）'),
+    ('url', 'https://creativecommons.org/licenses/by/4.0/'),
+):
+    if approved not in article_declaration:
+        raise ValueError('The article is missing the approved licence '+field)
+if '\npublished: false\n' not in article:
     raise ValueError('The Zenn article must remain unpublished')
+manuscript_declaration = next((line for line in source.splitlines() if 'Manuscript licence:' in line), '')
+for field, approved in (
+    ('identifier', 'CC-BY-4.0'),
+    ('name', 'Creative Commons Attribution 4.0 International (CC-BY-4.0)'),
+    ('url', 'https://creativecommons.org/licenses/by/4.0/'),
+):
+    if approved not in manuscript_declaration:
+        raise ValueError('The manuscript is missing the approved licence '+field)
 render = here/'rendered'
 render.mkdir(exist_ok=True)
 thumbs = []
