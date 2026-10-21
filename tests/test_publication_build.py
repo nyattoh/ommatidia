@@ -168,12 +168,14 @@ def test_verify_accepts_valid_inputs_in_both_modes(built_paper, optimised):
 
 @pytest.mark.parametrize('optimised', [False, True])
 @pytest.mark.parametrize('case', [
-    'source', 'pdf', 'licence', 'licence_link', 'abstract', 'published',
+    'source', 'pdf', 'pdf_added_paragraph', 'licence', 'licence_link', 'abstract', 'published',
     'missing_manifest', 'empty_manifest', 'partial_manifest', 'digest',
 ])
 def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
     manifest = built_paper/'SHA256SUMS.txt'
     metadata = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes() if case == 'pdf_added_paragraph' else None
     if case == 'source':
         source = built_paper/'manuscript.md'
         source.write_text(source.read_text(encoding='utf-8')+'\nUnrendered tampered paragraph.\n', encoding='utf-8', newline='\n')
@@ -182,6 +184,14 @@ def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
         pdf = built_paper/'manuscript.pdf'
         with fitz.open(pdf) as doc:
             doc.delete_page(len(doc)-1)
+            data = doc.tobytes()
+        pdf.write_bytes(data)
+    elif case == 'pdf_added_paragraph':
+        fitz = pytest.importorskip('fitz')
+        pdf = built_paper/'manuscript.pdf'
+        with fitz.open(pdf) as doc:
+            # Keep the added paragraph fully inside page 1 and outside the footer.
+            doc[0].insert_text((72, 720), 'Added paragraph: a new result was observed.', fontsize=9)
             data = doc.tobytes()
         pdf.write_bytes(data)
     elif case in ('licence', 'licence_link', 'abstract'):
@@ -204,12 +214,14 @@ def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
         rows = manifest.read_text(encoding='utf-8').splitlines()
         rows[0] = '0'*64+'  manuscript.md'
         manifest.write_text('\n'.join(rows)+'\n', encoding='utf-8', newline='\n')
-    if case in ('source', 'pdf'):
+    if case in ('source', 'pdf', 'pdf_added_paragraph'):
         # Keep hashes valid so this tests the semantic checks, not checksum failure.
         manifest.write_text(''.join(hashlib.sha256((built_paper/name).read_bytes()).hexdigest()+'  '+name+'\n'
                                     for name in ('manuscript.md', 'manuscript.pdf')), encoding='utf-8', newline='\n')
     result = run('verify.py', built_paper, optimised=optimised)
     assert result.returncode != 0, case+' was accepted: '+result.stdout+result.stderr
+    if case == 'pdf_added_paragraph':
+        assert validation.read_bytes() == validation_before, 'Rejected PDF changed validation.json'
 
 
 def test_build_preserves_reportlab_invariant_after_success(tmp_path, monkeypatch):

@@ -13,10 +13,68 @@ root = here.parents[1]
 source = (here/'manuscript.md').read_text(encoding='utf-8')
 doc = fitz.open(here/'manuscript.pdf')
 normal = lambda s: re.sub(r'\s+', '', s).replace('\u00ad', '')
-# Exclude page-number footers so cross-page paragraphs compare to source text.
-alltext = '\n'.join(page.get_text(clip=fitz.Rect(0, 0, page.rect.width, page.rect.height-38)) for page in doc)
+
+
+def word_tokens(text):
+    # Ignore layout and punctuation, while retaining every word and number.
+    return re.findall(r"[^\W_]+(?:[’'][^\W_]+)*", text.casefold(), flags=re.UNICODE)
+
+
+def source_word_tokens(markdown):
+    tokens = []
+    lists = []
+    for token in MarkdownIt().parse(markdown):
+        if token.type in ('ordered_list_open', 'bullet_list_open'):
+            start = token.attrGet('start') or '1'
+            lists.append([token.type, int(start)])
+        elif token.type in ('ordered_list_close', 'bullet_list_close'):
+            lists.pop()
+        elif token.type == 'list_item_open' and lists and lists[-1][0] == 'ordered_list_open':
+            tokens.append(str(lists[-1][1]))
+            lists[-1][1] += 1
+        elif token.type == 'inline':
+            tokens.extend(word_tokens(token.content))
+    return tokens
+
+
+def corresponds(expected, actual):
+    # PDF extraction can split one source token at a line wrap (notably URLs).
+    source_index = pdf_index = 0
+    while source_index < len(expected) and pdf_index < len(actual):
+        if expected[source_index] == actual[pdf_index]:
+            source_index += 1
+            pdf_index += 1
+            continue
+        joined = actual[pdf_index]
+        next_pdf_index = pdf_index + 1
+        while len(joined) < len(expected[source_index]) and next_pdf_index < len(actual):
+            joined += actual[next_pdf_index]
+            next_pdf_index += 1
+        if joined != expected[source_index]:
+            return False
+        source_index += 1
+        pdf_index = next_pdf_index
+    return source_index == len(expected) and pdf_index == len(actual)
+
+
+# Exclude only the centred page-number footer; retain all other in-bounds text.
+page_text = []
+for i, page in enumerate(doc):
+    text_blocks = []
+    for block in page.get_text('blocks'):
+        is_page_number = (
+            block[1] >= page.rect.height-38
+            and block[4].strip() == str(i+1)
+            and abs((block[0]+block[2])/2-page.rect.width/2) <= 36
+        )
+        if not is_page_number:
+            text_blocks.append(block[4])
+    page_text.append('\n'.join(text_blocks))
+alltext = '\n'.join(page_text)
 blocks = [t.content for t in MarkdownIt().parse(source) if t.type == 'inline']
 missing = [b[:100] for b in blocks if normal(b) not in normal(alltext)]
+if not corresponds(source_word_tokens(source), word_tokens(alltext)):
+    raise ValueError('PDF text does not correspond to the complete manuscript token sequence')
 outside = []
 for i, page in enumerate(doc):
     for b in page.get_text('blocks'):
