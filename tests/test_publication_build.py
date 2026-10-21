@@ -415,3 +415,92 @@ def test_build_restores_reportlab_font_registries_after_failure(tmp_path, monkey
             _reportlab_font_registry_changes(before, after)
     finally:
         _restore_reportlab_font_registry_state(before)
+
+
+def _assert_reportlab_registries_restored_exactly(before, registry_objects):
+    after = _reportlab_font_registry_state()
+    assert all(registry_objects[name] is _reportlab_font_registries()[name] for name in registry_objects)
+    for name in before:
+        assert after[name].keys() == before[name].keys(), {
+            'registry': name,
+            'added': after[name].keys()-before[name].keys(),
+            'removed': before[name].keys()-after[name].keys(),
+        }
+    for name in before:
+        for key, value in before[name].items():
+            restored = after[name][key]
+            if hasattr(value, 'fontName'):
+                assert restored is value, (name, key)
+            else:
+                assert restored == value, (name, key)
+
+
+def _reportlab_font_registries():
+    from reportlab.lib import fonts
+    from reportlab.pdfbase import pdfmetrics
+
+    return {
+        'fonts': pdfmetrics._fonts,
+        'dynamic_face_names': pdfmetrics._dynFaceNames,
+        'typeface_to_postscript': fonts._tt2ps_map,
+        'postscript_to_typeface': fonts._ps2tt_map,
+    }
+
+
+def _register_adversarial_reportlab_fonts():
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+
+    from matplotlib import get_data_path
+
+    font_dir = Path(get_data_path())/'fonts/ttf'
+    registry_objects = _reportlab_font_registries()
+    initial = {name: registry.copy() for name, registry in registry_objects.items()}
+    for name, file in [
+            ('Body', 'DejaVuSans.ttf'), ('Bold', 'DejaVuSans-Bold.ttf'),
+            ('Italic', 'DejaVuSans-Oblique.ttf'),
+            ('OmmatidiaBody', 'DejaVuSans.ttf'), ('OmmatidiaBold', 'DejaVuSans-Bold.ttf'),
+            ('OmmatidiaItalic', 'DejaVuSans-Oblique.ttf')]:
+        pdfmetrics.registerFont(TTFont(name, str(font_dir/file)))
+    pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic', boldItalic='Bold')
+    pdfmetrics.registerFontFamily('Ommatidia', normal='OmmatidiaBody', bold='OmmatidiaBold',
+                                  italic='OmmatidiaItalic', boldItalic='OmmatidiaBold')
+    for name, file in [('Body', 'DejaVuSerif.ttf'), ('Bold', 'DejaVuSerif-Bold.ttf'),
+                       ('Italic', 'DejaVuSerif-Italic.ttf')]:
+        face_name = TTFont('CallerFaceProbe', str(font_dir/file)).face.name
+        pdfmetrics._dynFaceNames[face_name] = pdfmetrics._fonts[name]
+    expected = {name: registry.copy() for name, registry in registry_objects.items()}
+    return expected, registry_objects, initial
+
+
+@pytest.mark.parametrize('failure', [False, True], ids=['success', 'exception'])
+def test_build_uses_its_fonts_despite_generic_and_private_name_collisions(
+        tmp_path, monkeypatch, failure):
+    from reportlab.platypus import SimpleDocTemplate
+
+    clean_paper = copy_paper(tmp_path/'clean')
+    clean = run('build.py', clean_paper)
+    assert clean.returncode == 0, clean.stdout+clean.stderr
+    expected_pdf = (clean_paper/'manuscript.pdf').read_bytes()
+
+    paper = copy_paper(tmp_path/'collision')
+    monkeypatch.chdir(paper)
+    before, registry_objects, initial = _register_adversarial_reportlab_fonts()
+    if failure:
+        def fail_after_font_registration(*args, **kwargs):
+            raise RuntimeError('forced failure after font registration')
+
+        monkeypatch.setattr(SimpleDocTemplate, 'build', fail_after_font_registration)
+
+    try:
+        if failure:
+            with contextlib.redirect_stdout(io.StringIO()), pytest.raises(
+                    RuntimeError, match='forced failure after font registration'):
+                runpy.run_path(str(paper/'build.py'), run_name='__main__')
+        else:
+            with contextlib.redirect_stdout(io.StringIO()):
+                runpy.run_path(str(paper/'build.py'), run_name='__main__')
+            assert (paper/'manuscript.pdf').read_bytes() == expected_pdf
+    finally:
+        _assert_reportlab_registries_restored_exactly(before, registry_objects)
+        _restore_reportlab_font_registry_state(initial)

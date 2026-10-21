@@ -37,13 +37,24 @@ registry_maps = (pdfmetrics._fonts, pdfmetrics._dynFaceNames,
                  reportlab_fonts._tt2ps_map, reportlab_fonts._ps2tt_map)
 registry_snapshots = tuple(registry.copy() for registry in registry_maps)
 try:
-    for name, file in [('Body', 'DejaVuSerif.ttf'), ('Bold', 'DejaVuSerif-Bold.ttf'), ('Italic', 'DejaVuSerif-Italic.ttf')]:
-        pdfmetrics.registerFont(TTFont(name, str(fonts / file)))
-    pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic', boldItalic='Bold')
-    body = ParagraphStyle('Body', fontName='Body', fontSize=9.2, leading=13.0, spaceAfter=6, splitLongWords=True)
-    styles = {1: ParagraphStyle('Title', parent=body, fontName='Bold', fontSize=16, leading=20, spaceAfter=12),
-              2: ParagraphStyle('Section', parent=body, fontName='Bold', fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
-              3: ParagraphStyle('Subsection', parent=body, fontName='Bold', fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
+    font_names = ('OmmatidiaBody', 'OmmatidiaBold', 'OmmatidiaItalic')
+    registered_fonts = [(name, TTFont(name, str(fonts / file))) for name, file in zip(font_names, (
+        'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf'))]
+    family = 'Ommatidia'
+    for name, font in registered_fonts:
+        pdfmetrics._fonts.pop(name, None)
+        pdfmetrics._dynFaceNames.pop(font.face.name, None)
+        reportlab_fonts._ps2tt_map.pop(name.lower(), None)
+    for bold, italic in ((0, 0), (1, 0), (0, 1), (1, 1)):
+        reportlab_fonts._tt2ps_map.pop((family.lower(), bold, italic), None)
+    pdfmetrics.registerFontFamily(family, normal=font_names[0], bold=font_names[1],
+                                  italic=font_names[2], boldItalic=font_names[1])
+    for _, font in registered_fonts:
+        pdfmetrics.registerFont(font)
+    body = ParagraphStyle('Body', fontName=font_names[0], fontSize=9.2, leading=13.0, spaceAfter=6, splitLongWords=True)
+    styles = {1: ParagraphStyle('Title', parent=body, fontName=font_names[1], fontSize=16, leading=20, spaceAfter=12),
+              2: ParagraphStyle('Section', parent=body, fontName=font_names[1], fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
+              3: ParagraphStyle('Subsection', parent=body, fontName=font_names[1], fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
     tokens = MarkdownIt().parse(text)
     story = []
     blocks = []
@@ -68,7 +79,7 @@ try:
 
     def page_number(canvas, doc):
         canvas.saveState()
-        canvas.setFont('Body', 8)
+        canvas.setFont(font_names[0], 8)
         canvas.setFillColor(colors.HexColor('#555555'))
         canvas.drawCentredString(A4[0]/2, 25, str(doc.page))
         canvas.restoreState()
