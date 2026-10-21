@@ -12,7 +12,7 @@ import time
 
 import pytest
 
-for optional_dependency in ('fitz', 'markdown_it', 'reportlab', 'matplotlib', 'PIL'):
+for optional_dependency in ('fitz', 'markdown_it', 'reportlab', 'matplotlib', 'PIL', 'yaml'):
     pytest.importorskip(optional_dependency)
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,6 +82,17 @@ def built_paper(tmp_path):
     return paper
 
 
+def test_build_rejects_ambiguous_duplicate_abstract_section(tmp_path):
+    paper = copy_paper(tmp_path)
+    manuscript = paper/'manuscript.md'
+    original = manuscript.read_bytes()
+    manuscript.write_bytes(original+b'\n## Abstract\n\nConflicting abstract section.\n')
+
+    result = run('build.py', paper)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert 'Manuscript must contain one title and one Abstract section' in result.stderr
+
+
 @pytest.mark.parametrize('case', ['missing', 'empty', 'source_only', 'pdf_only', 'duplicate', 'unexpected'])
 def test_verify_rejects_incomplete_or_ambiguous_checksums(built_paper, case):
     file = built_paper/'SHA256SUMS.txt'
@@ -105,6 +116,115 @@ def test_valid_checksums_and_licence_are_accepted(built_paper):
     assert 'CC-BY-4.0' in manuscript
     article = (built_paper.parents[1]/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8')
     assert 'CC-BY-4.0' in article and '\npublished: false\n' in article
+
+
+@pytest.mark.parametrize('change', ['missing', 'changed', 'duplicate'])
+@pytest.mark.parametrize('optimised', [False, True])
+def test_verify_rejects_unapproved_document_creator_affiliation_without_writing_validation(
+        built_paper, change, optimised):
+    metadata_file = built_paper/'document-metadata.json'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    metadata = json.loads(metadata_file.read_text(encoding='utf-8'))
+    if change == 'missing':
+        metadata.pop('creatorAffiliation', None)
+        metadata_file.write_text(json.dumps(metadata, indent=2)+'\n', encoding='utf-8')
+    elif change == 'changed':
+        metadata['creatorAffiliation'] = 'Independent Researcher (unverified)'
+        metadata_file.write_text(json.dumps(metadata, indent=2)+'\n', encoding='utf-8')
+    else:
+        metadata_file.write_text(
+            '{\n  "createdUtc": '+json.dumps(metadata['createdUtc'])+
+            ',\n  "creatorAffiliation": "Independent Researcher",\n'
+            '  "creatorAffiliation": "Changed Researcher"\n}\n',
+            encoding='utf-8')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize(('field', 'approved'), [
+    ('Family name', 'Sakakibara'),
+    ('Given name', 'Ryoko'),
+    ('ORCID', '0009-0009-9544-6315'),
+    ('Affiliation', 'Independent Researcher'),
+])
+def test_verify_rejects_creator_field_values_with_unapproved_suffix_without_writing_validation(
+        built_paper, optimised, field, approved):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    metadata = metadata_file.read_text(encoding='utf-8')
+    approved_line = f'{field}: {approved}'
+    assert approved_line in metadata
+    metadata_file.write_text(
+        metadata.replace(approved_line, approved_line+' (unverified)', 1),
+        encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('mutation', ['language_suffix', 'abstract_suffix', 'licence_in_other_section'])
+def test_verify_rejects_metadata_values_outside_their_approved_structure_without_writing_validation(
+        built_paper, optimised, mutation):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    metadata = metadata_file.read_text(encoding='utf-8')
+    if mutation == 'language_suffix':
+        metadata = metadata.replace('English (eng)', 'English (eng) extra', 1)
+    elif mutation == 'abstract_suffix':
+        metadata = metadata.replace('## Keywords\n\n', 'extra text\n\n## Keywords\n\n', 1)
+    else:
+        metadata = metadata.replace(
+            'Creative Commons Attribution 4.0 International (CC-BY-4.0)',
+            'Removed approved licence field', 1)
+        metadata = metadata.replace('https://creativecommons.org/licenses/by/4.0/',
+                                    'Removed approved licence URL', 1)
+        metadata = metadata.replace(
+            '## Keywords\n\n',
+            '## Keywords\n\nCreative Commons Attribution 4.0 International (CC-BY-4.0)\n'
+            'https://creativecommons.org/licenses/by/4.0/\n', 1)
+    metadata_file.write_text(metadata, encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+
+
+@pytest.mark.parametrize('frontmatter', [
+    'published: true',
+    'title: Draft\n',
+    'published: "false"',
+    'published: [',
+    '- published: false',
+    'published: false\npublished: true',
+    'NO_FRONTMATTER',
+])
+@pytest.mark.parametrize('optimised', [False, True])
+def test_verify_rejects_invalid_zenn_published_frontmatter_without_writing_validation(
+        built_paper, frontmatter, optimised):
+    article_file = built_paper.parents[1]/'articles/ommatidia-design-plan.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    article = article_file.read_text(encoding='utf-8')
+    _, _, remainder = article.split('---', 2)
+    if frontmatter == 'published: true':
+        remainder = '\n\npublished: false\n'+remainder
+    if frontmatter == 'NO_FRONTMATTER':
+        replacement = remainder.lstrip('\n')
+    else:
+        replacement = '---\n'+frontmatter+'\n---'+remainder
+    article_file.write_text(replacement, encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected publication changed validation.json'
 
 
 @pytest.mark.parametrize('optimised', [False, True])

@@ -12,6 +12,8 @@ def test_publication_tests_skip_during_collection_without_publication_dependenci
         '''import importlib.abc\nimport sys\n\nBLOCKED = {"fitz", "markdown_it", "reportlab", "matplotlib", "PIL"}\n\nclass BlockOptionalPublicationDependencies(importlib.abc.MetaPathFinder):\n    def find_spec(self, fullname, path=None, target=None):\n        if fullname.split(".", 1)[0] in BLOCKED:\n            raise ModuleNotFoundError(f"No module named {fullname}", name=fullname)\n\nsys.meta_path.insert(0, BlockOptionalPublicationDependencies())\n''',
         encoding='utf-8',
     )
+    blocker_text = blocker.read_text(encoding='utf-8').replace('"PIL"}', '"PIL", "yaml"}')
+    blocker.write_text(blocker_text, encoding='utf-8')
     env = os.environ.copy()
     env.pop('SOURCE_DATE_EPOCH', None)
     env['PYTHONPATH'] = str(tmp_path) + os.pathsep + env.get('PYTHONPATH', '')

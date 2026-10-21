@@ -20,7 +20,22 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / 'manuscript.md'
-document_metadata = json.loads((HERE/'document-metadata.json').read_text(encoding='utf-8'))
+
+
+def unique_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('document-metadata.json contains a duplicate field')
+        result[key] = value
+    return result
+
+
+document_metadata = json.loads(
+    (HERE/'document-metadata.json').read_text(encoding='utf-8'), object_pairs_hook=unique_json_object)
+approved_affiliation = 'Independent Researcher'
+if not isinstance(document_metadata, dict) or document_metadata.get('creatorAffiliation') != approved_affiliation:
+    raise ValueError('document-metadata.json must contain the approved creator affiliation')
 epoch = os.environ.get('SOURCE_DATE_EPOCH')
 if epoch is None:
     epoch = str(int(datetime.fromisoformat(document_metadata['createdUtc'].replace('Z', '+00:00')).timestamp()))
@@ -29,8 +44,21 @@ if epoch < 0:
     raise ValueError('SOURCE_DATE_EPOCH must be a non-negative integer')
 datetime.fromtimestamp(epoch, timezone.utc)
 text = SOURCE.read_text(encoding='utf-8')
-title = text.splitlines()[0].removeprefix('# ')
-abstract = text.split('## Abstract\n\n', 1)[1].split('\n\n## ', 1)[0].strip()
+tokens = MarkdownIt().parse(text)
+lines = text.splitlines()
+headings = [
+    (int(token.tag[1:]), tokens[index+1].content, token.map[0], token.map[1])
+    for index, token in enumerate(tokens) if token.type == 'heading_open'
+]
+titles = [heading for heading in headings if heading[0] == 1]
+abstracts = [heading for heading in headings if heading[:2] == (2, 'Abstract')]
+if len(titles) != 1 or len(abstracts) != 1:
+    raise ValueError('Manuscript must contain one title and one Abstract section')
+title = titles[0][1]
+abstract_heading = abstracts[0]
+abstract_end = next((start for level, _, start, _ in headings
+                     if level <= 2 and start > abstract_heading[2]), len(lines))
+abstract = '\n'.join(lines[abstract_heading[3]:abstract_end]).strip()
 fonts = Path(get_data_path()) / 'fonts/ttf'
 # ReportLab has no public unregister API, so restore its registries after this in-process build.
 registry_maps = (pdfmetrics._fonts, pdfmetrics._dynFaceNames,
@@ -55,7 +83,6 @@ try:
     styles = {1: ParagraphStyle('Title', parent=body, fontName=font_names[1], fontSize=16, leading=20, spaceAfter=12),
               2: ParagraphStyle('Section', parent=body, fontName=font_names[1], fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
               3: ParagraphStyle('Subsection', parent=body, fontName=font_names[1], fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
-    tokens = MarkdownIt().parse(text)
     story = []
     blocks = []
     list_stack = []
@@ -117,7 +144,7 @@ Publication → Preprint
 
 Family name: Sakakibara
 Given name: Ryoko
-Affiliation: Independent Researcher
+Affiliation: {document_metadata['creatorAffiliation']}
 ORCID: 0009-0009-9544-6315
 
 既存の著者提供情報を転記。実名・ORCIDの公開はKota承認済み。
