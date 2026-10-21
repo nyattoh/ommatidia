@@ -210,3 +210,132 @@ def test_verify_rejects_tampering_in_both_modes(built_paper, optimised, case):
                                     for name in ('manuscript.md', 'manuscript.pdf')), encoding='utf-8', newline='\n')
     result = run('verify.py', built_paper, optimised=optimised)
     assert result.returncode != 0, case+' was accepted: '+result.stdout+result.stderr
+
+
+def test_build_preserves_reportlab_invariant_after_success(tmp_path, monkeypatch):
+    from reportlab import rl_config
+
+    paper = copy_paper(tmp_path)
+    monkeypatch.chdir(paper)
+    expected = 37
+    monkeypatch.setattr(rl_config, 'invariant', expected)
+
+    with contextlib.redirect_stdout(io.StringIO()):
+        runpy.run_path(str(paper/'build.py'), run_name='__main__')
+
+    assert rl_config.invariant == expected
+
+
+def test_build_preserves_reportlab_invariant_after_failure(tmp_path, monkeypatch):
+    from reportlab import rl_config
+
+    paper = copy_paper(tmp_path)
+    monkeypatch.chdir(paper)
+    expected = 41
+    monkeypatch.setattr(rl_config, 'invariant', expected)
+    original_read_text = Path.read_text
+
+    def fail_on_manuscript(path, *args, **kwargs):
+        if path == paper/'manuscript.md':
+            raise OSError('forced manuscript read failure')
+        return original_read_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'read_text', fail_on_manuscript)
+    with contextlib.redirect_stdout(io.StringIO()), pytest.raises(OSError, match='forced manuscript read failure'):
+        runpy.run_path(str(paper/'build.py'), run_name='__main__')
+
+    assert rl_config.invariant == expected
+
+
+def _reportlab_font_registry_state():
+    from reportlab.lib import fonts
+    from reportlab.pdfbase import pdfmetrics
+
+    registries = {
+        'fonts': pdfmetrics._fonts,
+        'dynamic_face_names': pdfmetrics._dynFaceNames,
+        'typeface_to_postscript': fonts._tt2ps_map,
+        'postscript_to_typeface': fonts._ps2tt_map,
+    }
+    return {name: registry.copy() for name, registry in registries.items()}
+
+
+def _restore_reportlab_font_registry_state(state):
+    from reportlab.lib import fonts
+    from reportlab.pdfbase import pdfmetrics
+
+    registries = {
+        'fonts': pdfmetrics._fonts,
+        'dynamic_face_names': pdfmetrics._dynFaceNames,
+        'typeface_to_postscript': fonts._tt2ps_map,
+        'postscript_to_typeface': fonts._ps2tt_map,
+    }
+    for name, registry in registries.items():
+        registry.clear()
+        registry.update(state[name])
+
+
+def _reportlab_font_registry_changes(before, after):
+    old = _reportlab_font_registry_signature(before)
+    new = _reportlab_font_registry_signature(after)
+    return {name: {'before': old[name], 'after': new[name]}
+            for name in old if old[name] != new[name]}
+
+
+def _reportlab_font_registry_signature(state):
+    font_names = ('Body', 'Bold', 'Italic')
+    family_keys = {('body', bold, italic) for bold in (0, 1) for italic in (0, 1)}
+    postscript_names = {'body', 'bold', 'italic'}
+    return {
+        'fonts': {name: _reportlab_registry_value(state['fonts'][name])
+                  for name in font_names if name in state['fonts']},
+        'dynamic_face_names': {name: _reportlab_registry_value(value)
+                               for name, value in state['dynamic_face_names'].items()},
+        'typeface_to_postscript': {key: state['typeface_to_postscript'][key]
+                                   for key in family_keys if key in state['typeface_to_postscript']},
+        'postscript_to_typeface': {name: state['postscript_to_typeface'][name]
+                                   for name in postscript_names if name in state['postscript_to_typeface']},
+    }
+
+
+def _reportlab_registry_value(value):
+    if hasattr(value, 'fontName'):
+        return (type(value).__name__, value.fontName, id(value))
+    return value
+
+
+def test_build_restores_reportlab_font_registries_after_success(tmp_path, monkeypatch):
+    before = _reportlab_font_registry_state()
+    paper = copy_paper(tmp_path)
+    monkeypatch.chdir(paper)
+
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            runpy.run_path(str(paper/'build.py'), run_name='__main__')
+        after = _reportlab_font_registry_state()
+        assert _reportlab_font_registry_signature(after) == _reportlab_font_registry_signature(before), \
+            _reportlab_font_registry_changes(before, after)
+    finally:
+        _restore_reportlab_font_registry_state(before)
+
+
+def test_build_restores_reportlab_font_registries_after_failure(tmp_path, monkeypatch):
+    from reportlab.platypus import SimpleDocTemplate
+
+    before = _reportlab_font_registry_state()
+    paper = copy_paper(tmp_path)
+    monkeypatch.chdir(paper)
+
+    def fail_after_font_registration(*args, **kwargs):
+        raise RuntimeError('forced failure after font registration')
+
+    monkeypatch.setattr(SimpleDocTemplate, 'build', fail_after_font_registration)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), pytest.raises(
+                RuntimeError, match='forced failure after font registration'):
+            runpy.run_path(str(paper/'build.py'), run_name='__main__')
+        after = _reportlab_font_registry_state()
+        assert _reportlab_font_registry_signature(after) == _reportlab_font_registry_signature(before), \
+            _reportlab_font_registry_changes(before, after)
+    finally:
+        _restore_reportlab_font_registry_state(before)

@@ -10,7 +10,7 @@ from pathlib import Path
 from markdown_it import MarkdownIt
 from matplotlib import get_data_path
 from reportlab.lib import colors
-from reportlab import rl_config
+from reportlab.lib import fonts as reportlab_fonts
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
@@ -28,59 +28,67 @@ epoch = int(epoch)
 if epoch < 0:
     raise ValueError('SOURCE_DATE_EPOCH must be a non-negative integer')
 datetime.fromtimestamp(epoch, timezone.utc)
-rl_config.invariant = 1
 text = SOURCE.read_text(encoding='utf-8')
 title = text.splitlines()[0].removeprefix('# ')
 abstract = text.split('## Abstract\n\n', 1)[1].split('\n\n## ', 1)[0].strip()
 fonts = Path(get_data_path()) / 'fonts/ttf'
-for name, file in [('Body', 'DejaVuSerif.ttf'), ('Bold', 'DejaVuSerif-Bold.ttf'), ('Italic', 'DejaVuSerif-Italic.ttf')]:
-    pdfmetrics.registerFont(TTFont(name, str(fonts / file)))
-pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic', boldItalic='Bold')
-body = ParagraphStyle('Body', fontName='Body', fontSize=9.2, leading=13.0, spaceAfter=6, splitLongWords=True)
-styles = {1: ParagraphStyle('Title', parent=body, fontName='Bold', fontSize=16, leading=20, spaceAfter=12),
-          2: ParagraphStyle('Section', parent=body, fontName='Bold', fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
-          3: ParagraphStyle('Subsection', parent=body, fontName='Bold', fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
-tokens = MarkdownIt().parse(text)
-story = []
-blocks = []
-list_stack = []
-for index, token in enumerate(tokens):
-    if token.type == 'ordered_list_open': list_stack.append(int(token.attrGet('start') or 1))
-    elif token.type == 'bullet_list_open': list_stack.append(None)
-    elif token.type in ('ordered_list_close', 'bullet_list_close'): list_stack.pop()
-    elif token.type == 'inline':
-        previous = tokens[index-1]
-        content = html.escape(token.content).replace('\n', ' ')
-        content = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', content)
-        style = styles.get(int(previous.tag[1:]), body) if previous.type == 'heading_open' else body
-        bullet = None
-        if previous.type == 'paragraph_open' and list_stack:
-            current = list_stack[-1]
-            bullet = '-' if current is None else str(current)+'.'
-            if current is not None: list_stack[-1] += 1
-            style = ParagraphStyle('Item', parent=body, leftIndent=13, firstLineIndent=0, bulletIndent=0)
-        story.append(Paragraph(content, style, bulletText=bullet))
-        blocks.append(token.content)
+# ReportLab has no public unregister API, so restore its registries after this in-process build.
+registry_maps = (pdfmetrics._fonts, pdfmetrics._dynFaceNames,
+                 reportlab_fonts._tt2ps_map, reportlab_fonts._ps2tt_map)
+registry_snapshots = tuple(registry.copy() for registry in registry_maps)
+try:
+    for name, file in [('Body', 'DejaVuSerif.ttf'), ('Bold', 'DejaVuSerif-Bold.ttf'), ('Italic', 'DejaVuSerif-Italic.ttf')]:
+        pdfmetrics.registerFont(TTFont(name, str(fonts / file)))
+    pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic', boldItalic='Bold')
+    body = ParagraphStyle('Body', fontName='Body', fontSize=9.2, leading=13.0, spaceAfter=6, splitLongWords=True)
+    styles = {1: ParagraphStyle('Title', parent=body, fontName='Bold', fontSize=16, leading=20, spaceAfter=12),
+              2: ParagraphStyle('Section', parent=body, fontName='Bold', fontSize=11.2, leading=15, spaceBefore=9, keepWithNext=True),
+              3: ParagraphStyle('Subsection', parent=body, fontName='Bold', fontSize=10, leading=14, spaceBefore=6, keepWithNext=True)}
+    tokens = MarkdownIt().parse(text)
+    story = []
+    blocks = []
+    list_stack = []
+    for index, token in enumerate(tokens):
+        if token.type == 'ordered_list_open': list_stack.append(int(token.attrGet('start') or 1))
+        elif token.type == 'bullet_list_open': list_stack.append(None)
+        elif token.type in ('ordered_list_close', 'bullet_list_close'): list_stack.pop()
+        elif token.type == 'inline':
+            previous = tokens[index-1]
+            content = html.escape(token.content).replace('\n', ' ')
+            content = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', content)
+            style = styles.get(int(previous.tag[1:]), body) if previous.type == 'heading_open' else body
+            bullet = None
+            if previous.type == 'paragraph_open' and list_stack:
+                current = list_stack[-1]
+                bullet = '-' if current is None else str(current)+'.'
+                if current is not None: list_stack[-1] += 1
+                style = ParagraphStyle('Item', parent=body, leftIndent=13, firstLineIndent=0, bulletIndent=0)
+            story.append(Paragraph(content, style, bulletText=bullet))
+            blocks.append(token.content)
 
-def page_number(canvas, doc):
-    canvas.saveState()
-    canvas.setFont('Body', 8)
-    canvas.setFillColor(colors.HexColor('#555555'))
-    canvas.drawCentredString(A4[0]/2, 25, str(doc.page))
-    canvas.restoreState()
+    def page_number(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Body', 8)
+        canvas.setFillColor(colors.HexColor('#555555'))
+        canvas.drawCentredString(A4[0]/2, 25, str(doc.page))
+        canvas.restoreState()
 
-def timestamped_canvas(*args, **kwargs):
-    canvas = Canvas(*args, **kwargs)
-    build_time = datetime.fromtimestamp(epoch, timezone.utc)
-    canvas.setDateFormatter(lambda *_: "D:%04d%02d%02d%02d%02d%02d+00'00'" % (
-        build_time.year, build_time.month, build_time.day,
-        build_time.hour, build_time.minute, build_time.second))
-    return canvas
+    def timestamped_canvas(*args, **kwargs):
+        canvas = Canvas(*args, **kwargs)
+        build_time = datetime.fromtimestamp(epoch, timezone.utc)
+        canvas.setDateFormatter(lambda *_: "D:%04d%02d%02d%02d%02d%02d+00'00'" % (
+            build_time.year, build_time.month, build_time.day,
+            build_time.hour, build_time.minute, build_time.second))
+        return canvas
 
-SimpleDocTemplate(str(HERE/'manuscript.pdf'), pagesize=A4, leftMargin=48, rightMargin=48,
-    topMargin=45, bottomMargin=42, title=title, author='Ryoko Sakakibara', invariant=1,
-    subject='Research plan and system design; zero comparative study trials').build(
-        story, onFirstPage=page_number, onLaterPages=page_number, canvasmaker=timestamped_canvas)
+    SimpleDocTemplate(str(HERE/'manuscript.pdf'), pagesize=A4, leftMargin=48, rightMargin=48,
+        topMargin=45, bottomMargin=42, title=title, author='Ryoko Sakakibara', invariant=1,
+        subject='Research plan and system design; zero comparative study trials').build(
+            story, onFirstPage=page_number, onLaterPages=page_number, canvasmaker=timestamped_canvas)
+finally:
+    for registry, snapshot in zip(registry_maps, registry_snapshots):
+        registry.clear()
+        registry.update(snapshot)
 
 metadata = f'''# Zenodo入力案 — 未投稿・著者確認用
 
