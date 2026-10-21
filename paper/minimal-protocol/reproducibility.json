@@ -1,0 +1,62 @@
+{
+  "default": {
+    "SOURCE_DATE_EPOCH": null,
+    "byteIdentical": true,
+    "runs": [
+      {
+        "run": 1,
+        "hashes": {
+          "manuscript.pdf": "40429aa02c148c3bb525f82564841b56c05006ca6a1f140bb9737be0a61e216c",
+          "SHA256SUMS.txt": "538eddee3a893e64a53abdf48fafd8262e0a49d2c9c5896c017992539913ba9f"
+        },
+        "dates": {
+          "creationDate": "D:20261021000000+00'00'",
+          "modDate": "D:20261021000000+00'00'"
+        },
+        "exitCode": 0
+      },
+      {
+        "run": 2,
+        "hashes": {
+          "manuscript.pdf": "40429aa02c148c3bb525f82564841b56c05006ca6a1f140bb9737be0a61e216c",
+          "SHA256SUMS.txt": "538eddee3a893e64a53abdf48fafd8262e0a49d2c9c5896c017992539913ba9f"
+        },
+        "dates": {
+          "creationDate": "D:20261021000000+00'00'",
+          "modDate": "D:20261021000000+00'00'"
+        },
+        "exitCode": 0
+      }
+    ]
+  },
+  "explicit": {
+    "SOURCE_DATE_EPOCH": "1700000000",
+    "byteIdentical": true,
+    "runs": [
+      {
+        "run": 1,
+        "hashes": {
+          "manuscript.pdf": "4c29a18313e723c747ae4c0bcef1ff6e4eef1fb9e8f4a62374f5bacd9a1af08d",
+          "SHA256SUMS.txt": "b05a4464fd25e0abba786a4144605bc2dd9105ca6fb014d1d901ab91b872a82e"
+        },
+        "dates": {
+          "creationDate": "D:20231114221320+00'00'",
+          "modDate": "D:20231114221320+00'00'"
+        },
+        "exitCode": 0
+      },
+      {
+        "run": 2,
+        "hashes": {
+          "manuscript.pdf": "4c29a18313e723c747ae4c0bcef1ff6e4eef1fb9e8f4a62374f5bacd9a1af08d",
+          "SHA256SUMS.txt": "b05a4464fd25e0abba786a4144605bc2dd9105ca6fb014d1d901ab91b872a82e"
+        },
+        "dates": {
+          "creationDate": "D:20231114221320+00'00'",
+          "modDate": "D:20231114221320+00'00'"
+        },
+        "exitCode": 0
+      }
+    ]
+  }
+}

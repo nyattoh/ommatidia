@@ -1,0 +1,14 @@
+SPDX-License-Identifier: CC-BY-4.0
+
+Copyright (c) 2026 Ryoko Sakakibara
+
+The text of manuscript.md, its rendered manuscript.pdf, and the Japanese article
+articles/ommatidia-design-plan.md in this repository are licensed under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+
+Licence: https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode.en
+
+This notice applies only to the named publication texts. It does not license or
+relicense build.py, verify.py, tests, other software, third-party fonts or cited
+works. Their existing terms and rights are unchanged.

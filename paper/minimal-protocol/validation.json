@@ -1,0 +1,15 @@
+{
+  "pages": 5,
+  "sourceBlocksChecked": 59,
+  "missingBlocks": [],
+  "outsidePageBlocks": [],
+  "replacementGlyphs": 0,
+  "checksums": "pass",
+  "licenceField": "CC-BY-4.0",
+  "zennPublished": false,
+  "comparativeTrialsRun": 0,
+  "wordCount": 2416,
+  "sourceSha256": "297bfc9cfcfa85ef54d680576db78ac8680965a83f7d4f97290ea17dd8740c81",
+  "pdfSha256": "40429aa02c148c3bb525f82564841b56c05006ca6a1f140bb9737be0a61e216c",
+  "sourceBaseline": "b8cc565ef016f531fdef7325801e3468db82135f"
+}
