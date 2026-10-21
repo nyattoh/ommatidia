@@ -291,6 +291,226 @@ def test_verify_rejects_missing_publication_licence_fields_without_writing_valid
     assert validation.read_bytes() == validation_before, 'Rejected licence changed validation.json'
 
 
+UNRENDERED_SHAPES = {
+    'fenced_code': '```\nhidden fenced result\n```\n',
+    'indented_code': '    hidden indented result\n',
+    'html_block': '<div>hidden html result</div>\n',
+    'reference_definition': '[hidden]: https://example.com/hidden-result\n',
+    'blockquote': '> quoted hidden result\n',
+    'thematic_break': '***\n',
+    'emphasis': 'Visible *emphasised* result.\n',
+    'code_inline': 'Visible `inline code` result.\n',
+    'link': 'Visible [link](https://example.com/) result.\n',
+    'entity': 'Visible &amp; result.\n',
+    'nested_list': '- outer item\n  - nested hidden item\n',
+    'level_four_heading': '#### Hidden level four heading\n',
+}
+
+
+def insert_after_title(paper, snippet):
+    source = paper/'manuscript.md'
+    title, rest = source.read_text(encoding='utf-8').split('\n', 1)
+    source.write_text(title+'\n\n'+snippet+rest, encoding='utf-8', newline='\n')
+
+
+def rehash(paper):
+    (paper/'SHA256SUMS.txt').write_text(''.join(
+        hashlib.sha256((paper/name).read_bytes()).hexdigest()+'  '+name+'\n'
+        for name in ('manuscript.md', 'manuscript.pdf')), encoding='utf-8', newline='\n')
+
+
+@pytest.mark.parametrize('shape', UNRENDERED_SHAPES)
+def test_build_rejects_unrendered_manuscript_shapes_before_writing_artifacts(built_paper, shape):
+    names = ('manuscript.pdf', 'SHA256SUMS.txt', 'zenodo-metadata.md')
+    before = {name: (built_paper/name).read_bytes() for name in names}
+    insert_after_title(built_paper, UNRENDERED_SHAPES[shape])
+
+    result = run('build.py', built_paper)
+    assert result.returncode != 0, shape+' was built: '+result.stdout+result.stderr
+    assert 'Unsupported manuscript markdown' in result.stderr
+    assert before == {name: (built_paper/name).read_bytes() for name in names}, 'Rejected build wrote artifacts'
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('shape', UNRENDERED_SHAPES)
+def test_verify_rejects_unrendered_manuscript_shapes_with_valid_hashes(built_paper, shape, optimised):
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    insert_after_title(built_paper, UNRENDERED_SHAPES[shape])
+    rehash(built_paper)
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, shape+' was accepted: '+result.stdout+result.stderr
+    assert 'Unsupported manuscript markdown' in result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected manuscript changed validation.json'
+    assert not (built_paper/'rendered').exists(), 'Rejected manuscript wrote page renders'
+
+
+ORCID_LINE = 'ORCID: 0009-0009-9544-6315\n'
+LICENCE_URL_LINE = 'https://creativecommons.org/licenses/by/4.0/\n'
+WORKSHEET_MUTATIONS = {
+    'second_family_name': (ORCID_LINE, ORCID_LINE+'Family name2: Other\n'),
+    'unlabelled_identity': (ORCID_LINE, ORCID_LINE+'Other Person\n'),
+    'nested_identity': (ORCID_LINE, ORCID_LINE+'- Family name: Other\n'),
+    'code_identity': (ORCID_LINE, ORCID_LINE+'\n```\nCreator: Other Person\n```\n'),
+    'subsection_identity': (ORCID_LINE, ORCID_LINE+'\n### Additional creator\n\nName: Other Person\n'),
+    'extra_creator_section': ('## Description\n', '## Contributors\n\nFamily name: Other\n\n## Description\n'),
+    'licence_extra_line': (LICENCE_URL_LINE, LICENCE_URL_LINE+'MIT License\n'),
+    'licence_duplicate_line': (LICENCE_URL_LINE, LICENCE_URL_LINE+LICENCE_URL_LINE),
+}
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('mutation', WORKSHEET_MUTATIONS)
+def test_verify_rejects_worksheet_metadata_outside_exact_allowlist_without_writing_validation(
+        built_paper, optimised, mutation):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    old, new = WORKSHEET_MUTATIONS[mutation]
+    metadata = metadata_file.read_text(encoding='utf-8')
+    assert metadata.count(old) == 1
+    metadata_file.write_text(metadata.replace(old, new), encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, mutation+' was accepted: '+result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+    assert not (built_paper/'rendered').exists(), 'Rejected metadata wrote page renders'
+
+
+DATE_PLACEHOLDER = '公開時にKotaが実際の日付を入力。'
+DOI_PLACEHOLDER = '既存の予約DOIの有無と対象レコードをKotaが確認。未確認のDOIは入力しない。'
+VERSION_PLACEHOLDER = '候補: 0.1.0-plan-draft。既存レコードの新バージョンにするか新規登録にするかをKotaが決めてから確定。'
+FIXED_WORKSHEET_MUTATIONS = {
+    'preamble_identity': ('# Zenodo入力案', 'Creator: Other Person\n\n# Zenodo入力案'),
+    'h1_prose_identity': ('登録・公開操作は実施していません。\n', '登録・公開操作は実施していません。\nCreator: Other Person\n'),
+    'static_section_identity': ('prospective evaluation\n', 'prospective evaluation\n\nCreator: Other Person\n'),
+    'preamble_prefix': ('# Zenodo入力案', 'Unapproved prefix.\n\n# Zenodo入力案'),
+    'preamble_prose': ('登録・公開操作は実施していません。', '登録・公開操作を実施しました。'),
+    'resource_type_extra': ('Publication → Preprint\n', 'Publication → Preprint\nDataset\n'),
+    'resource_type_nested': ('Publication → Preprint\n', 'Publication → Preprint\n\n- Dataset\n'),
+    'keywords_extra': ('prospective evaluation\n', 'prospective evaluation; unapproved keyword\n'),
+    'related_works_extra': ('Cites / https://github.com/nyattoh/ommatidia / URL\n',
+                            'Cites / https://github.com/nyattoh/ommatidia / URL\n'
+                            'IsSupplementTo / https://example.com/ / URL\n'),
+    'files_unapproved_filename': ('manuscript.pdf, manuscript.md, SHA256SUMS.txt。',
+                                  'manuscript.pdf, manuscript.md, SHA256SUMS.txt, private-notes.md。'),
+    'files_code_block': ('## Digital Object Identifier\n',
+                         '```\nextra-file.bin\n```\n\n## Digital Object Identifier\n'),
+    'duplicate_keywords_section': ('## Related works', '## Keywords\n\nextra\n\n## Related works'),
+    'decision_list_extra': ('- Zenn記事の掲載可否。published: falseを維持中。\n',
+                            '- Zenn記事の掲載可否。published: falseを維持中。\n- Unapproved decision.\n'),
+    'suffix': ('published: falseを維持中。\n', 'published: falseを維持中。\n\nUnapproved suffix.\n'),
+}
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('mutation', FIXED_WORKSHEET_MUTATIONS)
+def test_verify_rejects_changes_to_fixed_worksheet_content_without_writing_validation(
+        built_paper, optimised, mutation):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    old, new = FIXED_WORKSHEET_MUTATIONS[mutation]
+    metadata = metadata_file.read_text(encoding='utf-8')
+    assert metadata.count(old) == 1
+    metadata_file.write_text(metadata.replace(old, new), encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, mutation+' was accepted: '+result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+    assert not (built_paper/'rendered').exists(), 'Rejected metadata wrote page renders'
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('date,version,doi', [
+    ('2026-10-21', VERSION_PLACEHOLDER, DOI_PLACEHOLDER),
+    (DATE_PLACEHOLDER, '0.2.0', '10.0000/example.doi'),
+    ('2026-10-21', '0.2.0', 'https://doi.org/10.0000/example.doi'),
+])
+def test_verify_accepts_plain_text_author_worksheet_fields(built_paper, optimised, date, version, doi):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    metadata = metadata_file.read_text(encoding='utf-8')
+    placeholders = (DATE_PLACEHOLDER, VERSION_PLACEHOLDER, DOI_PLACEHOLDER)
+    assert all(metadata.count(placeholder) == 1 for placeholder in placeholders)
+    for placeholder, value in zip(placeholders, (date, version, doi)):
+        metadata = metadata.replace(placeholder, value)
+    metadata_file.write_text(metadata, encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode == 0, result.stdout+result.stderr
+
+
+DYNAMIC_FIELD_FRAGMENTS = {
+    'empty': '',
+    'extra_line': '2026-10-21\nUnapproved line',
+    'extra_paragraph': '2026-10-21\n\nUnapproved paragraph',
+    'list': '- 2026-10-21',
+    'heading': '### 2026-10-21',
+    'code_block': '```\n2026-10-21\n```',
+    'indented_code': '    2026-10-21',
+    'code_inline': '`10.0000/example.doi`',
+    'emphasis': '*2026-10-21*',
+    'link': '[DOI](https://doi.org/10.0000/example.doi)',
+    'html': '<b>2026-10-21</b>',
+    'escape': '10.0000\\_example',
+    'trailing_space': '2026-10-21 ',
+    'other_label': 'Family name: Other',
+}
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('fragment', DYNAMIC_FIELD_FRAGMENTS)
+@pytest.mark.parametrize('placeholder', [DATE_PLACEHOLDER, VERSION_PLACEHOLDER, DOI_PLACEHOLDER],
+                         ids=['date', 'version', 'doi'])
+def test_verify_rejects_structural_fragments_in_author_worksheet_fields_without_writing_validation(
+        built_paper, optimised, fragment, placeholder):
+    metadata_file = built_paper/'zenodo-metadata.md'
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    metadata = metadata_file.read_text(encoding='utf-8')
+    assert metadata.count(placeholder) == 1
+    metadata_file.write_text(metadata.replace(placeholder, DYNAMIC_FIELD_FRAGMENTS[fragment]),
+                             encoding='utf-8', newline='\n')
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, fragment+' was accepted: '+result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected metadata changed validation.json'
+    assert not (built_paper/'rendered').exists(), 'Rejected metadata wrote page renders'
+
+
+ARTICLE_LICENCE_LINK = '(https://creativecommons.org/licenses/by/4.0/)'
+DECLARATION_MUTATIONS = {
+    'article_text_after_link': ('article', ARTICLE_LICENCE_LINK, ARTICLE_LICENCE_LINK+' UNAPPROVED EXTRA'),
+    'article_same_section_paragraph': (
+        'article', '記事は未公開の下書きです。\n', '記事は未公開の下書きです。\n\nAll rights reserved.\n'),
+    'manuscript_text_before_declaration': (
+        'manuscript', 'no comparative study results.', 'no comparative study results. All rights reserved.'),
+    'manuscript_front_paragraph': ('manuscript', '\n## Abstract\n', '\nAll rights reserved.\n\n## Abstract\n'),
+}
+
+
+@pytest.mark.parametrize('optimised', [False, True])
+@pytest.mark.parametrize('mutation', DECLARATION_MUTATIONS)
+def test_verify_rejects_unapproved_licence_declaration_text_without_writing_validation(
+        built_paper, optimised, mutation):
+    validation = built_paper/'validation.json'
+    validation_before = validation.read_bytes()
+    surface, old, new = DECLARATION_MUTATIONS[mutation]
+    file = built_paper.parents[1]/'articles/ommatidia-design-plan.md' if surface == 'article' else built_paper/'manuscript.md'
+    text = file.read_text(encoding='utf-8')
+    assert text.count(old) == 1
+    file.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+    if surface == 'manuscript':
+        build_result = run('build.py', built_paper)
+        assert build_result.returncode == 0, build_result.stdout+build_result.stderr
+
+    result = run('verify.py', built_paper, optimised=optimised)
+    assert result.returncode != 0, mutation+' was accepted: '+result.stdout+result.stderr
+    assert validation.read_bytes() == validation_before, 'Rejected declaration changed validation.json'
+    assert not (built_paper/'rendered').exists(), 'Rejected declaration wrote page renders'
+
+
 def test_verify_rejects_wrong_digest(built_paper):
     file = built_paper/'SHA256SUMS.txt'
     lines = file.read_text(encoding='utf-8').splitlines()

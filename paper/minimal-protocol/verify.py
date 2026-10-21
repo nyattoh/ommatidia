@@ -1,5 +1,6 @@
 """Check source/PDF correspondence, required hashes, licence and unpublished article."""
 import hashlib
+import importlib.util
 import json
 import re
 from pathlib import Path
@@ -12,6 +13,11 @@ import yaml
 here = Path(__file__).resolve().parent
 root = here.parents[1]
 source = (here/'manuscript.md').read_text(encoding='utf-8')
+build_spec = importlib.util.spec_from_file_location('publication_build', here/'build.py')
+build = importlib.util.module_from_spec(build_spec)
+build_spec.loader.exec_module(build)
+# Build and verification share one allowlist of rendered manuscript token shapes.
+build.manuscript_tokens(source)
 doc = fitz.open(here/'manuscript.pdf')
 normal = lambda s: re.sub(r'\s+', '', s).replace('\u00ad', '')
 
@@ -54,14 +60,28 @@ def unique_json_object(pairs):
     return result
 
 
+AUTHOR_WORKSHEET_FIELDS = ('Publication date', 'Version', 'Digital Object Identifier')
+APPROVED_MANUSCRIPT_FRONT = (
+    'Ryoko Sakakibara — Independent Researcher\n\n'
+    'ORCID: https://orcid.org/0009-0009-9544-6315\n\n'
+    'Draft dated 21 October 2026. Research plan and system design; no comparative study results. Manuscript licence: Creative Commons Attribution 4.0 International (CC-BY-4.0), https://creativecommons.org/licenses/by/4.0/.'
+)
+APPROVED_ARTICLE_LICENCE_SECTION = (
+    'Ommatidiaは、調査の途中で「何が分かったか」と「何が未確認か」を外部の構造化された状態に記録し、次に調べる問いを選ぶための設計です。今回は英語の設計・研究計画論文としてまとめました。\n\n'
+    '本試験は **0件** です。効果が出たという報告ではありません。論文の投稿とDOIの確定はこれからです。外部で事前登録が完了したとは扱っていません。\n\n'
+    '論文とこの記事の本文は、Ryoko Sakakibara名義で [Creative Commons Attribution 4.0 International（CC-BY-4.0）](https://creativecommons.org/licenses/by/4.0/) を適用します。コードのライセンスは変更しません。記事は未公開の下書きです。'
+)
+
+
+def markdown_headings(markdown):
+    tokens = MarkdownIt().parse(markdown)
+    return [(int(token.tag[1:]), tokens[index+1].content, token.map[0], token.map[1])
+            for index, token in enumerate(tokens) if token.type == 'heading_open']
+
+
 def markdown_sections(markdown):
     lines = markdown.splitlines()
-    tokens = MarkdownIt().parse(markdown)
-    headings = []
-    for index, token in enumerate(tokens):
-        if token.type == 'heading_open':
-            heading = tokens[index+1]
-            headings.append((int(token.tag[1:]), heading.content, token.map[0], token.map[1]))
+    headings = markdown_headings(markdown)
     sections = {}
     for index, (level, title, _, content_start) in enumerate(headings):
         content_end = len(lines)
@@ -71,6 +91,14 @@ def markdown_sections(markdown):
                 break
         sections.setdefault(title, []).append('\n'.join(lines[content_start:content_end]).strip())
     return sections
+
+
+def author_field_value(value):
+    """Return whether an author-entered worksheet value is one plain-text scalar without another label."""
+    tokens = MarkdownIt().parse(value)
+    return ([token.type for token in tokens] == ['paragraph_open', 'inline', 'paragraph_close']
+            and [(child.type, child.content) for child in tokens[1].children] == [('text', value)]
+            and re.search(r':\s|：', value) is None)
 
 
 def required_section(sections, title):
@@ -254,6 +282,22 @@ if 'https://creativecommons.org/licenses/by/4.0/' not in licence_lines:
 abstract = required_section(markdown_sections(source), 'Abstract')
 if required_section(metadata_sections, 'Description') != abstract:
     raise ValueError('Zenodo metadata does not contain the manuscript abstract')
+approved_metadata = build.zenodo_worksheet(expected_title, approved_affiliation, abstract)
+# The worksheet must equal the approved template, except that the author may replace
+# the date, version and DOI placeholders, each with one plain-text scalar.
+worksheet_pattern = re.escape(approved_metadata)
+approved_sections = markdown_sections(approved_metadata)
+placeholders = [required_section(approved_sections, section) for section in AUTHOR_WORKSHEET_FIELDS]
+for section, placeholder in zip(AUTHOR_WORKSHEET_FIELDS, placeholders):
+    if worksheet_pattern.count(re.escape(placeholder)) != 1:
+        raise ValueError('The approved worksheet has an ambiguous '+section+' placeholder')
+    worksheet_pattern = worksheet_pattern.replace(re.escape(placeholder), '([^\n]+)')
+worksheet_match = re.fullmatch(worksheet_pattern, metadata)
+if worksheet_match is None:
+    raise ValueError('Zenodo metadata differs from the approved worksheet')
+for value, placeholder in zip(worksheet_match.groups(), placeholders):
+    if value != placeholder and not author_field_value(value):
+        raise ValueError('Zenodo metadata date, version and DOI fields must each be one plain-text value')
 article = (root/'articles/ommatidia-design-plan.md').read_text(encoding='utf-8')
 article_licence_prefix = '\u8ad6\u6587\u3068\u3053\u306e\u8a18\u4e8b\u306e\u672c\u6587\u306f'
 article_licence_name, article_licence_url = required_markdown_link(article, article_licence_prefix)
@@ -270,6 +314,8 @@ if article_licence_url != 'https://creativecommons.org/licenses/by/4.0/':
     raise ValueError('The article is missing the approved licence url')
 if not article_published_false(article):
     raise ValueError('The Zenn article frontmatter must contain published: false as a YAML boolean')
+if required_section(markdown_sections(article), '今回公開を準備しているもの') != APPROVED_ARTICLE_LICENCE_SECTION:
+    raise ValueError('The article licence declaration section differs from the approved text')
 manuscript_licence_paragraphs = [
     token.content for token in MarkdownIt().parse(source)
     if token.type == 'inline' and 'Manuscript licence:' in token.content
@@ -287,6 +333,10 @@ if manuscript_licence != (
         'Creative Commons Attribution 4.0 International (CC-BY-4.0), '
         'https://creativecommons.org/licenses/by/4.0/.'):
     raise ValueError('The manuscript licence declaration is ambiguous')
+title_heading, abstract_heading = markdown_headings(source)[:2]
+front = '\n'.join(source.splitlines()[title_heading[3]:abstract_heading[2]]).strip()
+if abstract_heading[:2] != (2, 'Abstract') or front != APPROVED_MANUSCRIPT_FRONT:
+    raise ValueError('The manuscript licence front matter differs from the approved text')
 render = here/'rendered'
 render.mkdir(exist_ok=True)
 thumbs = []
