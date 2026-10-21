@@ -143,15 +143,20 @@ def test_reproducibility_receipts_match_canonical_checkout_bytes(tmp_path):
 
 def test_committed_current_byte_hash_claims_match_generated_artifacts():
     """Current receipts and validation metadata must identify the checked-in bytes."""
+    raw = {
+        name: hashlib.sha256((PAPER/name).read_bytes()).hexdigest()
+        for name in ('manuscript.md', 'manuscript.pdf')
+    }
     validation = json.loads((PAPER/'validation.json').read_text(encoding='utf-8'))
     checksums = (PAPER/'SHA256SUMS.txt').read_text(encoding='utf-8').splitlines()
     entries = {line.split('  ', 1)[1]: line.split('  ', 1)[0] for line in checksums}
-    assert validation['sourceSha256'] == entries['manuscript.md']
-    assert validation['pdfSha256'] == entries['manuscript.pdf']
+    assert entries == raw
+    assert validation['sourceSha256'] == raw['manuscript.md']
+    assert validation['pdfSha256'] == raw['manuscript.pdf']
 
     records = json.loads((PAPER/'reproducibility.json').read_text(encoding='utf-8'))
     default = records['default']['runs'][0]['hashes']
-    assert default['manuscript.pdf'] == entries['manuscript.pdf']
+    assert default['manuscript.pdf'] == raw['manuscript.pdf']
     assert default['SHA256SUMS.txt'] == hashlib.sha256((PAPER/'SHA256SUMS.txt').read_bytes()).hexdigest()
 
 
